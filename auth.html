@@ -26,6 +26,53 @@
       --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
+    /* ═══════════════════════════════════════════════════════════════
+       SESSION-CHECK OVERLAY
+       Видим сразу, с первой отрисовки страницы (без JS), и скрываем
+       только после того, как onAuthStateChanged скажет нам, что делать.
+       Это убирает "вспышку" формы входа перед автоматическим редиректом
+       уже залогиненного пользователя на его профиль.
+    ═══════════════════════════════════════════════════════════════ */
+    #sessionCheckOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: opacity 0.35s var(--ease);
+    }
+
+    #sessionCheckOverlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .session-spinner {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3.5px solid var(--teal-light);
+      border-top-color: var(--teal);
+      animation: session-spin 0.8s linear infinite;
+    }
+
+    .session-check-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--grey-text);
+    }
+
+    @keyframes session-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     *,
     *::before,
     *::after {
@@ -936,6 +983,12 @@
 
 <body>
 
+  <!-- Перекрывает форму входа, пока не выясним, залогинен ли человек уже -->
+  <div id="sessionCheckOverlay">
+    <div class="session-spinner"></div>
+    <div class="session-check-text">Проверяем сессию...</div>
+  </div>
+
   <div class="auth-wrap">
 
     <!-- LEFT: Hero image -->
@@ -1330,18 +1383,36 @@
     /* ═══════════════════════════════════════════════════════════════
        АВТО-ВХОД: если сессия уже есть — сразу на профиль
     ═══════════════════════════════════════════════════════════════ */
+    const sessionOverlay = document.getElementById('sessionCheckOverlay');
+    function hideSessionOverlay() {
+      sessionOverlay?.classList.add('hidden');
+    }
+
+    // Страховка: если проверка сессии почему-то зависла (плохая сеть,
+    // Firestore не отвечает) — не держим человека перед пустым экраном
+    // вечно, показываем форму входа через 6 секунд в любом случае.
+    const sessionOverlayFallback = setTimeout(hideSessionOverlay, 6000);
+
     onAuthStateChanged(auth, async (user) => {
-      if (!user) return; // не залогинен — остаёмся на странице входа
+      if (!user) { clearTimeout(sessionOverlayFallback); hideSessionOverlay(); return; } // не залогинен — остаёмся на странице входа
 
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
         if (snap.exists() && snap.data().role) {
           const role = snap.data().role;
+          // Оверлей НЕ скрываем — страница сразу уходит на профиль,
+          // так форма входа ни на миг не успевает промелькнуть.
+          clearTimeout(sessionOverlayFallback);
           window.location.replace(role === 'tutor' ? './tutor-profile.html' : './profile.html');
+          return;
         }
         // если роль не задана — остаёмся, пусть выберет
+        clearTimeout(sessionOverlayFallback);
+        hideSessionOverlay();
       } catch (_) {
         // ошибка Firestore — просто показываем страницу входа
+        clearTimeout(sessionOverlayFallback);
+        hideSessionOverlay();
       }
     });
 
