@@ -1,0 +1,3442 @@
+<!DOCTYPE html>
+<html lang="ru" translate="no">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TutorApp — Найди репетитора</title>
+  <meta name="google" content="notranslate">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ══════════════════════════════════════════
+       RESET & CSS VARIABLES
+    ══════════════════════════════════════════ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --teal: #00A896;
+      --teal-dark: #007F72;
+      --teal-mid: #5BBDB5;
+      --teal-light: #E0F5F3;
+      --teal-pale: #F0FAF9;
+      --accent: #80D1C1;
+      --accent-dark: #3FA9A1;
+      --accent-light: #E0F5F3;
+      --text-dark: #1A2E2C;
+      --text-mid: #4A6360;
+      --text-soft: #7A9A97;
+      --white: #FFFFFF;
+      --bg: #F4FAFA;
+      --border: #D4EEEA;
+      --gold: #F5B942;
+      --red: #E05A7A;
+      --card-radius: 22px;
+      --sidebar-w: 168px;
+      --header-h: 64px;
+      --subnav-h: 48px;
+      --shadow-xs: 0 1px 4px rgba(0, 168, 150, .07);
+      --shadow-sm: 0 4px 20px rgba(0, 168, 150, .12);
+      --shadow-md: 0 12px 36px rgba(0, 168, 150, .18);
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════════════════════════
+       FIXED HEADER
+    ══════════════════════════════════════════ */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-h);
+      z-index: 700;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 24px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .h-ham {
+      display: flex;
+      flex-direction: column;
+      gap: 4.5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .h-ham span {
+      display: block;
+      width: 20px;
+      height: 1.8px;
+      background: var(--text-mid);
+      border-radius: 2px;
+    }
+
+    .h-logo {
+      font-weight: 800;
+      font-size: 19px;
+      color: var(--teal);
+      letter-spacing: -.02em;
+      flex-shrink: 0;
+      text-decoration: none;
+      border-bottom: none !important;
+    }
+
+    .h-logo span {
+      color: var(--text-dark);
+    }
+
+    /* Header nav menu */
+    .h-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      margin: 0 12px;
+      justify-content: center;
+    }
+
+    .h-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      transition: all .18s;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .h-nav a:hover {
+      color: var(--teal-dark);
+      background: var(--teal-pale);
+    }
+
+    .h-nav a.active {
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .h-nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 14px;
+      right: 14px;
+      height: 2.5px;
+      background: var(--teal);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .h-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .h-lang {
+      background: none;
+      color: var(--text-mid);
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: border-color .2s;
+    }
+
+    .h-lang:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark);
+    }
+
+    .h-coins {
+      background: var(--teal-pale);
+      border-radius: 50px;
+      padding: 6px 14px;
+      color: var(--teal-dark);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--teal-light);
+    }
+
+    .coins-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #4ADE80;
+    }
+
+    .h-notif {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-mid);
+      transition: border-color .2s, background .2s;
+    }
+
+    .h-notif:hover {
+      background: var(--teal-light);
+      border-color: var(--teal);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: 2px solid var(--white);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* NOTIFICATION BELL PULSE */
+    @keyframes notifPulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.15)
+      }
+    }
+
+    .notif-pulse {
+      animation: notifPulse .4s ease-in-out;
+    }
+
+    /* NOTIFICATION DROPDOWN PANEL */
+    .notif-panel {
+      position: fixed;
+      top: calc(var(--header-h) + 8px);
+      right: 16px;
+      width: 340px;
+      max-height: 480px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, .10);
+      z-index: 900;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .notif-panel.open {
+      display: flex;
+    }
+
+    .notif-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 850;
+    }
+
+    .notif-overlay.open {
+      display: block;
+    }
+
+    .notif-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .notif-panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .notif-mark-all {
+      background: none;
+      border: none;
+      color: var(--teal);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background .18s;
+    }
+
+    .notif-mark-all:hover {
+      background: var(--teal-light);
+    }
+
+    .notif-panel-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .notif-panel-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .notif-panel-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .15s;
+      position: relative;
+    }
+
+    .notif-item:hover {
+      background: var(--teal-pale);
+    }
+
+    .notif-item.unread {
+      background: var(--teal-pale);
+    }
+
+    .notif-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .notif-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--teal-mid, #5BBDB5), var(--teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .notif-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .notif-icon-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--white);
+    }
+
+    .notif-icon-badge.msg {
+      background: var(--teal);
+    }
+
+    .notif-icon-badge.like {
+      background: #E05A7A;
+    }
+
+    .notif-icon-badge.comment {
+      background: #4A90D9;
+    }
+
+    .notif-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notif-from {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 2px;
+    }
+
+    .notif-text {
+      font-size: 12.5px;
+      color: var(--text-mid);
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .notif-time {
+      font-size: 11px;
+      color: var(--text-soft, #7A9A97);
+      margin-top: 3px;
+    }
+
+    .notif-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--text-soft, #7A9A97);
+      font-size: 13px;
+    }
+
+    /* COINS POP */
+    .h-coins.coins-pop {
+      transform: scale(1.18);
+      background: #d2f6ee;
+      box-shadow: 0 0 0 6px rgba(56, 214, 138, .18);
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s, background .25s;
+    }
+
+    .h-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2.5px solid var(--teal-mid);
+      cursor: pointer;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #A8D8D4, #5BBDB5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .h-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ══════════════════════════════════════════
+       SUBNAV
+    ══════════════════════════════════════════ */
+    .subnav {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      z-index: 600;
+      height: var(--subnav-h);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 0 24px;
+    }
+
+    .subnav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 6px 16px;
+      border-radius: 50px;
+      transition: all .18s;
+      white-space: nowrap;
+    }
+
+    .subnav a:hover {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+    }
+
+    .subnav a.active {
+      color: var(--teal-dark);
+      font-weight: 700;
+      border-bottom: 2px solid var(--teal);
+      border-radius: 0;
+      padding-bottom: 4px;
+    }
+
+    .subnav {
+      display: none;
+    }
+
+    /* ══════════════════════════════════════════
+       APP SHELL
+    ══════════════════════════════════════════ */
+    .app-body {
+      display: flex;
+      padding-top: var(--header-h);
+      min-height: 100vh;
+    }
+
+    /* ══════════════════════════════════════════
+       LEFT PROMO PANEL (replaces sidebar)
+    ══════════════════════════════════════════ */
+    :root {
+      --promo-w: 230px;
+    }
+
+    .promo-panel {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      width: var(--promo-w);
+      height: calc(100vh - var(--header-h));
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      z-index: 500;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Top card: Become a tutor */
+    .promo-top {
+      background: linear-gradient(160deg, #e8faf8 0%, #c8f0eb 100%);
+      padding: 22px 18px 18px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .promo-top .promo-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--teal-dark);
+      margin-bottom: 8px;
+    }
+
+    .promo-top h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.25;
+      margin-bottom: 3px;
+    }
+
+    .promo-top h3 span {
+      color: var(--teal);
+    }
+
+    .promo-checklist {
+      list-style: none;
+      margin: 12px 0 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .promo-checklist li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-mid);
+      font-weight: 500;
+    }
+
+    .promo-checklist li::before {
+      content: '';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .promo-start-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      transition: background .2s, transform .15s;
+      box-shadow: 0 4px 14px rgba(0, 168, 150, .28);
+    }
+
+    .promo-start-btn:hover {
+      background: var(--teal-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Tutor photo inside promo */
+    .promo-img-wrap {
+      position: relative;
+      height: 160px;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(170deg, #d4f5f0 0%, #a8e6e0 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .promo-img-wrap img {
+      height: 95%;
+      width: auto;
+      object-fit: contain;
+      object-position: bottom;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0, 120, 110, .18));
+    }
+
+    .promo-sparkle {
+      position: absolute;
+      top: 14px;
+      font-size: 16px;
+      opacity: 0.55;
+      animation: twinkle 2.5s ease-in-out infinite;
+    }
+
+    .promo-sparkle:nth-child(2) {
+      left: 18px;
+      animation-delay: 0s;
+    }
+
+    .promo-sparkle:nth-child(3) {
+      right: 22px;
+      animation-delay: .9s;
+      font-size: 11px;
+      top: 28px;
+    }
+
+    .promo-sparkle:nth-child(4) {
+      left: 50%;
+      animation-delay: 1.6s;
+      font-size: 13px;
+      top: 8px;
+    }
+
+    /* Community section */
+    .promo-community {
+      padding: 14px 18px 16px;
+      flex-shrink: 0;
+    }
+
+    .promo-community h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .promo-community p {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-bottom: 10px;
+      line-height: 1.45;
+    }
+
+    .promo-avatars {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .promo-avatars .pav {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--white);
+      margin-right: -8px;
+      overflow: hidden;
+      background: var(--teal-light);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .promo-avatars .pav img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .promo-avatars .pav-count {
+      background: var(--teal);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      margin-right: 0;
+      margin-left: 12px;
+    }
+
+    /* ══════════════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════════════ */
+    .main-content {
+      margin-left: var(--promo-w);
+      flex: 1;
+      min-width: 0;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 28px auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ══════════════════════════════════════════
+       AD BANNER
+    ══════════════════════════════════════════ */
+    .ad-banner {
+      background: linear-gradient(100deg, var(--teal-dark) 0%, var(--teal) 55%, var(--teal-mid) 100%);
+      border-radius: 20px;
+      padding: 24px 32px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ad-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='500' height='130' viewBox='0 0 500 130' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='420' cy='30' r='80' fill='rgba(255,255,255,0.05)'/%3E%3Ccircle cx='460' cy='110' r='55' fill='rgba(255,255,255,0.04)'/%3E%3Ccircle cx='370' cy='-10' r='40' fill='rgba(255,255,255,0.04)'/%3E%3Cpath d='M320 10 Q370 50 350 100' stroke='rgba(255,255,255,0.06)' stroke-width='2' fill='none'/%3E%3C/svg%3E") right center no-repeat;
+      pointer-events: none;
+    }
+
+    .ad-sparkles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ad-sparkles span {
+      position: absolute;
+      font-size: 14px;
+      animation: twinkle 2.5s ease-in-out infinite;
+    }
+
+    .ad-sparkles span:nth-child(1) {
+      top: 18%;
+      left: 52%;
+      animation-delay: 0s;
+    }
+
+    .ad-sparkles span:nth-child(2) {
+      top: 55%;
+      left: 68%;
+      animation-delay: .7s;
+      font-size: 10px;
+    }
+
+    .ad-sparkles span:nth-child(3) {
+      top: 25%;
+      right: 22%;
+      animation-delay: 1.4s;
+      font-size: 12px;
+    }
+
+    .ad-sparkles span:nth-child(4) {
+      top: 65%;
+      right: 38%;
+      animation-delay: .3s;
+      font-size: 9px;
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        opacity: .3;
+        transform: scale(.8)
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.1)
+      }
+    }
+
+    .ad-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    .ad-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, .22);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border-radius: 50px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
+    }
+
+    .ad-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .ad-sub {
+      font-size: 14px;
+      color: rgba(255, 255, 255, .85);
+      font-weight: 500;
+    }
+
+    .ad-btn {
+      position: relative;
+      z-index: 1;
+      background: var(--white);
+      color: var(--teal-dark);
+      border: none;
+      border-radius: 14px;
+      padding: 12px 26px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .12);
+      transition: transform .2s, box-shadow .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ad-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, .16);
+    }
+
+    /* ══════════════════════════════════════════
+       FILTER BAR
+    ══════════════════════════════════════════ */
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      background: var(--white);
+      border-radius: 18px;
+      padding: 16px 20px;
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-xs);
+    }
+
+    .filter-select {
+      position: relative;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .filter-select label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-soft);
+      font-weight: 600;
+      margin-bottom: 5px;
+      padding-left: 14px;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    .filter-select select {
+      width: 100%;
+      padding: 9px 34px 9px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      color: var(--text-dark);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      appearance: none;
+      cursor: pointer;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .filter-select select:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0, 168, 150, .12);
+    }
+
+    .filter-select::after {
+      content: '▾';
+      position: absolute;
+      right: 12px;
+      bottom: 11px;
+      color: var(--teal);
+      pointer-events: none;
+      font-size: 13px;
+    }
+
+    /* ══════════════════════════════════════════
+       TUTOR CARD — full-width, all Firestore fields
+    ══════════════════════════════════════════ */
+    .card-wrapper {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 160px 1fr 200px 200px;
+      align-items: stretch;
+      background: var(--white);
+      border-radius: var(--card-radius);
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 22px;
+      overflow: hidden;
+      transition: transform .22s, box-shadow .22s, border-color .22s;
+      animation: cardIn .35s ease both;
+    }
+
+    .card-wrapper:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--teal-mid);
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ─── COL 1: Photo ─── */
+    .card-photo-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 24px 16px 20px;
+      border-right: 1px solid #EDF6F5;
+      background: var(--teal-pale);
+    }
+
+    .card-photo {
+      width: 120px;
+      height: 144px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2.5px solid var(--teal-light);
+      box-shadow: 0 4px 14px rgba(0, 168, 150, .15);
+      flex-shrink: 0;
+    }
+
+    .card-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .card-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--teal-light), var(--teal-mid));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--teal-dark);
+    }
+
+    .card-students {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-soft);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .card-students svg {
+      flex-shrink: 0;
+      color: var(--teal-mid);
+    }
+
+    /* ─── COL 2: Info ─── */
+    .card-body {
+      padding: 22px 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .card-name-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .card-name {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .card-flag {
+      font-size: 17px;
+    }
+
+    .card-badge {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border-radius: 50px;
+      padding: 3px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .card-badge.senior {
+      background: #FEF3C7;
+      color: #B45309;
+    }
+
+    .card-badge.pro {
+      background: #EDE9FE;
+      color: #6D28D9;
+    }
+
+    .card-badge.junior {
+      background: #DCFCE7;
+      color: #166534;
+    }
+
+    .card-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .card-row svg {
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .card-row.muted {
+      color: var(--text-soft);
+    }
+
+    .card-row strong {
+      color: var(--text-mid);
+      font-weight: 600;
+    }
+
+    .card-experience {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--teal-dark);
+      font-weight: 600;
+      background: var(--teal-pale);
+      border-radius: 50px;
+      padding: 3px 11px;
+      border: 1px solid var(--teal-light);
+      width: fit-content;
+    }
+
+    .card-bio {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.65;
+      margin-top: 2px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .card-tag {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      color: var(--text-mid);
+      border-radius: 50px;
+      padding: 4px 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+
+    .card-tag:hover {
+      background: var(--teal-light);
+      border-color: var(--teal-mid);
+      color: var(--teal-dark);
+    }
+
+    /* ─── COL 3: Meta/Price ─── */
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 22px 20px 20px;
+      border-left: 1px solid #EDF6F5;
+      min-width: 0;
+    }
+
+    .card-fav {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #C0D8D6;
+      font-size: 22px;
+      align-self: flex-end;
+      transition: color .2s, transform .2s;
+      line-height: 1;
+    }
+
+    .card-fav:hover {
+      color: var(--gold);
+      transform: scale(1.2);
+    }
+
+    .card-fav.active {
+      color: var(--gold);
+    }
+
+    .card-price-block {
+      text-align: center;
+    }
+
+    .card-price {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1;
+    }
+
+    .card-price-unit {
+      font-size: 13px;
+      color: var(--text-soft);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .stars {
+      display: flex;
+      gap: 2px;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    .star {
+      font-size: 18px;
+    }
+
+    .star.filled {
+      color: var(--gold);
+    }
+
+    .star.half {
+      color: var(--gold);
+      opacity: .5;
+    }
+
+    .star.empty {
+      color: #D9E8E6;
+    }
+
+    .card-rating-text {
+      font-size: 12px;
+      color: var(--text-soft);
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .card-rating-text strong {
+      color: var(--text-dark);
+      font-weight: 700;
+    }
+
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn-chat {
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background .2s, transform .15s;
+    }
+
+    .btn-chat:hover {
+      background: var(--teal-dark);
+      transform: scale(1.02);
+    }
+
+    .btn-book {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border: none;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background .2s, transform .15s;
+    }
+
+    .btn-book:hover {
+      background: #C0E8E3;
+      transform: scale(1.02);
+    }
+
+    /* ─── COL 4: Video ─── */
+    .card-video {
+      background: var(--teal-pale);
+      border-left: 1px solid #EDF6F5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-video::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 168, 150, .08) 0%, rgba(91, 189, 181, .04) 100%);
+    }
+
+    .video-thumb {
+      width: 148px;
+      height: 100px;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .14);
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .video-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-thumb-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--teal), var(--teal-mid));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .play-btn {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .2);
+      transition: background .2s;
+    }
+
+    .play-btn:hover {
+      background: rgba(0, 0, 0, .32);
+    }
+
+    .play-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .2s;
+    }
+
+    .play-btn:hover .play-icon {
+      transform: scale(1.1);
+    }
+
+    .play-icon::after {
+      content: '';
+      border-style: solid;
+      border-width: 7px 0 7px 14px;
+      border-color: transparent transparent transparent var(--teal-dark);
+      margin-left: 3px;
+    }
+
+    .btn-profile {
+      background: var(--white);
+      color: var(--teal-dark);
+      border: 1.5px solid var(--teal-mid);
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      width: 100%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+      transition: background .2s, transform .15s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-profile:hover {
+      background: var(--teal-light);
+      transform: scale(1.02);
+    }
+
+    /* ── Loading / Empty ── */
+    .feed-loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-soft);
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .feed-loading .spinner {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid var(--teal-light);
+      border-top-color: var(--teal);
+      animation: spin .8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .feed-empty {
+      text-align: center;
+      padding: 70px 20px;
+      color: var(--text-soft);
+      font-size: 15px;
+    }
+
+    .feed-error {
+      text-align: center;
+      padding: 70px 20px;
+      color: #e74c3c;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 3px;
+      opacity: .5;
+    }
+
+    /* ══════════════════════════════════════════
+       EUREKA MASCOT WIDGET
+    ══════════════════════════════════════════ */
+    .eureka-widget {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    /* Speech bubble */
+    .eureka-bubble {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 14px 16px 14px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .14);
+      max-width: 240px;
+      min-width: 190px;
+      position: relative;
+      border: 1.5px solid var(--border);
+      animation: bubbleIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
+    }
+
+    @keyframes bubbleIn {
+      from {
+        opacity: 0;
+        transform: scale(.8) translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0)
+      }
+    }
+
+    .eureka-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -9px;
+      right: 28px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 10px 8px 0 8px;
+      border-color: var(--white) transparent transparent transparent;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .07));
+    }
+
+    .eureka-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-soft);
+      font-size: 16px;
+      line-height: 1;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background .15s, color .15s;
+    }
+
+    .eureka-close:hover {
+      background: var(--bg);
+      color: var(--text-dark);
+    }
+
+    .eureka-text {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.55;
+      font-weight: 500;
+      padding-right: 18px;
+    }
+
+    .eureka-text strong {
+      color: var(--text-dark);
+      display: block;
+      margin-bottom: 3px;
+      font-weight: 700;
+    }
+
+    /* Mascot avatar */
+    .mascot-avatar-circle {
+      width: 75px !important;
+      /* Оставляем круг аккуратным */
+      height: 75px !important;
+      border-radius: 50% !important;
+
+      /* Загружаем картинку */
+      background-image: url('./assets/eureka.png') !important;
+
+      /* 🔥 Увеличиваем масштаб самой картинки внутри круга, чтобы избавиться от полей */
+      background-size: 250% !important;
+
+      /* Смещаем фокус: center — по горизонтали, 30% — немного приподнимет лицо девочки */
+      background-position: center 30% !important;
+      background-repeat: no-repeat !important;
+
+      /* Сбрасываем лишние рамки и фоны, которые могли прилетать из других стилей */
+      background-color: transparent !important;
+      border: none !important;
+
+      box-shadow: 0 4px 16px rgba(91, 189, 181, 0.3) !important;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .mascot-avatar-circle:hover {
+      transform: scale(1.08);
+    }
+
+    /* Avatar wrap — floating animation */
+    .eureka-avatar-wrap {
+      position: relative;
+      animation: float 3s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .eureka-pulse {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #4ADE80;
+      border: 2px solid var(--white);
+    }
+
+    .eureka-pulse::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: rgba(74, 222, 128, .35);
+      animation: pulse-ring 1.5s ease infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        opacity: .8;
+        transform: scale(.9)
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.7)
+      }
+    }
+
+    /* Bubble hidden state */
+    .eureka-bubble.hidden {
+      display: none;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(18px);
+      background: var(--text-dark);
+      color: #fff;
+      padding: 11px 22px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: opacity .28s, transform .28s;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ══════════════════════════════════════════
+       MOBILE ADAPTIVE — App Style
+    ══════════════════════════════════════════ */
+    .mob-nav {
+      display: none;
+    }
+
+    /* ── Поиск на десктопе ── */
+    .mobile-search-bar {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+
+      html,
+      body {
+        overflow: auto;
+        height: auto;
+      }
+
+      :root {
+        --header-h: 54px;
+        --mob-nav-h: 60px;
+      }
+
+      /* ─── Хедер ─── */
+      header {
+        padding: 0 16px;
+        height: var(--header-h);
+        gap: 0;
+        justify-content: space-between;
+      }
+
+      .h-ham {
+        display: none;
+      }
+
+      .h-nav {
+        display: none;
+      }
+
+      .h-lang {
+        display: none;
+      }
+
+      .h-coins {
+        display: none;
+      }
+
+      .h-logo {
+        font-size: 18px;
+      }
+
+      .h-right {
+        gap: 10px;
+        margin-left: 0;
+      }
+
+      .h-notif {
+        width: 34px;
+        height: 34px;
+      }
+
+      .h-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+        border: 2.5px solid var(--teal);
+        box-shadow: 0 0 0 3px rgba(0, 168, 150, .15);
+      }
+
+      /* ─── Нижний таббар ─── */
+      .mob-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 900;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+        height: var(--mob-nav-h);
+        align-items: stretch;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, .09);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      .mob-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        text-decoration: none;
+        color: #9AA5B4;
+        font-size: 10px;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        transition: color .18s;
+        padding-bottom: 2px;
+      }
+
+      .mob-nav-item svg {
+        width: 22px;
+        height: 22px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke .18s, transform .18s;
+      }
+
+      .mob-nav-item.active {
+        color: var(--teal);
+      }
+
+      .mob-nav-item.active svg {
+        stroke: var(--teal);
+        transform: translateY(-1px);
+      }
+
+      /* ─── App body ─── */
+      .app-body {
+        position: static !important;
+        display: block;
+        overflow: visible;
+        padding-top: var(--header-h);
+        padding-bottom: calc(var(--mob-nav-h) + 8px);
+        min-height: 100vh;
+      }
+
+      .promo-panel {
+        display: none !important;
+      }
+
+      .main-content {
+        margin-left: 0 !important;
+      }
+
+      /* ─── Subnav ─── */
+      .subnav {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 0 12px;
+        gap: 2px;
+        scrollbar-width: none;
+      }
+
+      .subnav::-webkit-scrollbar {
+        display: none;
+      }
+
+      .subnav a {
+        font-size: 12px;
+        padding: 6px 10px;
+        white-space: nowrap;
+      }
+
+      /* ─── Поисковая строка (только мобил) ─── */
+      .mobile-search-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        padding: 10px 16px;
+        margin: 12px 14px 0;
+        box-shadow: var(--shadow-xs);
+      }
+
+      .mobile-search-bar svg {
+        color: var(--teal-mid);
+        flex-shrink: 0;
+      }
+
+      .mobile-search-bar input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        color: var(--text-dark);
+        width: 100%;
+      }
+
+      .mobile-search-bar input::placeholder {
+        color: var(--text-soft);
+      }
+
+      /* ─── Фильтры ─── */
+      .filter-bar {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 8px;
+        padding: 10px 14px;
+        scrollbar-width: none;
+      }
+
+      .filter-bar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .filter-select {
+        min-width: 130px;
+        flex-shrink: 0;
+        position: relative;
+      }
+
+      .filter-select select {
+        font-size: 12px;
+        padding: 7px 28px 7px 12px;
+        border-radius: 50px;
+      }
+
+      /* ─── AD Banner ─── */
+      .ad-banner {
+        margin: 8px 14px 4px;
+        border-radius: 16px;
+        padding: 14px 16px;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .ad-sparkles {
+        display: none;
+      }
+
+      .ad-title {
+        font-size: 14px;
+      }
+
+      .ad-sub {
+        font-size: 11.5px;
+      }
+
+      .ad-btn {
+        padding: 8px 14px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      /* ─── Main ─── */
+      main {
+        padding: 0 0 16px;
+        margin: 0;
+      }
+
+      /* ════════════════════════════════════════
+         КАРТОЧКИ РЕПЕТИТОРОВ — МОБИЛЬНЫЙ ДИЗАЙН
+         Новый компактный вертикальный дизайн
+      ════════════════════════════════════════ */
+      #tutor-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 8px 14px 16px;
+      }
+
+      /* Оверрайд старого grid */
+      .card-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: unset !important;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1.5px solid var(--border);
+        box-shadow: 0 2px 16px rgba(0, 168, 150, .10);
+        margin-bottom: 0 !important;
+        background: var(--white);
+      }
+
+      /* ─── Шапка карточки: фото + имя в строку ─── */
+      .card-photo-col {
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 14px !important;
+        padding: 16px 16px 12px !important;
+        border-right: none !important;
+        border-bottom: 1px solid #EDF6F5;
+        background: linear-gradient(135deg, var(--teal-pale) 0%, #fff 100%);
+      }
+
+      .card-photo {
+        width: 64px !important;
+        height: 64px !important;
+        border-radius: 50% !important;
+        flex-shrink: 0;
+        border: 2.5px solid var(--teal-light) !important;
+        box-shadow: 0 4px 12px rgba(0, 168, 150, .2) !important;
+      }
+
+      /* Скрываем "0 учеников" — теперь оно внутри card-body */
+      .card-students {
+        display: none !important;
+      }
+
+      /* Имя + бейдж рядом с фото */
+      .card-photo-col .card-name-row-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      /* ─── Тело карточки ─── */
+      .card-body {
+        padding: 12px 16px 10px !important;
+        gap: 6px !important;
+        border-bottom: 1px solid #EDF6F5;
+      }
+
+      .card-name-row {
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .card-name {
+        font-size: 17px;
+      }
+
+      .card-bio {
+        font-size: 13px;
+        -webkit-line-clamp: 2;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .card-tags {
+        gap: 5px;
+      }
+
+      .card-tag {
+        font-size: 11px;
+        padding: 3px 10px;
+      }
+
+      .card-experience {
+        font-size: 11.5px;
+      }
+
+      /* ─── Нижняя панель: цена + кнопки ─── */
+      .card-meta {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        padding: 12px 16px !important;
+        border-left: none !important;
+        border-top: none !important;
+        border-bottom: 1px solid #EDF6F5;
+        gap: 10px;
+        flex-wrap: nowrap;
+        background: var(--white);
+      }
+
+      .card-fav {
+        font-size: 20px;
+        margin: 0;
+        align-self: center;
+      }
+
+      .card-price-block {
+        flex: 1;
+      }
+
+      .card-price {
+        font-size: 24px !important;
+        line-height: 1;
+      }
+
+      .card-price-unit {
+        font-size: 11px;
+      }
+
+      .stars {
+        gap: 1px;
+      }
+
+      .star {
+        font-size: 13px;
+      }
+
+      .card-rating-text {
+        font-size: 11px;
+        white-space: nowrap;
+      }
+
+      .card-actions {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 6px !important;
+        min-width: 130px;
+      }
+
+      .btn-chat {
+        padding: 9px 14px !important;
+        font-size: 12.5px !important;
+        border-radius: 50px !important;
+        width: 100%;
+      }
+
+      .btn-book {
+        padding: 8px 14px !important;
+        font-size: 12px !important;
+        border-radius: 50px !important;
+        width: 100%;
+      }
+
+      /* ─── Видео-колонка: кнопка профиля ─── */
+      .card-video {
+        border-left: none !important;
+        border-top: none !important;
+        background: var(--white) !important;
+        padding: 12px 16px 14px !important;
+        flex-direction: row !important;
+        gap: 10px !important;
+        align-items: center !important;
+      }
+
+      /* Скрываем видеопревью — только кнопка профиля */
+      .video-thumb {
+        display: none !important;
+      }
+
+      .btn-profile {
+        flex: 1;
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+        border-radius: 50px !important;
+        text-align: center;
+      }
+
+      /* ─── Мобил: показать имя рядом с фото, скрыть в body ─── */
+      .card-name-row-desktop {
+        display: none !important;
+      }
+
+      .card-name-row-mobile {
+        display: flex !important;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .card-stars-desktop {
+        display: none !important;
+      }
+
+      /* ─── Eureka и Toast выше таббара ─── */
+      .eureka-widget {
+        bottom: calc(var(--mob-nav-h) + 10px);
+        right: 12px;
+      }
+
+      .eureka-bubble {
+        max-width: 200px;
+        min-width: 160px;
+      }
+
+      .mascot-avatar-circle {
+        width: 56px !important;
+        height: 56px !important;
+      }
+
+      .toast {
+        bottom: calc(var(--mob-nav-h) + 12px);
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       BOOKING MODAL (встроен в index.html)
+    ══════════════════════════════════════════ */
+    .bk-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 30, 28, .55);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .bk-overlay.open {
+      display: flex;
+      animation: bkFade .22s ease;
+    }
+
+    @keyframes bkFade {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .bk-modal {
+      background: var(--white);
+      border-radius: 24px;
+      width: 400px;
+      max-width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0, 100, 90, .28);
+      animation: bkPop .28s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    @keyframes bkPop {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .bk-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bk-modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .bk-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all .15s;
+    }
+
+    .bk-close:hover {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border-color: var(--teal);
+    }
+
+    .bk-duration-badge {
+      display: block;
+      text-align: center;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      font-size: 14px;
+      font-weight: 800;
+      padding: 9px 28px;
+      border-radius: 50px;
+      margin: 16px auto;
+      width: fit-content;
+    }
+
+    .bk-tz {
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-soft);
+      margin-bottom: 18px;
+      padding: 0 22px;
+    }
+
+    .bk-section {
+      padding: 0 22px 16px;
+    }
+
+    .bk-section-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 10px;
+    }
+
+    .bk-time-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .bk-time-btn {
+      padding: 9px 6px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+    }
+
+    .bk-time-btn:hover {
+      border-color: var(--teal-mid);
+      background: var(--teal-pale);
+    }
+
+    .bk-time-btn.selected {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+
+    .bk-week-cal {
+      padding: 0 22px 20px;
+    }
+
+    .bk-week-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .bk-week-arrow {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-mid);
+      transition: all .15s;
+    }
+
+    .bk-week-arrow:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: var(--teal-pale);
+    }
+
+    .bk-week-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .bk-week-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .bk-day-name {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-soft);
+      padding: 4px 0;
+    }
+
+    .bk-day-num {
+      text-align: center;
+      padding: 8px 4px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all .15s;
+      border: 1.5px solid transparent;
+    }
+
+    .bk-day-num:hover:not(.bk-disabled) {
+      background: var(--teal-pale);
+      border-color: var(--teal-light);
+    }
+
+    .bk-day-num.bk-today {
+      font-weight: 800;
+      color: var(--teal-dark);
+    }
+
+    .bk-day-num.bk-selected {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+
+    .bk-day-num.bk-disabled {
+      color: var(--border);
+      cursor: default;
+    }
+
+    .bk-continue {
+      display: block;
+      width: calc(100% - 44px);
+      margin: 4px 22px 20px;
+      padding: 14px 24px;
+      border-radius: 50px;
+      background: var(--teal);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      transition: background .18s, transform .15s;
+    }
+
+    .bk-continue:hover {
+      background: var(--teal-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Туторка в шапке модала (мини-карточка) */
+    .bk-tutor-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 22px 0;
+      margin-bottom: 2px;
+    }
+
+    .bk-tutor-av {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid var(--teal-light);
+      background: linear-gradient(135deg, var(--teal-light), var(--teal-mid));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--teal-dark);
+    }
+
+    .bk-tutor-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bk-tutor-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .bk-tutor-badge {
+      display: inline-block;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 50px;
+    }
+
+    /* Mobile: bottom sheet */
+    @media (max-width: 768px) {
+      .bk-overlay {
+        align-items: flex-end;
+        padding: 0;
+      }
+
+      .bk-modal {
+        border-radius: 24px 24px 0 0;
+        width: 100%;
+        max-height: 92vh;
+        animation: bkSlide .3s cubic-bezier(.25, 1, .5, 1);
+      }
+
+      @keyframes bkSlide {
+        from {
+          transform: translateY(100%);
+        }
+
+        to {
+          transform: translateY(0);
+        }
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ════════════ HEADER ════════════ -->
+  <header>
+    <div class="h-ham"><span></span><span></span><span></span></div>
+    <a href="../index.html" class="h-logo">Tutor<span>App</span></a>
+    <nav class="h-nav">
+      <a href="index.html" class="active">Лента</a>
+      <a href="Chat.html">Чат</a>
+      <a href="public.html">Обсуждения</a>
+      <a href="unique.html">Unique</a>
+      <a href="exam.html">Экзамены</a>
+      <a href="trainings.html">Тренинги</a>
+      <a href="profile.html">Профиль</a>
+    </nav>
+    <div class="h-right">
+      <div class="h-coins" id="hCoinsBadge"><span class="coins-dot"></span><span id="coinsDisplay">5</span></div>
+      <div class="h-notif" id="hNotif" onclick="window.toggleNotifPanel && window.toggleNotifPanel()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <span class="notif-badge" id="notifBadge" style="display:none;"></span>
+      </div>
+      <div class="h-avatar" id="headerAvatar" onclick="window.location.href='profile.html'">A</div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION DROPDOWN PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-head">
+      <span class="notif-panel-title">Уведомления</span>
+      <button class="notif-mark-all" id="notifMarkAll">Прочитать все</button>
+    </div>
+    <div class="notif-panel-list" id="notifPanelList">
+      <div class="notif-empty">Нет новых уведомлений</div>
+    </div>
+  </div>
+  <div class="notif-overlay" id="notifOverlay" onclick="window.closeNotifPanel && window.closeNotifPanel()"></div>
+
+  <!-- ════════════ SUBNAV ════════════ -->
+  <nav class="subnav">
+    <a href="index.html" class="active">Лента</a>
+    <a href="public.html">Обсуждения</a>
+    <a href="Chat.html">Чат</a>
+    <a href="unique.html">Unique</a>
+    <a href="exam.html">Экзамены</a>
+    <a href="trainings.html">Тренинги</a>
+    <a href="profile.html">Профиль</a>
+  </nav>
+
+  <!-- MOBILE SEARCH BAR -->
+  <div class="mobile-search-bar">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+    <input type="text" id="mobileSearch" placeholder="Найти репетитора..." oninput="applyMobileSearch(this.value)">
+  </div>
+
+
+  <!-- ════════════ APP BODY ════════════ -->
+  <div class="app-body">
+
+    <!-- PROMO PANEL (replaces sidebar) -->
+    <aside class="promo-panel">
+      <!-- Top: Become a tutor CTA -->
+      <div class="promo-top">
+        <div class="promo-label">TutorApp Premium</div>
+        <h3>Стань репетитором<br>и <span>меняй жизни!</span></h3>
+        <ul class="promo-checklist">
+          <li>Больше учеников</li>
+          <li>Гибкий график</li>
+          <li>Высокий доход</li>
+          <li>Тысячи учеников</li>
+          <li>Поддержка 24/7</li>
+        </ul>
+        <button class="promo-start-btn" onclick="showToast('🚀 Переход на страницу регистрации...')">
+          Начать сейчас →
+        </button>
+      </div>
+
+      <!-- Tutor photo area -->
+      <div class="promo-img-wrap">
+        <span class="promo-sparkle">✦</span>
+        <span class="promo-sparkle">✦</span>
+        <span class="promo-sparkle">✦</span>
+        <img src="./assets/tutor-promo.png" alt="Tutor" onerror="this.style.display='none'">
+      </div>
+
+      <!-- Community info -->
+      <div class="promo-community">
+        <h4>Присоединяйся к сообществу</h4>
+        <p>Более 700+ репетиторов уже с нами</p>
+        <div class="promo-avatars">
+          <div class="pav" style="background:#c8f0eb;color:var(--teal-dark);">А</div>
+          <div class="pav" style="background:#fde8ef;color:#c0567a;">М</div>
+          <div class="pav" style="background:#e8ecff;color:#5060c0;">Д</div>
+          <div class="pav" style="background:#fef3e2;color:#c07830;">С</div>
+          <div class="pav pav-count">+700</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <main>
+
+        <!-- AD BANNER -->
+        <div class="ad-banner">
+          <div class="ad-sparkles">
+            <span>✦</span><span>✦</span><span>✦</span><span>✦</span>
+          </div>
+          <div class="ad-text">
+            <div class="ad-tag">Реклама</div>
+            <div class="ad-title">Уже 700+ волонтёров в Unique</div>
+            <div class="ad-sub">Более 5 000 учеников прямо сейчас ищут репетиторов</div>
+          </div>
+          <button class="ad-btn" onclick="showToast('🚀 Переход в Unique...')">
+            Начать сейчас →
+          </button>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+          <div class="filter-select">
+            <label>Хочу изучить</label>
+            <select id="filter-subject">
+              <option value="">Все предметы</option>
+              <option value="Английский">Английский</option>
+              <option value="Русский">Русский</option>
+              <option value="Кыргызский">Кыргызский</option>
+              <option value="Немецкий">Немецкий</option>
+              <option value="Французский">Французский</option>
+              <option value="Китайский">Китайский</option>
+              <option value="Программирование">Программирование</option>
+              <option value="Математика">Математика</option>
+              <option value="Физика">Физика</option>
+              <option value="Химия">Химия</option>
+              <option value="История">История</option>
+              <option value="Биология">Биология</option>
+            </select>
+          </div>
+          <div class="filter-select">
+            <label>Мой уровень</label>
+            <select id="filter-level">
+              <option value="">Любой уровень</option>
+              <option value="beginner">Начинающий</option>
+              <option value="intermediate">Средний</option>
+              <option value="advanced">Продвинутый</option>
+            </select>
+          </div>
+          <div class="filter-select">
+            <label>Цена (сом/мес)</label>
+            <select id="filter-price">
+              <option value="">Любая цена</option>
+              <option value="0-2000">до 2 000 сом</option>
+              <option value="2000-4000">2 000 – 4 000 сом</option>
+              <option value="4000-6000">4 000 – 6 000 сом</option>
+              <option value="6000-10000">6 000 – 10 000 сом</option>
+              <option value="10000+">от 10 000 сом</option>
+            </select>
+          </div>
+          <div class="filter-select">
+            <label>Язык преподавания</label>
+            <select id="filter-lang">
+              <option value="">Любой язык</option>
+              <option value="Русский">Русский</option>
+              <option value="Кыргызский">Кыргызский</option>
+              <option value="Английский">Английский</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- TUTOR FEED — рендерится через JS -->
+        <div id="tutor-feed"></div>
+
+      </main>
+    </div><!-- /main-content -->
+  </div><!-- /app-body -->
+
+  <!-- ════════════ EUREKA MASCOT ════════════ -->
+  <div class="eureka-widget" id="eurekaWidget">
+    <!-- Speech bubble -->
+    <div class="eureka-bubble" id="eurekaBubble">
+      <button class="eureka-close" id="eurekaClose" title="Dismiss">×</button>
+      <div class="eureka-text" id="eurekaText">
+        <strong>Привет, я Эврика! ✨</strong>
+        Загружаю...
+      </div>
+    </div>
+    <!-- Avatar — image loaded via background-image in CSS (.mascot-avatar-circle) -->
+    <div class="eureka-avatar-wrap" onclick="eurekaToggle()">
+      <div class="mascot-avatar-circle" id="eurekaAvatar"></div>
+      <div class="eureka-pulse"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toastEl"></div>
+
+  <!-- ════════════════════════════════════════════════════════
+       STUB MODE — Firebase отключён, показываем демо-данные
+  ════════════════════════════════════════════════════════ -->
+  <script type="module">
+    // ══ FIREBASE ══
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQ9UYY6uh3CgXzytNwt_r2LCwaXval9T8",
+      authDomain: "tutorapp-95f48.firebaseapp.com",
+      projectId: "tutorapp-95f48",
+      storageBucket: "tutorapp-95f48.firebasestorage.app",
+      messagingSenderId: "559214827748",
+      appId: "1:559214827748:web:c77d90b72d607f6df1b4f1"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    window.logout = async function () {
+      try {
+        await signOut(auth);
+        window.location.href = './auth.html';
+      } catch (err) {
+        console.error("Logout error:", err);
+        showToast("⚠️ Не удалось выйти");
+      }
+    };
+
+    window.openChat = (tutorId) => { window.location.href = 'Chat.html?to=' + tutorId; };
+
+    let allTutors = [];
+
+    /* ── Load tutors from Firebase ── */
+    async function loadTutorsFromFirebase() {
+      try {
+        const q = query(collection(db, 'users'), where('role', '==', 'tutor'));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          allTutors = [];
+          renderFeed(allTutors);
+          return;
+        }
+        const firebaseTutors = snap.docs.map(doc => {
+          const d = doc.data();
+          const rating = typeof d.rating === 'number' ? d.rating : (parseFloat(d.rating) || 0);
+          return {
+            id: doc.id,
+            fullName: d.fullName || d.nick || 'Репетитор',
+            countryFlag: d.countryFlag || '🇰🇬',
+            tierBadge: getTierBadge(rating),
+            subjects: d.subjects || [],
+            languages: d.languages || ['Русский'],
+            description: d.description || d.bio || '',
+            ratePerHour: d.ratePerHour || 0,
+            rating: rating,
+            reviewCount: d.reviewCount || 0,
+            studentCount: d.studentCount || '0',
+            experience: d.experience || '',
+            specialtyTags: d.specialtyTags || d.subjects || [],
+            photoUrl: d.photoUrl || '',
+            avatarBg: d.avatarBg || '00A896',
+            fromFirebase: true
+          };
+        });
+        allTutors = firebaseTutors;
+        renderFeed(allTutors);
+      } catch (e) {
+        console.warn('Firebase load failed, using stubs:', e.message);
+      }
+    }
+
+    /* ── Auto-compute tier badge from rating ── */
+    function getTierBadge(rating) {
+      const r = parseFloat(rating) || 0;
+      if (r >= 4.5) return 'Про';
+      if (r >= 3.5) return 'Мид';
+      if (r >= 2.0) return 'Начинающий';
+      return 'Новичок';
+    }
+
+    /* ── Stars HTML — supports 0.0 to 5.0 ── */
+    function starsHtml(val) {
+      const rating = Math.max(0, Math.min(5, parseFloat(val) || 0));
+      return Array.from({ length: 5 }, (_, i) => {
+        if (i < Math.floor(rating)) return `<span class="star filled">★</span>`;
+        if (i < Math.ceil(rating) && rating % 1 >= .5) return `<span class="star half">★</span>`;
+        return `<span class="star empty">☆</span>`;
+      }).join('');
+    }
+
+    /* ── Badge class by tier ── */
+    function badgeClass(tier) {
+      if (!tier) return '';
+      const t = tier.toLowerCase();
+      if (t === 'про' || t.includes('pro') || t.includes('senior') || t.includes('expert')) return 'pro';
+      if (t === 'начинающий' || t === 'новичок' || t.includes('junior') || t.includes('starter')) return 'junior';
+      return '';
+    }
+
+    /* ── Avatar URL: real photo or DiceBear fallback ── */
+    function avatarUrl(t) {
+      if (t.photoUrl) return t.photoUrl;
+      const seed = encodeURIComponent(t.fullName);
+      const bg = t.avatarBg || '00A896';
+      return `https://api.dicebear.com/7.x/personas/svg?seed=${seed}&backgroundColor=${bg}&radius=16`;
+    }
+
+    /* ── renderCard ── */
+    function renderCard(t) {
+      const name = t.fullName || 'Tutor';
+      const flag = t.countryFlag || '🌍';
+      const rating = Math.max(0, Math.min(5, parseFloat(t.rating) || 0));
+      const tier = getTierBadge(rating);
+      const bio = t.description || '';
+      const rate = t.ratePerHour || '—';
+      const reviews = t.reviewCount || 0;
+      const studentCnt = t.studentCount || '0';
+      const experience = t.experience || '';
+      const subjects = [].concat(t.subjects || []).join(', ');
+      const langs = [].concat(t.languages || []).join(', ');
+      const tagArr = Array.isArray(t.specialtyTags) ? t.specialtyTags : [];
+      const tagsHtml = tagArr.map(tag => `<span class="card-tag">${tag}</span>`).join('');
+      const expHtml = experience
+        ? `<div class="card-experience">
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+             Опыт: ${experience}
+           </div>`
+        : '';
+
+      const ratingLabel = rating > 0 ? rating.toFixed(1) : 'Нет оценок';
+      const photoSrc = avatarUrl(t);
+
+      return `
+      <div class="card-wrapper">
+
+        <!-- ── Шапка: фото + имя + бейдж ── -->
+        <div class="card-photo-col">
+          <div class="card-photo">
+            <img src="${photoSrc}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block;"
+              onerror="this.style.display='none';this.nextSibling.style.display='flex';">
+            <div class="card-photo-placeholder" style="display:none;background:linear-gradient(135deg,#${t.avatarBg || '00A896'}99,#${t.avatarBg || '5BBDB5'});color:#fff;font-size:38px;">${name[0]}</div>
+          </div>
+          <!-- Десктоп: ученики под фото -->
+          <div class="card-students">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            ${studentCnt} учеников
+          </div>
+          <!-- Мобил: имя + бейдж рядом с фото -->
+          <div class="card-name-row-mobile" style="display:none;">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <span class="card-name">${name}</span>
+              <span class="card-flag">${flag}</span>
+            </div>
+            <span class="card-badge ${badgeClass(tier)}">${tier}</span>
+            <div class="stars" style="margin-top:2px;">${starsHtml(rating)}</div>
+            <div class="card-rating-text" style="font-size:11px;"><strong>${ratingLabel}</strong></div>
+          </div>
+        </div>
+
+        <!-- ── Основная информация ── -->
+        <div class="card-body">
+          <div class="card-name-row card-name-row-desktop">
+            <span class="card-name">${name}</span>
+            <span class="card-flag">${flag}</span>
+            <span class="card-badge ${badgeClass(tier)}">${tier}</span>
+          </div>
+          <div class="card-row">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg>
+            ${subjects}
+          </div>
+          <div class="card-row muted">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span><strong>Языки:</strong> ${langs}</span>
+          </div>
+          ${expHtml}
+          <p class="card-bio">${bio}</p>
+          ${tagsHtml ? `<div class="card-tags">${tagsHtml}</div>` : ''}
+        </div>
+
+        <!-- ── Цена + рейтинг + кнопки ── -->
+        <div class="card-meta">
+          <button class="card-fav" onclick="toggleFav(this)" title="В избранное">☆</button>
+          <div class="card-price-block">
+            <div class="card-price">${rate}<span style="font-size:18px;font-weight:600;">сом</span></div>
+            <div class="card-price-unit">за месяц</div>
+          </div>
+          <div class="stars card-stars-desktop">${starsHtml(rating)}</div>
+          <div class="card-rating-text"><strong>${ratingLabel}</strong>${reviews > 0 ? ` (${reviews} отз.)` : ''}</div>
+          <div class="card-actions">
+            <button class="btn-chat" onclick="window.openChat('${t.id}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Написать в чат
+            </button>
+            <button class="btn-book" onclick="openBooking('${t.id}','${(t.fullName || '').replace(/'/g, "\\'")}','${(t.tierBadge || '').replace(/'/g, "\\'")}','${(t.photoUrl || '')}','${(t.fullName || 'Т')[0]}')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
+              Забронировать урок
+            </button>
+          </div>
+        </div>
+
+        <!-- ── Профиль (десктоп: видео + кнопка) ── -->
+        <div class="card-video">
+          <div class="video-thumb" onclick="showToast('📹 Видео появится после подключения Firebase')">
+            <div class="video-thumb-placeholder"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+            <div class="play-btn"><div class="play-icon"></div></div>
+          </div>
+          <button class="btn-profile" onclick="window.location.href='./tutor-profile.html?uid=${t.id}'">
+            Посмотреть профиль
+          </button>
+        </div>
+      </div>`;
+    }
+
+    function renderFeed(tutors) {
+      const feedEl = document.getElementById('tutor-feed');
+      if (!tutors.length) {
+        feedEl.innerHTML = '<div class="feed-empty">🔍 Репетиторы не найдены по заданным фильтрам.</div>';
+        return;
+      }
+      feedEl.innerHTML = tutors.map((t, i) =>
+        renderCard(t).replace('class="card-wrapper"', `class="card-wrapper" style="animation-delay:${i * 0.07}s"`)
+      ).join('');
+    }
+
+    /* ── Filters ── */
+    function setupFilters() {
+      ['filter-subject', 'filter-price', 'filter-lang', 'filter-level'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', applyFilters);
+      });
+    }
+
+    function applyFilters() {
+      const subj = document.getElementById('filter-subject').value;
+      const price = document.getElementById('filter-price').value;
+      const lang = document.getElementById('filter-lang').value;
+
+      const filtered = allTutors.filter(t => {
+        // Subject filter — match against subjects array (case-insensitive)
+        if (subj) {
+          const tSubjects = [].concat(t.subjects || []).map(s => s.toLowerCase());
+          const subjLower = subj.toLowerCase();
+          const subjectMatch = tSubjects.some(s => s.includes(subjLower) || subjLower.includes(s));
+          if (!subjectMatch) return false;
+        }
+
+        // Language filter — match against languages array (case-insensitive)
+        if (lang) {
+          const tLangs = [].concat(t.languages || []).map(l => l.toLowerCase());
+          const langLower = lang.toLowerCase();
+          const langMatch = tLangs.some(l => l.includes(langLower) || langLower.includes(l));
+          if (!langMatch) return false;
+        }
+
+        // Price filter in SOM
+        if (price) {
+          const tPrice = Number(t.ratePerHour) || 0;
+          if (price === '0-2000' && tPrice > 2000) return false;
+          if (price === '2000-4000' && (tPrice < 2000 || tPrice > 4000)) return false;
+          if (price === '4000-6000' && (tPrice < 4000 || tPrice > 6000)) return false;
+          if (price === '6000-10000' && (tPrice < 6000 || tPrice > 10000)) return false;
+          if (price === '10000+' && tPrice < 10000) return false;
+        }
+
+        return true;
+      });
+      renderFeed(filtered);
+    }
+
+    /* ── Favourite toggle ── */
+    window.toggleFav = function (btn) {
+      const isActive = btn.classList.toggle('active');
+      btn.textContent = isActive ? '★' : '☆';
+      showToast(isActive ? '⭐ Добавлено в избранное' : '☆ Удалено из избранного');
+    };
+
+    /* ── Init with Firebase ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      setupFilters();
+      loadTutorsFromFirebase();
+    });
+  </script>
+
+  <!-- ════════════ EUREKA WIDGET SCRIPT ════════════ -->
+  <script>
+    const EUREKA_PHRASES = [
+      {
+        title: "Привет, я Эврика! 🚀",
+        body: "Давай найдём твоего идеального репетитора — я помогу на каждом шагу!"
+      },
+      {
+        title: "Совет дня! 🪙",
+        body: "Выполняй ежедневные задания и получай монеты для оплаты уроков."
+      },
+      {
+        title: "Интересный факт! 📚",
+        body: "Ищешь разговорные клубы по английскому или группы по математике? Загляни во вкладку «Обсуждения»!"
+      },
+      {
+        title: "С возвращением! ✨",
+        body: "Твоё последнее занятие прошло успешно. Готов продолжить в том же темпе?"
+      },
+      {
+        title: "Знаешь ли ты? 🌍",
+        body: "Ученики, занимающиеся минимум 3 раза в неделю, прогрессируют в 2 раза быстрее. Забронируй следующий урок!"
+      }
+    ];
+
+    let bubbleOpen = true;
+
+    function eurekaInit() {
+      const phrase = EUREKA_PHRASES[Math.floor(Math.random() * EUREKA_PHRASES.length)];
+      const textEl = document.getElementById('eurekaText');
+      textEl.innerHTML = `<strong>${phrase.title}</strong>${phrase.body}`;
+
+      document.getElementById('eurekaClose').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('eurekaBubble').classList.add('hidden');
+        bubbleOpen = false;
+      });
+    }
+
+    window.eurekaToggle = function () {
+      const bubble = document.getElementById('eurekaBubble');
+      if (bubbleOpen) {
+        bubble.classList.add('hidden');
+        bubbleOpen = false;
+      } else {
+        bubble.classList.remove('hidden');
+        bubbleOpen = true;
+        // Cycle a new phrase each time it reopens
+        const phrase = EUREKA_PHRASES[Math.floor(Math.random() * EUREKA_PHRASES.length)];
+        document.getElementById('eurekaText').innerHTML = `<strong>${phrase.title}</strong>${phrase.body}`;
+        bubble.style.animation = 'none';
+        requestAnimationFrame(() => { bubble.style.animation = ''; });
+      }
+    };
+
+    /* ── Global toast helper ── */
+    let _tt;
+    window.showToast = function (msg) {
+      const el = document.getElementById('toastEl');
+      if (!el) return;
+      el.textContent = msg; el.classList.add('show');
+      clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 2800);
+    };
+
+
+    /* ── Mobile search ── */
+    window.applyMobileSearch = function (query) {
+      const q = query.toLowerCase().trim();
+      if (!q) { renderFeed(allTutors); return; }
+      const filtered = allTutors.filter(t => {
+        const name = (t.fullName || '').toLowerCase();
+        const subj = [].concat(t.subjects || []).join(' ').toLowerCase();
+        const bio = (t.description || '').toLowerCase();
+        return name.includes(q) || subj.includes(q) || bio.includes(q);
+      });
+      renderFeed(filtered);
+    };
+
+    document.addEventListener('DOMContentLoaded', eurekaInit);
+
+    /* ══════════════════════════════════════════
+       BOOKING MODAL — встроен в index.html
+    ══════════════════════════════════════════ */
+    let bkState = {
+      tutorId: null, tutorName: null, tutorInitials: 'Т',
+      tutorBadge: '', tutorPhoto: '', date: null, time: '20:00'
+    };
+    let bkWeekOffset = 0;
+
+    const BK_MONTHS_SHORT = ['янв.', 'февр.', 'март', 'апр.', 'май', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'];
+
+    /* Открыть модал из карточки репетитора */
+    window.openBooking = function (tutorId, tutorName, tutorBadge, tutorPhoto, tutorInitials) {
+      bkState = {
+        tutorId, tutorName, tutorInitials: tutorInitials || tutorName[0],
+        tutorBadge: tutorBadge || '', tutorPhoto: tutorPhoto || '',
+        date: null, time: '20:00'
+      };
+
+      // Заполнить мини-карточку репетитора
+      const av = document.getElementById('bkTutorAv');
+      if (bkState.tutorPhoto) {
+        av.innerHTML = `<img src="${bkState.tutorPhoto}" onerror="this.style.display='none'">`;
+      } else {
+        av.textContent = bkState.tutorInitials;
+      }
+      document.getElementById('bkTutorName').textContent = bkState.tutorName;
+      document.getElementById('bkTutorBadge').textContent = bkState.tutorBadge;
+
+      // Сбросить выбор времени
+      document.querySelectorAll('.bk-time-btn').forEach(b => b.classList.remove('selected'));
+      const defaultBtn = document.querySelector('.bk-selected-default');
+      if (defaultBtn) defaultBtn.classList.add('selected');
+
+      bkWeekOffset = 0;
+      bkRenderWeek();
+
+      document.getElementById('bkOverlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+
+    function bkClose() {
+      document.getElementById('bkOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Закрыть при клике на оверлей
+    document.getElementById('bkOverlay').addEventListener('click', function (e) {
+      if (e.target === this) bkClose();
+    });
+
+    function bkSelectTime(el, time) {
+      document.querySelectorAll('.bk-time-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      bkState.time = time;
+    }
+
+    /* Недельный календарь */
+    function bkGetWeekStart(offset) {
+      const now = new Date();
+      const day = now.getDay();
+      const mon = new Date(now);
+      mon.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
+      mon.setHours(0, 0, 0, 0);
+      return mon;
+    }
+
+    function bkRenderWeek() {
+      const mon = bkGetWeekStart(bkWeekOffset);
+      const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+
+      const sameMonth = mon.getMonth() === sun.getMonth();
+      const ml = BK_MONTHS_SHORT[mon.getMonth()];
+      const yr = mon.getFullYear();
+      document.getElementById('bkWeekLabel').textContent =
+        `${mon.getDate()}${sameMonth ? '' : ' ' + ml}–${sun.getDate()} ${sameMonth ? ml : BK_MONTHS_SHORT[sun.getMonth()]} ${yr} г.`;
+
+      const container = document.getElementById('bkWeekDays');
+      container.innerHTML = '';
+
+      ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'].forEach(n => {
+        const el = document.createElement('div');
+        el.className = 'bk-day-name'; el.textContent = n;
+        container.appendChild(el);
+      });
+
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(mon); d.setDate(mon.getDate() + i);
+        const el = document.createElement('div');
+        const isPast = d < today;
+        el.className = 'bk-day-num' + (isPast ? ' bk-disabled' : '');
+        if (!isPast && d.toDateString() === today.toDateString()) el.classList.add('bk-today');
+        if (bkState.date && d.toDateString() === bkState.date.toDateString()) el.classList.add('bk-selected');
+        el.textContent = d.getDate();
+        if (!isPast) {
+          el.addEventListener('click', () => {
+            bkState.date = new Date(d);
+            bkRenderWeek();
+          });
+        }
+        container.appendChild(el);
+      }
+    }
+
+    function bkChangeWeek(delta) {
+      bkWeekOffset += delta;
+      bkRenderWeek();
+    }
+
+    /* Продолжить → перейти на booking.html с параметрами */
+    function bkProceed() {
+      if (!bkState.date) { showToast('⚠️ Выберите дату урока'); return; }
+      if (!bkState.time) { showToast('⚠️ Выберите время урока'); return; }
+
+      // Сохраняем в sessionStorage и переходим на booking.html
+      const params = {
+        tutorId: bkState.tutorId,
+        tutorName: bkState.tutorName,
+        tutorBadge: bkState.tutorBadge,
+        tutorPhoto: bkState.tutorPhoto,
+        tutorInitials: bkState.tutorInitials,
+        date: bkState.date.toISOString(),
+        time: bkState.time
+      };
+      sessionStorage.setItem('bookingParams', JSON.stringify(params));
+      window.location.href = 'booking.html?from=index';
+    }
+
+  </script>
+
+  <!-- ════════════════════════════════════════════
+       BOOKING MODAL — открывается из ленты
+  ════════════════════════════════════════════ -->
+  <div class="bk-overlay" id="bkOverlay">
+    <div class="bk-modal" id="bkModal">
+
+      <!-- Шапка: заголовок + кнопка закрыть -->
+      <div class="bk-modal-head">
+        <span class="bk-modal-title">Бронь пробного урока</span>
+        <button class="bk-close" onclick="bkClose()">×</button>
+      </div>
+
+      <!-- Мини-карточка репетитора -->
+      <div class="bk-tutor-strip" id="bkTutorStrip">
+        <div class="bk-tutor-av" id="bkTutorAv"></div>
+        <div>
+          <div class="bk-tutor-name" id="bkTutorName"></div>
+          <span class="bk-tutor-badge" id="bkTutorBadge"></span>
+        </div>
+      </div>
+
+      <!-- Длительность -->
+      <span class="bk-duration-badge">50 минут</span>
+      <p class="bk-tz">В вашем часовом поясе Kyrgyzstan, Bishkek</p>
+
+      <!-- Дневные слоты -->
+      <div class="bk-section">
+        <div class="bk-section-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+          </svg>
+          День
+        </div>
+        <div class="bk-time-grid">
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'10:00')">10:00</button>
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'12:00')">12:00</button>
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'14:00')">14:00</button>
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'16:00')">16:00</button>
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'16:30')">16:30</button>
+        </div>
+      </div>
+
+      <!-- Вечерние слоты -->
+      <div class="bk-section">
+        <div class="bk-section-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          Вечер
+        </div>
+        <div class="bk-time-grid">
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'18:00')">18:00</button>
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'19:00')">19:00</button>
+          <button class="bk-time-btn bk-selected-default" onclick="bkSelectTime(this,'20:00')">20:00</button>
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'20:30')">20:30</button>
+          <button class="bk-time-btn" onclick="bkSelectTime(this,'21:00')">21:00</button>
+        </div>
+      </div>
+
+      <!-- Недельный календарь -->
+      <div class="bk-week-cal">
+        <div class="bk-week-nav">
+          <button class="bk-week-arrow" onclick="bkChangeWeek(-1)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <span class="bk-week-label" id="bkWeekLabel"></span>
+          <button class="bk-week-arrow" onclick="bkChangeWeek(1)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+        <div class="bk-week-days" id="bkWeekDays"></div>
+      </div>
+
+      <!-- Кнопка "Продолжить" → booking.html -->
+      <button class="bk-continue" onclick="bkProceed()">Продолжить</button>
+    </div>
+  </div>
+  <!-- ════ MOBILE BOTTOM NAV ════ -->
+  <nav class="mob-nav" id="mobNav">
+    <a href="index.html" class="mob-nav-item active">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+        <polyline points="9 21 9 12 15 12 15 21" />
+      </svg>
+      <span>Лента</span>
+    </a>
+    <a href="public.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      <span>Обсуждения</span>
+    </a>
+    <a href="Chat.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+      <span>Чат</span>
+    </a>
+    <a href="trainings.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+      <span>Тренинги</span>
+    </a>
+    <a href="profile.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+      <span>Профиль</span>
+    </a>
+  </nav>
+
+  <!-- FIREBASE: avatar, coins, notifications -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import {
+      getFirestore, doc, getDoc, onSnapshot,
+      collection, query, where, orderBy, limit, getDocs, updateDoc, setDoc, arrayUnion
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQ9UYY6uh3CgXzytNwt_r2LCwaXval9T8",
+      authDomain: "tutorapp-95f48.firebaseapp.com",
+      projectId: "tutorapp-95f48",
+      storageBucket: "tutorapp-95f48.firebasestorage.app",
+      messagingSenderId: "559214827748",
+      appId: "1:559214827748:web:c77d90b72d607f6df1b4f1"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    let notifsUnsub = null, pointsUnsub = null, lastPoints = null;
+
+    window.toggleNotifPanel = function () {
+      const p = document.getElementById('notifPanel');
+      const o = document.getElementById('notifOverlay');
+      const open = p.classList.contains('open');
+      p.classList.toggle('open', !open);
+      o.classList.toggle('open', !open);
+    };
+    window.closeNotifPanel = function () {
+      document.getElementById('notifPanel').classList.remove('open');
+      document.getElementById('notifOverlay').classList.remove('open');
+    };
+
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function relTime(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const m = Math.floor((Date.now() - d.getTime()) / 60000);
+      if (m < 1) return 'только что'; if (m < 60) return m + ' мин'; const h = Math.floor(m / 60);
+      if (h < 24) return h + ' ч'; return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    }
+    function renderNotifs(docs) {
+      const list = document.getElementById('notifPanelList'); if (!list) return;
+      if (!docs.length) { list.innerHTML = '<div class="notif-empty">Нет новых уведомлений</div>'; return; }
+      list.innerHTML = '';
+      docs.forEach(d => {
+        const data = d.data();
+        const item = document.createElement('div');
+        item.className = 'notif-item' + (data.read ? '' : ' unread');
+        const init = (data.fromName || '?')[0].toUpperCase();
+        const avContent = data.fromAvatar ? `<img src="${esc(data.fromAvatar)}" alt="" onerror="this.parentElement.innerHTML='${init}'">` : init;
+        const typeIcon = data.type === 'like' ? '<span class="notif-icon-badge like">❤️</span>' : data.type === 'comment' ? '<span class="notif-icon-badge comment">💬</span>' : '<span class="notif-icon-badge msg">💬</span>';
+        item.innerHTML = `<div class="notif-av" style="position:relative;">${avContent}${typeIcon}</div><div class="notif-body"><div class="notif-from">${esc(data.fromName || 'Кто-то')}</div><div class="notif-text">${esc(data.text || '')}</div><div class="notif-time">${relTime(data.createdAt)}</div></div>`;
+        item.addEventListener('click', async () => {
+          try { await updateDoc(d.ref, { read: true }); } catch (e) { }
+          if (data.chatId && data.chatType === 'direct') window.location.href = `Chat.html?to=${data.fromUid}`;
+          else if (data.type === 'like' || data.type === 'comment') window.location.href = 'public.html';
+          window.closeNotifPanel();
+        });
+        list.appendChild(item);
+      });
+    }
+    function subscribeNotifs(uid) {
+      if (notifsUnsub) notifsUnsub();
+      const q = query(collection(db, 'notifications'), where('toUid', '==', uid), orderBy('createdAt', 'desc'), limit(30));
+      notifsUnsub = onSnapshot(q, snap => {
+        const unread = snap.docs.filter(d => !d.data().read).length;
+        const badge = document.getElementById('notifBadge');
+        const bell = document.getElementById('hNotif');
+        if (badge) {
+          if (unread > 0) { badge.textContent = unread > 9 ? '9+' : unread; badge.style.display = 'flex'; if (bell) { bell.classList.add('notif-pulse'); setTimeout(() => bell.classList.remove('notif-pulse'), 400); } }
+          else { badge.style.display = 'none'; }
+        }
+        renderNotifs(snap.docs);
+      }, err => console.warn('[Notifs]', err));
+    }
+    function bindMarkAll(uid) {
+      const btn = document.getElementById('notifMarkAll');
+      if (!btn || btn._bound) return; btn._bound = true;
+      btn.addEventListener('click', async () => {
+        const q2 = query(collection(db, 'notifications'), where('toUid', '==', uid), where('read', '==', false));
+        const snap = await getDocs(q2);
+        await Promise.all(snap.docs.map(d => updateDoc(d.ref, { read: true })));
+      });
+    }
+    function animateCoins(el, from, to) {
+      const badge = document.getElementById('hCoinsBadge');
+      if (badge && to > from) { badge.classList.add('coins-pop'); setTimeout(() => badge.classList.remove('coins-pop'), 280); }
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / 700, 1), e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(from + (to - from) * e).toLocaleString('ru-RU');
+        if (p < 1) requestAnimationFrame(tick); else el.textContent = to.toLocaleString('ru-RU');
+      }
+      requestAnimationFrame(tick);
+    }
+
+    onAuthStateChanged(auth, async user => {
+      const av = document.getElementById('headerAvatar');
+      const coinsEl = document.getElementById('coinsDisplay');
+      if (!user) { if (coinsEl) coinsEl.textContent = '5'; return; }
+      // Ensure signup bonus
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (!snap.exists() || typeof snap.data().score !== 'number') {
+          await setDoc(doc(db, 'users', user.uid), { score: 5, scoreHistory: arrayUnion({ amount: 5, reason: 'signup_bonus', at: Date.now() }) }, { merge: true });
+        }
+      } catch (e) { }
+      // Real-time points + avatar
+      if (pointsUnsub) pointsUnsub();
+      pointsUnsub = onSnapshot(doc(db, 'users', user.uid), snap => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        // Avatar
+        if (av) {
+          const photo = data.photoUrl || user.photoURL;
+          if (photo) av.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`;
+          else av.textContent = (data.fullName || data.nick || user.email || '?')[0].toUpperCase();
+          av.onclick = () => window.location.href = data.role === 'tutor' ? 'tutor-profile.html' : 'profile.html';
+          av.style.cursor = 'pointer';
+        }
+        // Coins
+        if (coinsEl) {
+          const pts = typeof data.score === 'number' ? data.score : 5;
+          if (lastPoints !== null && pts !== lastPoints) animateCoins(coinsEl, lastPoints, pts);
+          else coinsEl.textContent = pts.toLocaleString('ru-RU');
+          lastPoints = pts;
+        }
+      }, err => console.warn('[Points]', err));
+      subscribeNotifs(user.uid);
+      bindMarkAll(user.uid);
+    });
+  </script>
+</body>
+
+</html>

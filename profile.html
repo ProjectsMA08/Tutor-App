@@ -1,0 +1,3817 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TutorApp — Профиль</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --teal: #00A896;
+      --teal-dark: #008F7E;
+      --teal-light: #E6F7F5;
+      --teal-mid: #99D9D3;
+      --teal-pale: #F0FAF9;
+      --cobalt: #1E40AF;
+      --cobalt-mid: #3B5BD6;
+      --cobalt-light: #EEF2FF;
+      --bg: #F5F7FA;
+      --white: #FFFFFF;
+      --text: #1A2332;
+      --text-mid: #4A5568;
+      --muted: #9AA5B4;
+      --border: #E8EDF3;
+      --green: #38D68A;
+      --gold: #F5B942;
+      --red: #E05A7A;
+      --shadow-xs: 0 1px 4px rgba(0, 0, 0, .06);
+      --shadow-sm: 0 2px 12px rgba(0, 0, 0, .08);
+      --shadow-md: 0 6px 24px rgba(0, 0, 0, .10);
+      --r: 16px;
+      --r-sm: 10px;
+      --header-h: 60px;
+      --promo-w: 230px;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    /* ══ HEADER ══ */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-h);
+      z-index: 700;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 24px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .h-ham {
+      display: flex;
+      flex-direction: column;
+      gap: 4.5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .h-ham span {
+      display: block;
+      width: 20px;
+      height: 1.8px;
+      background: var(--text-mid);
+      border-radius: 2px;
+    }
+
+    .h-logo {
+      font-weight: 800;
+      font-size: 19px;
+      color: var(--teal);
+      letter-spacing: -.02em;
+      flex-shrink: 0;
+      text-decoration: none !important;
+      cursor: pointer;
+    }
+
+    .h-logo span {
+      color: var(--text)
+    }
+
+    /* Centered nav */
+    .h-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .h-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      transition: all .18s;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .h-nav a:hover {
+      color: var(--teal-dark);
+      background: var(--teal-pale);
+    }
+
+    .h-nav a.active {
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .h-nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 14px;
+      right: 14px;
+      height: 2.5px;
+      background: var(--teal);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* Coins badge */
+    .h-coins {
+      background: var(--teal-pale);
+      border-radius: 50px;
+      padding: 6px 14px;
+      color: var(--teal-dark);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--teal-light);
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s, background .25s;
+    }
+
+    .h-coins.coins-pop {
+      transform: scale(1.18);
+      background: #d2f6ee;
+      box-shadow: 0 0 0 6px rgba(56, 214, 138, .18);
+    }
+
+    .coins-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green)
+    }
+
+    /* Notification bell */
+    .h-notif {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-mid);
+      transition: border-color .2s, background .2s;
+    }
+
+    .h-notif:hover {
+      background: var(--teal-light);
+      border-color: var(--teal)
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: 2px solid var(--white);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes notifPulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.15)
+      }
+    }
+
+    .notif-pulse {
+      animation: notifPulse .4s ease-in-out;
+    }
+
+    /* Notification panel */
+    .notif-panel {
+      position: fixed;
+      top: calc(var(--header-h) + 8px);
+      right: 16px;
+      width: 340px;
+      max-height: 480px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      box-shadow: var(--shadow-md);
+      z-index: 900;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .notif-panel.open {
+      display: flex
+    }
+
+    .notif-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 850;
+    }
+
+    .notif-overlay.open {
+      display: block
+    }
+
+    .notif-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .notif-panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .notif-mark-all {
+      background: none;
+      border: none;
+      color: var(--teal);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background .18s;
+    }
+
+    .notif-mark-all:hover {
+      background: var(--teal-light)
+    }
+
+    .notif-panel-list {
+      flex: 1;
+      overflow-y: auto
+    }
+
+    .notif-panel-list::-webkit-scrollbar {
+      width: 4px
+    }
+
+    .notif-panel-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px
+    }
+
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .15s;
+      position: relative;
+    }
+
+    .notif-item:hover {
+      background: var(--teal-pale)
+    }
+
+    .notif-item.unread {
+      background: var(--teal-pale)
+    }
+
+    .notif-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .notif-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--teal-mid), var(--teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .notif-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    .notif-icon-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--white);
+    }
+
+    .notif-icon-badge.msg {
+      background: var(--teal)
+    }
+
+    .notif-icon-badge.like {
+      background: var(--red)
+    }
+
+    .notif-icon-badge.comment {
+      background: #4A90D9
+    }
+
+    .notif-body {
+      flex: 1;
+      min-width: 0
+    }
+
+    .notif-from {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px
+    }
+
+    .notif-text {
+      font-size: 12.5px;
+      color: var(--text-mid);
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .notif-time {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px
+    }
+
+    .notif-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .notif-icon-badge.friend {
+      background: #9b59b6
+    }
+
+    .notif-friend-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px
+    }
+
+    .notif-accept-btn,
+    .notif-decline-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .notif-accept-btn {
+      background: var(--teal);
+      color: #fff
+    }
+
+    .notif-decline-btn {
+      background: var(--bg);
+      color: var(--muted);
+      border: 1.5px solid var(--border)
+    }
+
+    /* Header avatar */
+    .h-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2.5px solid var(--teal);
+      cursor: pointer;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #00C9B1, #00A896, #007A6D);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.18), 0 2px 8px rgba(0, 168, 150, 0.25);
+      transition: box-shadow .2s, transform .15s;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+    }
+
+    .h-avatar:hover {
+      box-shadow: 0 0 0 4px rgba(0, 168, 150, 0.28), 0 4px 14px rgba(0, 168, 150, 0.35);
+      transform: scale(1.06);
+    }
+
+    .h-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      margin-left: auto
+    }
+
+    /* ══ APP BODY ══ */
+    .app-body {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ══ LEFT PROMO PANEL ══ */
+    .promo-panel {
+      width: var(--promo-w);
+      height: 100%;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .promo-top {
+      background: linear-gradient(160deg, #e8faf8 0%, #c8f0eb 100%);
+      padding: 22px 18px 18px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .promo-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--teal-dark);
+      margin-bottom: 8px
+    }
+
+    .promo-top h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 3px
+    }
+
+    .promo-top h3 span {
+      color: var(--teal)
+    }
+
+    .promo-checklist {
+      list-style: none;
+      margin: 12px 0 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px
+    }
+
+    .promo-checklist li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-mid);
+      font-weight: 500
+    }
+
+    .promo-checklist li::before {
+      content: '';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .promo-start-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      transition: background .2s, transform .15s;
+      box-shadow: 0 4px 14px rgba(0, 168, 150, .28);
+    }
+
+    .promo-start-btn:hover {
+      background: var(--teal-dark);
+      transform: translateY(-1px)
+    }
+
+    .promo-community {
+      padding: 14px 18px 16px;
+      flex-shrink: 0
+    }
+
+    .promo-community h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px
+    }
+
+    .promo-community p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      line-height: 1.45
+    }
+
+    .promo-avatars {
+      display: flex;
+      align-items: center
+    }
+
+    .pav {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      margin-right: -8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pav-count {
+      background: var(--teal);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      margin-right: 0;
+      margin-left: 12px
+    }
+
+    /* Tutor photo inside promo — matches index.html */
+    .promo-img-wrap {
+      position: relative;
+      height: 160px;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(170deg, #d4f5f0 0%, #a8e6e0 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .promo-img-wrap img {
+      height: 95%;
+      width: auto;
+      object-fit: contain;
+      object-position: bottom;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0, 120, 110, .18));
+    }
+
+    .promo-sparkle {
+      position: absolute;
+      top: 14px;
+      font-size: 16px;
+      opacity: .55;
+      animation: twinkle 2.5s ease-in-out infinite;
+    }
+
+    .promo-sparkle:nth-child(2) {
+      left: 18px;
+      animation-delay: 0s;
+    }
+
+    .promo-sparkle:nth-child(3) {
+      right: 22px;
+      animation-delay: .9s;
+      font-size: 11px;
+      top: 28px;
+    }
+
+    .promo-sparkle:nth-child(4) {
+      left: 50%;
+      animation-delay: 1.6s;
+      font-size: 13px;
+      top: 8px;
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        opacity: .3;
+        transform: scale(.8)
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.1)
+      }
+    }
+
+    /* Streak timer widget (Days in a row) */
+    .streak-widget {
+      flex-shrink: 0;
+      border-top: 1px solid var(--border);
+      padding: 14px 18px;
+      background: linear-gradient(135deg, #fff9ec, #fffdf5);
+    }
+
+    .streak-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .streak-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .streak-flame {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .streak-count {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .streak-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .streak-bar-track {
+      height: 5px;
+      border-radius: 5px;
+      background: var(--border);
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .streak-bar-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--gold), #f97316);
+      transition: width .6s cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    .streak-next {
+      font-size: 10.5px;
+      color: var(--muted);
+    }
+
+    /* Visitor banner for other people's profiles */
+    .visitor-profile-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: linear-gradient(90deg, #e0f5f3, #f0faf9);
+      border-bottom: 1.5px solid var(--teal-mid);
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--teal-dark);
+      flex-shrink: 0;
+    }
+
+    .visitor-profile-banner.visible {
+      display: flex;
+    }
+
+    .visitor-profile-banner a {
+      font-size: 12px;
+      color: var(--teal-dark);
+      cursor: pointer;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 50px;
+      border: 1.5px solid var(--teal-mid);
+      text-decoration: none;
+      transition: background .18s;
+    }
+
+    .visitor-profile-banner a:hover {
+      background: var(--teal-light);
+    }
+
+    /* Visitor action buttons */
+    .visitor-actions {
+      display: none;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .visitor-actions.visible {
+      display: flex;
+    }
+
+    .btn-add-friend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: none;
+      background: var(--teal);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .18s;
+    }
+
+    .btn-add-friend:hover {
+      background: var(--teal-dark);
+    }
+
+    .btn-add-friend.added {
+      background: #e0f5f3;
+      color: var(--teal-dark);
+      border: 1.5px solid var(--teal-mid);
+    }
+
+    .btn-msg-user {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all .18s;
+    }
+
+    .btn-msg-user:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark);
+      background: var(--teal-pale);
+    }
+
+    /* ══ MAIN AREA ══ */
+    .main-area {
+      flex: 1;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 1fr 268px;
+      overflow: hidden;
+    }
+
+    /* ══ PROFILE COLUMN ══ */
+    .profile-col {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    #profileWrap {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--bg);
+      min-height: 0
+    }
+
+    #profileWrap::-webkit-scrollbar {
+      width: 4px
+    }
+
+    #profileWrap::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 3px
+    }
+
+    .profile-inner {
+      padding: 16px 18px 32px;
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    /* ══ PROFILE CARD ══ */
+    .profile-card {
+      background: var(--white);
+      border-radius: var(--r);
+      box-shadow: var(--shadow-xs);
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* Banner */
+    .profile-banner {
+      height: 140px;
+      background: linear-gradient(135deg, #00C9B1 0%, #00A896 50%, #007A6D 100%);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .2s;
+    }
+
+    .profile-banner:hover {
+      opacity: .92
+    }
+
+    .banner-upload-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255, 255, 255, .75);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .banner-upload-hint svg {
+      opacity: .7
+    }
+
+    .profile-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    /* Avatar + actions row */
+    .profile-meta {
+      padding: 0 20px 16px;
+    }
+
+    .profile-av-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: -28px;
+      margin-bottom: 14px;
+    }
+
+    .profile-av-wrap {
+      position: relative;
+      flex-shrink: 0
+    }
+
+    .profile-av {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 3.5px solid var(--white);
+      background: linear-gradient(135deg, #00C9B1, #00A896, #007A6D);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 28px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, .15);
+      transition: transform .18s;
+      flex-shrink: 0;
+    }
+
+    .profile-av:hover {
+      transform: scale(1.04)
+    }
+
+    .profile-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .av-edit-btn {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: 2px solid var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      font-size: 10px;
+    }
+
+    /* Action buttons — placed in their own row below avatar */
+    .profile-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .btn-edit-profile {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all .18s;
+    }
+
+    .btn-edit-profile:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark);
+      background: var(--teal-pale)
+    }
+
+    .btn-logout {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 1.5px solid #ffd0d8;
+      background: #fff5f7;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--red);
+      cursor: pointer;
+      transition: all .18s;
+    }
+
+    .btn-logout:hover {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red)
+    }
+
+    /* Name / handle / bio */
+    .profile-info {
+      margin-bottom: 14px
+    }
+
+    .profile-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 2px
+    }
+
+    .profile-handle-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px
+    }
+
+    .profile-handle {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500
+    }
+
+    .profile-online {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--green);
+      font-weight: 600
+    }
+
+    .online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green)
+    }
+
+    .profile-bio {
+      font-size: 13.5px;
+      color: var(--text-mid);
+      line-height: 1.6
+    }
+
+    /* Stats — 3 items */
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      overflow: hidden;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px 8px;
+      gap: 2px;
+    }
+
+    .stat-item+.stat-item {
+      border-left: 1px solid var(--border)
+    }
+
+    .stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text)
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500
+    }
+
+    /* ══ MY COURSES CARD ══ */
+    .section-card {
+      background: var(--white);
+      border-radius: var(--r);
+      box-shadow: var(--shadow-xs);
+      border: 1.5px solid var(--border);
+      padding: 16px 18px;
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-all {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--teal-dark);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .section-all:hover {
+      text-decoration: underline
+    }
+
+    .courses-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 0;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .courses-empty svg {
+      opacity: .4
+    }
+
+    /* ══ POST COMPOSE (перенесено 1:1 из tutor-profile.html, вместо compose-sticky) ══ */
+    .post-compose {
+      width: 100%;
+      resize: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color .2s;
+      background: var(--teal-pale);
+      height: 72px
+    }
+
+    .post-compose:focus {
+      border-color: var(--teal)
+    }
+
+    .btn-post {
+      margin-top: 8px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 8px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s
+    }
+
+    .btn-post:hover {
+      background: var(--teal-dark)
+    }
+
+    .post-compose-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px
+    }
+
+    .btn-post-photo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 7px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: border-color .2s, color .2s
+    }
+
+    .btn-post-photo:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark)
+    }
+
+    .post-upload-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--teal-pale)
+    }
+
+    .post-upload-bar.show {
+      display: flex
+    }
+
+    .post-upload-preview {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0
+    }
+
+    .post-upload-clear {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      transition: background .2s, color .2s
+    }
+
+    .post-upload-clear:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--text)
+    }
+
+    /* ══ POSTS FEED (same style as public.html) ══ */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .post {
+      background: var(--white);
+      border-radius: var(--r);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-xs);
+      border: 1.5px solid var(--border);
+      transition: box-shadow .22s, border-color .22s;
+      animation: fadeUp .3s ease both;
+    }
+
+    .post:hover {
+      box-shadow: var(--shadow-sm);
+      border-color: var(--teal-mid)
+    }
+
+    .ph {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px
+    }
+
+    .ph-av {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--teal-pale);
+    }
+
+    .ph-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .ph-info {
+      flex: 1
+    }
+
+    .ph-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer
+    }
+
+    .ph-name:hover {
+      color: var(--teal)
+    }
+
+    .ph-time {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px
+    }
+
+    .ph-more {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: background .18s;
+      letter-spacing: 2px
+    }
+
+    .ph-more:hover {
+      background: rgba(0, 0, 0, .06)
+    }
+
+    .post-text {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 12px
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px
+    }
+
+    .act-btn,
+    .comments-toggle,
+    .share-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 9px;
+      border-radius: var(--r-sm);
+      transition: background .18s, color .18s;
+    }
+
+    .act-btn:hover,
+    .comments-toggle:hover,
+    .share-btn:hover {
+      background: var(--teal-light);
+      color: var(--teal-dark)
+    }
+
+    .act-btn.liked {
+      color: var(--red)
+    }
+
+    @keyframes heartPop {
+      0% {
+        transform: scale(1)
+      }
+
+      35% {
+        transform: scale(1.5)
+      }
+
+      65% {
+        transform: scale(.88)
+      }
+
+      100% {
+        transform: scale(1)
+      }
+    }
+
+    .act-btn.pop {
+      animation: heartPop .35s ease
+    }
+
+    .act-views {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 500
+    }
+
+    .comment-av {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: var(--teal-pale);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal-dark);
+    }
+
+    .comment-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    /* ══ RIGHT PANEL ══ */
+    .panel-right {
+      border-left: 1px solid var(--border);
+      background: var(--white);
+      overflow-y: auto;
+      padding: 16px 14px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel-right::-webkit-scrollbar {
+      width: 3px
+    }
+
+    .panel-right::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 2px
+    }
+
+    /* ══ FOCUS TIMER (перенесено из public.html + доработано под требование
+       «нельзя уйти со страницы, пока идёт сессия») ══ */
+    .timer-box {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      flex-shrink: 0
+    }
+
+    .timer-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .timer-ring-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px
+    }
+
+    .timer-ring {
+      position: relative;
+      width: 72px;
+      height: 72px
+    }
+
+    .timer-ring svg {
+      transform: rotate(-90deg)
+    }
+
+    .timer-track {
+      fill: none;
+      stroke: var(--teal-light);
+      stroke-width: 5
+    }
+
+    .timer-prog {
+      fill: none;
+      stroke: var(--teal);
+      stroke-width: 5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset .8s linear
+    }
+
+    .timer-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text)
+    }
+
+    .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px
+    }
+
+    .timer-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-mid);
+      transition: background .18s, border-color .18s
+    }
+
+    .timer-btn:hover {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      color: var(--teal-dark)
+    }
+
+    .timer-btn.play {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff
+    }
+
+    .timer-btn.play:hover {
+      background: var(--teal-dark)
+    }
+
+    .timer-btn.stop {
+      background: var(--red);
+      border-color: var(--red);
+      color: #fff
+    }
+
+    .timer-btn.stop:hover {
+      background: #c94867
+    }
+
+    .timer-modes {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px
+    }
+
+    .timer-mode {
+      padding: 3px 11px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .18s
+    }
+
+    .timer-mode.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff
+    }
+
+    .timer-mode:disabled {
+      opacity: .5;
+      cursor: not-allowed
+    }
+
+    .timer-custom-row {
+      display: none;
+      gap: 6px;
+      margin-bottom: 8px
+    }
+
+    .timer-custom-input {
+      flex: 1;
+      min-width: 0;
+      padding: 5px 10px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      text-align: center
+    }
+
+    .timer-custom-input:focus {
+      border-color: var(--teal)
+    }
+
+    .timer-custom-apply {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 5px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .timer-custom-apply:hover {
+      background: var(--teal-dark)
+    }
+
+    .timer-session {
+      font-size: 10.5px;
+      color: var(--muted);
+      text-align: center
+    }
+
+    /* Блокировка страницы на время активной сессии: всё, кроме самого
+       виджета таймера (#focusTimerBox), дизейблится и притемняется —
+       клики никуда не проходят (pointer-events:none), плюс подстраховка
+       через JS (click-guard/beforeunload/popstate), см. скрипты ниже. */
+    body.focus-locked header,
+    body.focus-locked .mob-nav,
+    body.focus-locked #profileWrap {
+      pointer-events: none;
+      opacity: .45;
+      filter: grayscale(.35);
+      transition: opacity .25s, filter .25s;
+    }
+
+    body.focus-locked .panel-right>*:not(#focusTimerBox) {
+      pointer-events: none;
+      opacity: .4;
+      transition: opacity .25s;
+    }
+
+    /* ACHIEVEMENTS */
+    .achiev-box {
+      flex-shrink: 0
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px
+    }
+
+    .section-head-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .section-head-icon {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .achiev-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px
+    }
+
+    .achiev-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: var(--r-sm);
+      background: var(--teal-pale);
+      border: 1.5px solid var(--border);
+      transition: background .18s;
+    }
+
+    .achiev-item:hover {
+      background: var(--teal-light)
+    }
+
+    .achiev-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      background: var(--teal-light);
+      border: 1.5px solid var(--teal-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .achiev-body {
+      flex: 1;
+      min-width: 0
+    }
+
+    .achiev-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .achiev-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px
+    }
+
+    .achiev-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 50px;
+      white-space: nowrap;
+    }
+
+    .achiev-badge.earned {
+      background: var(--teal-light);
+      color: var(--teal-dark)
+    }
+
+    .achiev-badge.locked {
+      background: var(--bg);
+      color: var(--muted);
+      border: 1px solid var(--border)
+    }
+
+    /* MY CLUBS */
+    .club-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--r-sm);
+      background: var(--teal-pale);
+      margin-bottom: 7px;
+      cursor: pointer;
+      transition: background .18s;
+    }
+
+    .club-row:hover {
+      background: var(--teal-light)
+    }
+
+    .club-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--teal-light);
+      border: 2px solid var(--teal-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      overflow: hidden;
+    }
+
+    .club-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .club-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .club-members {
+      font-size: 10.5px;
+      color: var(--muted)
+    }
+
+    .club-join-btn {
+      background: var(--white);
+      border: 1.5px solid var(--teal-mid);
+      color: var(--teal-dark);
+      border-radius: 50px;
+      padding: 4px 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s, transform .15s;
+      white-space: nowrap;
+    }
+
+    .club-join-btn:hover {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+      transform: scale(1.04)
+    }
+
+    .club-join-btn.joined {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff
+    }
+
+    /* FRIENDS (sidebar list) */
+    .friend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--r-sm);
+      margin-bottom: 7px;
+      cursor: pointer;
+      transition: background .18s;
+    }
+
+    .friend-row:hover {
+      background: var(--teal-pale)
+    }
+
+    .friend-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--teal-light);
+      border: 2px solid var(--teal-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      overflow: hidden;
+    }
+
+    .friend-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .friend-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    /* ACTIVITY */
+    .activity-box {
+      flex-shrink: 0
+    }
+
+    .activity-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .activity-row:last-child {
+      border-bottom: none
+    }
+
+    .activity-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-mid)
+    }
+
+    .activity-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green)
+    }
+
+    .activity-count {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    /* THREAD MODAL */
+    .thread-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .thread-overlay.open {
+      display: flex
+    }
+
+    .thread-box {
+      background: var(--white);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      animation: fadeUp .25s ease;
+    }
+
+    .thread-head {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .thread-head-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text)
+    }
+
+    .thread-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg);
+      color: var(--text-mid);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s
+    }
+
+    .thread-close:hover {
+      background: var(--border)
+    }
+
+    .thread-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 18px
+    }
+
+    .thread-scroll::-webkit-scrollbar {
+      width: 4px
+    }
+
+    .thread-scroll::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 2px
+    }
+
+    .thread-original-post {
+      padding-bottom: 16px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .thread-comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    .thread-comment-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      animation: fadeUp .2s ease both
+    }
+
+    .thread-comment-body {
+      flex: 1;
+      min-width: 0
+    }
+
+    .thread-comment-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .thread-comment-text {
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-top: 2px;
+      word-wrap: break-word
+    }
+
+    .thread-input-row {
+      flex-shrink: 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      background: var(--white)
+    }
+
+    .thread-input {
+      flex: 1;
+      padding: 9px 16px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .thread-input:focus {
+      border-color: var(--teal)
+    }
+
+    .thread-send-btn {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--teal);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s, transform .15s
+    }
+
+    .thread-send-btn:hover {
+      background: var(--teal-dark);
+      transform: scale(1.06)
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(14px);
+      background: var(--text);
+      color: #fff;
+      border-radius: 50px;
+      padding: 9px 22px;
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      transition: opacity .22s, transform .22s;
+      pointer-events: none;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0)
+    }
+
+    /* SKELETON */
+    .skel {
+      background: linear-gradient(90deg, var(--border) 25%, #f0f3f7 50%, var(--border) 75%);
+      background-size: 200% 100%;
+      animation: skelAnim 1.5s infinite;
+      border-radius: 8px
+    }
+
+    @keyframes skelAnim {
+      0% {
+        background-position: 200% 0
+      }
+
+      100% {
+        background-position: -200% 0
+      }
+    }
+
+    .skel-post {
+      background: var(--white);
+      border-radius: var(--r);
+      padding: 16px 18px;
+      border: 1.5px solid var(--border)
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .promo-panel {
+        display: none
+      }
+
+      .main-area {
+        grid-template-columns: 1fr
+      }
+
+      .panel-right {
+        display: none
+      }
+    }
+
+    @media (max-width: 600px) {
+      .h-nav {
+        display: none
+      }
+
+      .profile-inner {
+        padding: 12px 12px 80px
+      }
+    }
+
+    /* ══ BOTTOM TAB BAR (перенесено из tutor-profile.html) ══
+       В profile.html этого компонента раньше не было вовсе — место
+       внизу экрана держал .compose-sticky. Теперь композер переехал
+       внутрь ленты, и на мобильной адаптивке освободившееся место
+       занимает нижняя навигация приложения (как на остальных страницах). */
+    .mob-nav {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --mob-nav-h: 60px;
+      }
+
+      .profile-inner {
+        padding: 12px 12px calc(var(--mob-nav-h) + 20px);
+      }
+
+      .mob-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 900;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+        height: var(--mob-nav-h);
+        align-items: stretch;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, .09);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      .mob-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        transition: color .18s;
+        padding-bottom: 2px;
+      }
+
+      .mob-nav-item svg {
+        width: 22px;
+        height: 22px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke .18s, transform .18s;
+      }
+
+      .mob-nav-item.active {
+        color: var(--teal);
+      }
+
+      .mob-nav-item.active svg {
+        stroke: var(--teal);
+        transform: translateY(-1px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER (identical to public.html) -->
+  <header>
+    <div class="h-ham"><span></span><span></span><span></span></div>
+    <a href="index.html" class="h-logo">Tutor<span>App</span></a>
+    <nav class="h-nav">
+      <a href="index.html">Лента</a>
+      <a href="Chat.html">Чат</a>
+      <a href="public.html">Обсуждения</a>
+      <a href="unique.html">Unique</a>
+      <a href="exam.html">Экзамены</a>
+      <a href="trainings.html">Тренинги</a>
+      <a href="profile.html" class="active">Профиль</a>
+    </nav>
+    <div class="h-right">
+      <div class="h-coins" id="hCoinsBadge"><span class="coins-dot"></span><span id="coinsDisplay">5</span></div>
+      <div class="h-notif" id="hNotif" onclick="window.toggleNotifPanel()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <span class="notif-badge" id="notifBadge" style="display:none;"></span>
+      </div>
+      <div class="h-avatar" id="headerAvatar">А</div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-head">
+      <span class="notif-panel-title">Уведомления</span>
+      <button class="notif-mark-all" id="notifMarkAll">Прочитать все</button>
+    </div>
+    <div class="notif-panel-list" id="notifPanelList">
+      <div class="notif-empty">Нет новых уведомлений</div>
+    </div>
+  </div>
+  <div class="notif-overlay" id="notifOverlay" onclick="window.closeNotifPanel()"></div>
+
+  <!-- VISITOR PROFILE BANNER (shown when viewing someone else's profile) -->
+  <div class="visitor-profile-banner" id="visitorProfileBanner">
+    <span id="visitorBannerText">👤 Профиль пользователя</span>
+    <a onclick="history.back()">← Назад</a>
+  </div>
+
+  <!-- APP BODY -->
+  <div class="app-body">
+
+    <!-- LEFT PROMO PANEL — matches index.html -->
+    <aside class="promo-panel">
+      <div class="promo-top">
+        <div class="promo-label">TutorApp Premium</div>
+        <h3>Стань репетитором<br>и <span>меняй жизни!</span></h3>
+        <ul class="promo-checklist">
+          <li>Больше учеников</li>
+          <li>Гибкий график</li>
+          <li>Высокий доход</li>
+          <li>Тысячи учеников</li>
+          <li>Поддержка 24/7</li>
+        </ul>
+        <button class="promo-start-btn" onclick="toast('🚀 Переход на страницу регистрации...')">Начать сейчас
+          →</button>
+      </div>
+      <!-- Tutor photo area (matches index.html) -->
+      <div class="promo-img-wrap">
+        <span class="promo-sparkle">✦</span>
+        <span class="promo-sparkle">✦</span>
+        <span class="promo-sparkle">✦</span>
+        <img src="./assets/tutor-promo.png" alt="Tutor" onerror="this.style.display='none'">
+      </div>
+      <!-- Community -->
+      <div class="promo-community">
+        <h4>Присоединяйся к сообществу</h4>
+        <p>Более 700+ репетиторов уже с нами</p>
+        <div class="promo-avatars">
+          <div class="pav" style="background:#c8f0eb;color:var(--teal-dark);">А</div>
+          <div class="pav" style="background:#fde8ef;color:#c0567a;">М</div>
+          <div class="pav" style="background:#e8ecff;color:#5060c0;">Д</div>
+          <div class="pav" style="background:#fef3e2;color:#c07830;">С</div>
+          <div class="pav pav-count">+700</div>
+        </div>
+      </div>
+      <!-- Streak / Days in a row widget -->
+      <div class="streak-widget" id="streakWidget">
+        <div class="streak-title">🔥 Серия дней</div>
+        <div class="streak-display">
+          <span class="streak-flame">🔥</span>
+          <div>
+            <div class="streak-count" id="streakCount">0</div>
+            <div class="streak-label">дней подряд</div>
+          </div>
+        </div>
+        <div class="streak-bar-track">
+          <div class="streak-bar-fill" id="streakBarFill" style="width:0%"></div>
+        </div>
+        <div class="streak-next" id="streakNext">Войди завтра, чтобы продолжить серию!</div>
+      </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- PROFILE COLUMN -->
+      <div class="profile-col">
+        <div id="profileWrap">
+          <div class="profile-inner">
+
+            <!-- PROFILE CARD -->
+            <div class="profile-card">
+              <!-- Banner -->
+              <div class="profile-banner" id="profileBanner" onclick="document.getElementById('bannerInput').click()">
+                <div class="banner-upload-hint" id="bannerHint">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                  Click to add a cover photo
+                </div>
+              </div>
+              <input type="file" id="bannerInput" accept="image/*" style="display:none">
+
+              <!-- Meta -->
+              <div class="profile-meta">
+                <div class="profile-av-row">
+                  <div class="profile-av-wrap">
+                    <div class="profile-av" id="profileAv" onclick="document.getElementById('avatarInput').click()">
+                      <span id="profileAvInit">?</span>
+                    </div>
+                    <div class="av-edit-btn" onclick="document.getElementById('avatarInput').click()">✏</div>
+                  </div>
+                </div>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none">
+
+                <!-- Buttons below avatar — OWNER mode (default, hidden for visitors) -->
+                <div class="profile-actions" id="ownerActions">
+                  <button class="btn-edit-profile" onclick="toast('✏️ Редактирование профиля скоро!')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    Edit profile
+                  </button>
+                  <button class="btn-logout" id="logoutBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Выйти
+                  </button>
+                </div>
+                <!-- Buttons — VISITOR mode -->
+                <div class="visitor-actions" id="visitorActions">
+                  <button class="btn-add-friend" id="addFriendBtn" onclick="window._handleAddFriend()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                    </svg>
+                    <span id="addFriendLabel">Добавить в друзья</span>
+                  </button>
+                  <button class="btn-msg-user" id="msgUserBtn" onclick="window._handleMsgUser()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    Написать
+                  </button>
+                </div>
+
+                <!-- Name / Handle / Bio -->
+                <div class="profile-info" style="margin-top:14px;">
+                  <div class="profile-name" id="profileName">Загрузка...</div>
+                  <div class="profile-handle-row">
+                    <span class="profile-handle" id="profileHandle">@...</span>
+                    <span class="profile-online"><span class="online-dot"></span>Online</span>
+                  </div>
+                  <div class="profile-bio" id="profileBio"></div>
+                </div>
+
+                <!-- Stats — 3 items -->
+                <div class="profile-stats">
+                  <div class="stat-item">
+                    <span class="stat-num" id="statPosts">0</span>
+                    <span class="stat-label">Posts</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-num" id="statFriends">0</span>
+                    <span class="stat-label">Friends</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-num" id="statClubs">0</span>
+                    <span class="stat-label">Clubs</span>
+                  </div>
+                </div>
+              </div>
+            </div><!-- /profile-card -->
+
+            <!-- MY COURSES -->
+            <div class="section-card">
+              <div class="section-title-row">
+                <div class="section-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                  </svg>
+                  MY COURSES
+                </div>
+                <a class="section-all" href="#">All courses →</a>
+              </div>
+              <div class="courses-empty">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                </svg>
+                You don't have any courses yet
+              </div>
+            </div>
+
+            <!-- MY POSTS FEED -->
+            <div class="section-card" style="padding:0;overflow:hidden;">
+              <div style="padding:16px 18px 10px;border-bottom:1px solid var(--border);">
+                <div class="section-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
+                  </svg>
+                  <span id="postsHeadingText">МОИ ПОСТЫ</span>
+                </div>
+              </div>
+              <div style="padding:14px 18px;" id="postComposeArea">
+                <textarea class="post-compose" id="postCompose" placeholder="Поделись своими мыслями..."></textarea>
+                <div class="post-upload-bar" id="postUploadBar">
+                  <img src="" alt="preview" class="post-upload-preview" id="postUploadPreview">
+                  <span id="postUploadFileName"
+                    style="font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                  <button type="button" class="post-upload-clear" onclick="clearPostUpload()"
+                    title="Убрать фото">✕</button>
+                </div>
+                <div class="post-compose-actions">
+                  <input type="file" id="postPhotoInput" accept="image/*" style="display:none;"
+                    onchange="handlePostPhotoSelect(event)">
+                  <button type="button" class="btn-post-photo"
+                    onclick="document.getElementById('postPhotoInput').click()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                    Фото
+                  </button>
+                  <button class="btn-post" id="postBtn" onclick="window.localSubmitPost()">Опубликовать</button>
+                </div>
+              </div>
+              <div style="padding:0 18px 14px;" id="myPostsFeed">
+                <div class="skel-post" id="skelLoad">
+                  <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center">
+                    <div class="skel" style="width:40px;height:40px;border-radius:50%"></div>
+                    <div style="flex:1">
+                      <div class="skel" style="height:12px;width:60%;margin-bottom:6px"></div>
+                      <div class="skel" style="height:10px;width:35%"></div>
+                    </div>
+                  </div>
+                  <div class="skel" style="height:14px;margin-bottom:8px"></div>
+                  <div class="skel" style="height:14px;width:80%"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- /profileWrap -->
+      </div><!-- /profile-col -->
+
+      <!-- RIGHT PANEL -->
+      <aside class="panel-right">
+
+        <!-- FOCUS TIMER (блокирует страницу на время сессии) -->
+        <div class="timer-box" id="focusTimerBox">
+          <div class="timer-label">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            Таймер фокуса
+          </div>
+          <div class="timer-ring-wrap">
+            <div class="timer-ring">
+              <svg width="72" height="72" viewBox="0 0 72 72">
+                <circle class="timer-track" cx="36" cy="36" r="30" />
+                <circle class="timer-prog" id="timerProg" cx="36" cy="36" r="30" stroke-dasharray="188.5"
+                  stroke-dashoffset="0" />
+              </svg>
+              <div class="timer-text" id="timerDisplay">25:00</div>
+            </div>
+          </div>
+          <div class="timer-modes" id="timerModes">
+            <button class="timer-mode" onclick="setFocusMode(this,15)">15</button>
+            <button class="timer-mode active" onclick="setFocusMode(this,25)">25</button>
+            <button class="timer-mode" onclick="setFocusMode(this,45)">45</button>
+            <button class="timer-mode" onclick="setFocusMode(this,60)">60</button>
+            <button class="timer-mode" onclick="setFocusModeCustom(this)">Своё</button>
+          </div>
+          <div class="timer-custom-row" id="timerCustomRow">
+            <input type="number" id="timerCustomInput" min="1" max="180" placeholder="мин" class="timer-custom-input">
+            <button class="timer-custom-apply" onclick="applyCustomFocusDuration()">OK</button>
+          </div>
+          <div class="timer-controls">
+            <button class="timer-btn play" id="timerPlayBtn" onclick="focusTimerStart()" title="Начать">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+            </button>
+            <button class="timer-btn stop" id="timerStopBtn" onclick="focusTimerStop()" title="Остановить"
+              style="display:none;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="5" y="5" width="14" height="14" rx="2" />
+              </svg>
+            </button>
+          </div>
+          <div class="timer-session" id="timerSession">Выбери длительность и нажми ▶</div>
+        </div>
+
+        <!-- ACHIEVEMENTS (only 3) -->
+        <div class="achiev-box">
+          <div class="section-head">
+            <span class="section-head-title">ACHIEVEMENTS</span>
+          </div>
+          <div class="achiev-grid">
+            <div class="achiev-item">
+              <div class="achiev-icon">🌱</div>
+              <div class="achiev-body">
+                <div class="achiev-name">Starter</div>
+                <div class="achiev-desc">Первый шаг сделан!</div>
+              </div>
+              <span class="achiev-badge earned">✓</span>
+            </div>
+            <div class="achiev-item">
+              <div class="achiev-icon">🎯</div>
+              <div class="achiev-body">
+                <div class="achiev-name">Focus Master</div>
+                <div class="achiev-desc">Запусти таймер фокуса</div>
+              </div>
+              <span class="achiev-badge locked" id="focusAchievBadge">🔒</span>
+            </div>
+            <div class="achiev-item">
+              <div class="achiev-icon">🔔</div>
+              <div class="achiev-body">
+                <div class="achiev-name">Alert</div>
+                <div class="achiev-desc">Получи первое уведомление</div>
+              </div>
+              <span class="achiev-badge locked">🔒</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FRIENDS (accepted friendRequests, from Firebase) -->
+        <div>
+          <div class="section-head">
+            <span class="section-head-title">ДРУЗЬЯ</span>
+          </div>
+          <div id="friendsList">
+            <div style="color:var(--muted);font-size:12px;padding:4px 0;">Загружаем...</div>
+          </div>
+        </div>
+
+        <!-- MY CLUBS (from Firebase) -->
+        <div>
+          <div class="section-head">
+            <span class="section-head-title">MY CLUBS</span>
+            <a class="section-head-all" href="public.html">All →</a>
+          </div>
+          <div id="myClubsList">
+            <div style="color:var(--muted);font-size:12px;padding:4px 0;">Загружаем...</div>
+          </div>
+        </div>
+
+        <!-- ACTIVITY -->
+        <div class="activity-box">
+          <div class="section-head">
+            <span class="section-head-title">ACTIVITY</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-label"><span class="activity-dot"></span>Online now</span>
+            <span class="activity-count" id="activityOnline">—</span>
+          </div>
+        </div>
+
+      </aside>
+    </div><!-- /main-area -->
+  </div><!-- /app-body -->
+
+  <!-- BOTTOM TAB BAR (мобильная навигация, перенесено из tutor-profile.html) -->
+  <nav class="mob-nav" id="mobNav">
+    <a href="index.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+        <polyline points="9 21 9 12 15 12 15 21" />
+      </svg>
+      <span>Лента</span>
+    </a>
+    <a href="public.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      <span>Обсуждения</span>
+    </a>
+    <a href="Chat.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+      <span>Чат</span>
+    </a>
+    <a href="trainings.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+      <span>Тренинги</span>
+    </a>
+    <a href="profile.html" class="mob-nav-item active">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+      <span>Профиль</span>
+    </a>
+  </nav>
+
+  <!-- TOAST -->
+  <div class="toast" id="toastEl"></div>
+
+  <!-- THREAD MODAL -->
+  <div class="thread-overlay" id="threadOverlay" onclick="if(event.target===this) closeThread()">
+    <div class="thread-box">
+      <div class="thread-head">
+        <span class="thread-head-title">Тред</span>
+        <button class="thread-close" onclick="closeThread()">✕</button>
+      </div>
+      <div class="thread-scroll" id="threadScroll">
+        <div class="thread-original-post" id="threadOriginalPost"></div>
+        <div class="thread-comments-list" id="threadCommentsList">
+          <div style="color:var(--muted);font-size:12px;padding:6px 0;">Загружаем...</div>
+        </div>
+      </div>
+      <div class="thread-input-row">
+        <input class="thread-input" type="text" id="threadInput" placeholder="Написать ответ..."
+          onkeydown="if(event.key==='Enter') window._fbSubmitThreadComment()">
+        <button class="thread-send-btn" onclick="window._fbSubmitThreadComment()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ UTILITIES (non-module) ══ -->
+  <script>
+    let _tt;
+    function toast(msg) {
+      const el = document.getElementById('toastEl');
+      el.textContent = msg; el.classList.add('show');
+      clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    /* ══════════ FOCUS TIMER (с блокировкой страницы) ══════════
+       Требование: пока сессия идёт, вся страница (шапка, таббар,
+       композер, лента, правая колонка) заблокирована — уйти нельзя.
+       "Уйти нельзя" реализовано по максимуму, что доступно браузеру:
+       1) pointer-events:none на всех блоках, кроме самого таймера —
+          клики по ссылкам/кнопкам физически никуда не проходят;
+       2) document click-guard (capture-фаза) — подстраховка на случай
+          активации клавиатурой/программно;
+       3) beforeunload — предупреждение при закрытии вкладки/перезагрузке/
+          уходе по адресной строке (полностью запретить это браузер
+          не позволяет никакому JS, только показать диалог подтверждения);
+       4) popstate-ловушка — если нажать "назад", тут же возвращаем
+          пользователя обратно через pushState. */
+    const FOCUS_RING_CIRCUM = 188.5; // 2 * PI * r(30), совпадает с dasharray в разметке
+
+    let focusInterval = null;
+    let focusRunning = false;
+    let focusTotalSeconds = 25 * 60;
+    let focusRemaining = 25 * 60;
+
+    function focusUpdateRing() {
+      const m = Math.floor(focusRemaining / 60), s = focusRemaining % 60;
+      const disp = document.getElementById('timerDisplay');
+      if (disp) disp.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      const prog = document.getElementById('timerProg');
+      if (prog) {
+        const elapsed = focusTotalSeconds - focusRemaining;
+        const offset = FOCUS_RING_CIRCUM - (FOCUS_RING_CIRCUM * elapsed / focusTotalSeconds);
+        prog.style.strokeDashoffset = offset;
+      }
+    }
+
+    window.setFocusMode = function (btn, mins) {
+      if (focusRunning) return;
+      document.querySelectorAll('#timerModes .timer-mode').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('timerCustomRow').style.display = 'none';
+      focusTotalSeconds = mins * 60;
+      focusRemaining = focusTotalSeconds;
+      focusUpdateRing();
+    };
+
+    window.setFocusModeCustom = function (btn) {
+      if (focusRunning) return;
+      document.querySelectorAll('#timerModes .timer-mode').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('timerCustomRow').style.display = 'flex';
+      document.getElementById('timerCustomInput').focus();
+    };
+
+    window.applyCustomFocusDuration = function () {
+      const input = document.getElementById('timerCustomInput');
+      let mins = parseInt(input.value, 10);
+      if (!mins || mins < 1) { toast('⏱️ Введи число минут от 1 до 180'); return; }
+      if (mins > 180) mins = 180;
+      focusTotalSeconds = mins * 60;
+      focusRemaining = focusTotalSeconds;
+      focusUpdateRing();
+      toast(`✅ Установлено: ${mins} мин`);
+    };
+
+    function focusBeforeUnload(e) {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    }
+
+    function focusPopstateTrap() {
+      history.pushState(null, '', location.href);
+      toast('🔒 Заверши сессию таймера, чтобы уйти со страницы');
+    }
+
+    function focusDocClickGuard(e) {
+      const box = document.getElementById('focusTimerBox');
+      if (box && box.contains(e.target)) return; // клики внутри самого таймера разрешены
+      e.preventDefault();
+      e.stopPropagation();
+      toast('🔒 Страница заблокирована до конца сессии фокуса');
+    }
+
+    window.focusTimerStart = function () {
+      if (focusRunning) return;
+      if (focusRemaining <= 0) focusRemaining = focusTotalSeconds;
+      focusRunning = true;
+
+      document.body.classList.add('focus-locked');
+      document.querySelectorAll('#timerModes .timer-mode').forEach(b => b.disabled = true);
+      document.getElementById('timerCustomRow').style.display = 'none';
+      document.getElementById('timerPlayBtn').style.display = 'none';
+      document.getElementById('timerStopBtn').style.display = 'flex';
+      document.getElementById('timerSession').textContent = 'Сессия идёт · Stay locked in 🔒';
+
+      window.addEventListener('beforeunload', focusBeforeUnload);
+      history.pushState(null, '', location.href);
+      window.addEventListener('popstate', focusPopstateTrap);
+      document.addEventListener('click', focusDocClickGuard, true);
+
+      focusInterval = setInterval(() => {
+        focusRemaining--;
+        focusUpdateRing();
+        if (focusRemaining <= 0) focusTimerFinish();
+      }, 1000);
+    };
+
+    window.focusTimerStop = function () {
+      if (!focusRunning) return;
+      focusTimerUnlock();
+      focusRemaining = focusTotalSeconds;
+      focusUpdateRing();
+      document.getElementById('timerSession').textContent = 'Сессия остановлена. Выбери длительность и нажми ▶';
+      toast('⏹️ Сессия фокуса остановлена');
+    };
+
+    function focusTimerFinish() {
+      focusTimerUnlock();
+      focusRemaining = 0;
+      focusUpdateRing();
+      document.getElementById('timerSession').textContent = 'Сессия завершена ✅ Выбери длительность и нажми ▶';
+      toast('⏰ Время вышло! Отличная работа!');
+      const badge = document.getElementById('focusAchievBadge');
+      if (badge && badge.classList.contains('locked')) {
+        badge.classList.remove('locked'); badge.classList.add('earned'); badge.textContent = '✓';
+      }
+    }
+
+    function focusTimerUnlock() {
+      clearInterval(focusInterval); focusInterval = null;
+      focusRunning = false;
+      document.body.classList.remove('focus-locked');
+      document.querySelectorAll('#timerModes .timer-mode').forEach(b => b.disabled = false);
+      document.getElementById('timerPlayBtn').style.display = 'flex';
+      document.getElementById('timerStopBtn').style.display = 'none';
+      window.removeEventListener('beforeunload', focusBeforeUnload);
+      window.removeEventListener('popstate', focusPopstateTrap);
+      document.removeEventListener('click', focusDocClickGuard, true);
+    }
+
+    /* Photo upload preview (перенесено под новые id, см. #postComposeArea) */
+    let pendingPostImgFile = null;
+    window.handlePostPhotoSelect = function (e) {
+      const file = e.target.files[0]; if (!file) return;
+      pendingPostImgFile = file;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('postUploadPreview').src = ev.target.result;
+        document.getElementById('postUploadFileName').textContent = file.name;
+        document.getElementById('postUploadBar').classList.add('show');
+      };
+      reader.readAsDataURL(file); e.target.value = '';
+    };
+    window.clearPostUpload = function () {
+      pendingPostImgFile = null;
+      document.getElementById('postUploadPreview').src = '';
+      document.getElementById('postUploadFileName').textContent = '';
+      document.getElementById('postUploadBar').classList.remove('show');
+    };
+
+    /* Relative time */
+    function relativeTime(ts) {
+      if (!ts) return 'только что';
+      const date = ts.toDate ? ts.toDate() : new Date(ts);
+      const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+      if (diff < 60) return 'только что';
+      if (diff < 3600) return Math.floor(diff / 60) + ' мин назад';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' ч назад';
+      return Math.floor(diff / 86400) + ' дн назад';
+    }
+
+    /* Avatar HTML helper */
+    function avatarHTML(name, photoUrl, size = 40, cls = 'ph-av') {
+      const init = (name || '?')[0].toUpperCase();
+      const colors = ['#00A896', '#3B5BD6', '#E05A7A', '#F5B942', '#38D68A', '#f97316', '#7c3aed'];
+      const color = colors[init.charCodeAt(0) % colors.length];
+      if (photoUrl) {
+        return `<div class="${cls}" style="width:${size}px;height:${size}px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid #E8EDF3;">
+        <img src="${photoUrl}" alt="${init}" style="width:100%;height:100%;object-fit:cover;"
+          onerror="this.parentElement.style.background='${color}';this.parentElement.innerHTML='<span style=\\'color:#fff;font-weight:700;font-size:${Math.floor(size * .4)}px;\\'>${init}</span>'">
+      </div>`;
+      }
+      return `<div class="${cls}" style="width:${size}px;height:${size}px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.floor(size * .4)}px;flex-shrink:0;">${init}</div>`;
+    }
+
+    const SVG_HEART = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+    const SVG_COMMENT = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+    const SVG_SHARE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+    const SVG_EYE = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+
+    /* Thread modal controls */
+    window._openThreadPostId = null;
+    window.openThread = function (postId) {
+      window._openThreadPostId = postId;
+      const overlay = document.getElementById('threadOverlay');
+      const data = window.postsCache && window.postsCache.get(postId);
+      if (data && window._renderThreadOriginalPost) window._renderThreadOriginalPost(postId, data);
+      overlay.classList.add('open');
+      document.getElementById('threadInput').value = '';
+      document.getElementById('threadCommentsList').innerHTML = `<div style="color:var(--muted);font-size:12px;padding:6px 0;">Загружаем...</div>`;
+      if (!window._commentUnsubs || !window._commentUnsubs.has(postId)) window._startThreadCommentsListener(postId);
+      const scrollEl = document.getElementById('threadScroll');
+      if (scrollEl) scrollEl.scrollTop = 0;
+    };
+    window.closeThread = function () {
+      document.getElementById('threadOverlay').classList.remove('open');
+      window._openThreadPostId = null;
+    };
+
+    window._renderThreadOriginalPost = function _renderThreadOriginalPost(postId, data) {
+      const wrap = document.getElementById('threadOriginalPost'); if (!wrap) return;
+      const safeText = (data.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      const timeStr = relativeTime(data.createdAt);
+      const avHTML = avatarHTML(data.authorName, data.authorAvatar, 40, 'ph-av');
+      let imgHTML = '';
+      if (data.imageUrl) {
+        imgHTML = `<div style="margin:10px 0 0;border-radius:12px;overflow:hidden;max-height:360px;">
+        <img src="${_escAttr(data.imageUrl)}" style="width:100%;display:block;object-fit:cover;max-height:360px;cursor:pointer;"
+          onclick="window.open('${_escAttr(data.imageUrl)}','_blank')" onerror="this.parentElement.style.display='none'"></div>`;
+      }
+      wrap.innerHTML = `
+      <div class="ph" style="margin-bottom:0;">
+        <div onclick="window.location.href='profile.html?uid=${data.authorId || ''}'" style="cursor:pointer;flex-shrink:0;">${avHTML}</div>
+        <div class="ph-info">
+          <div class="ph-name" onclick="window.location.href='profile.html?uid=${data.authorId || ''}'" style="cursor:pointer;">${_esc(data.authorName || 'Пользователь')}</div>
+          <div class="ph-time">${timeStr}</div>
+        </div>
+      </div>
+      ${data.content ? `<div class="post-text" style="margin-top:10px;">${safeText}</div>` : ''}
+      ${imgHTML}`;
+    }
+
+    function _esc(s) { return String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;') }
+    function _escAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;') }
+    function _fmtNum(n) { if (n >= 1000) return (n / 1000).toFixed(1) + 'k'; return String(n) }
+
+    /* Submit thread comment */
+    window._fbSubmitThreadComment = async function () {
+      const postId = window._openThreadPostId; if (!postId) return;
+      if (!window._currentUser) { toast('👤 Войдите, чтобы комментировать'); return; }
+      const input = document.getElementById('threadInput');
+      const text = input.value.trim(); if (!text) return;
+      input.disabled = true;
+      try {
+        await window._fbAddComment(postId, text);
+        input.value = '';
+        const scrollEl = document.getElementById('threadScroll');
+        if (scrollEl) setTimeout(() => { scrollEl.scrollTop = scrollEl.scrollHeight; }, 120);
+      } catch (e) { console.error('[Comment]', e); toast('⚠️ Ошибка комментария.'); }
+      finally { input.disabled = false; input.focus(); }
+    };
+
+    /* Publish post */
+    window.localSubmitPost = async function () {
+      const input = document.getElementById('postCompose');
+      const text = input.value.trim();
+      if (!text && !pendingPostImgFile) { toast('✏️ Напиши что-нибудь!'); return; }
+      if (!window._currentUser) { toast('👤 Войдите, чтобы публиковать'); return; }
+      const btn = document.getElementById('postBtn');
+      btn.disabled = true; btn.textContent = '...';
+      try {
+        await window._fbPublishPost(text, pendingPostImgFile);
+        input.value = '';
+        clearPostUpload();
+        toast('✅ Пост опубликован!');
+      } catch (e) {
+        console.error('[Post]', e);
+        toast('⚠️ Ошибка публикации.');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Опубликовать';
+      }
+    };
+
+    /* Toggle notifications panel */
+    window.toggleNotifPanel = function () {
+      const panel = document.getElementById('notifPanel');
+      const overlay = document.getElementById('notifOverlay');
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) { panel.classList.remove('open'); overlay.classList.remove('open'); }
+      else { panel.classList.add('open'); overlay.classList.add('open'); }
+    };
+    window.closeNotifPanel = function () {
+      document.getElementById('notifPanel').classList.remove('open');
+      document.getElementById('notifOverlay').classList.remove('open');
+    };
+  </script>
+
+  <!-- ══ FIREBASE MODULE ══ -->
+  <script type="module">
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import {
+      collection, doc, addDoc, getDoc, getDocs, setDoc, updateDoc, deleteDoc,
+      onSnapshot, query, orderBy, limit, where,
+      runTransaction, serverTimestamp, arrayUnion, arrayRemove, increment
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import { uploadToCloudinary } from './cloudinary-upload.js';
+    // Единый источник Firebase App/Auth/Firestore — см. auth-context.js.
+    // Раньше эта страница сама вызывала initializeApp(firebaseConfig);
+    // теперь auth и db общие с tutor-profile.html.
+    import { auth, db } from './auth-context.js';
+
+    let currentUser = null, currentProfile = null;
+    // Профиль, который СЕЙЧАС ОТКРЫТ на странице (может отличаться от
+    // currentUser, если открыли чужой профиль через ?uid=...).
+    let profileUid = null, profileData = null, isOwner = true;
+    let friendStatusUnsub = null;
+    let notifsUnsub = null, userPointsUnsub = null, feedUnsub = null;
+    let _lastKnownPoints = null;
+    const SIGNUP_BONUS_SCORE = 5;
+    const postsCache = new Map();
+    const likedCache = new Map();
+    const commentUnsubs = new Map();
+
+    /* ── Expose to global scope immediately ── */
+    window._currentUser = null;
+    window.postsCache = postsCache;
+
+    window._fbPublishPost = async function (text, imgFile) {
+      let imageUrl = null;
+      if (imgFile) {
+        try { imageUrl = await uploadToCloudinary(imgFile, 'post_images'); }
+        catch (e) { console.warn('[Upload]', e); toast('⚠️ Фото не загрузилось, пост без фото'); }
+      }
+      const postData = {
+        authorId: currentUser.uid,
+        authorName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+        authorAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+        content: text,
+        createdAt: serverTimestamp(),
+        likesCount: 0, commentsCount: 0, viewsCount: 0,
+      };
+      if (imageUrl) postData.imageUrl = imageUrl;
+      await addDoc(collection(db, 'posts'), postData);
+    };
+
+    window._fbAddComment = async function (postId, text) {
+      await addDoc(collection(db, 'posts', postId, 'comments'), {
+        authorId: currentUser.uid,
+        authorName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+        authorAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+        text, createdAt: serverTimestamp()
+      });
+      await runTransaction(db, async (tx) => {
+        const snap = await tx.get(doc(db, 'posts', postId));
+        if (snap.exists()) tx.update(doc(db, 'posts', postId), { commentsCount: (snap.data().commentsCount || 0) + 1 });
+      });
+      // Notify post author
+      const postData = window.postsCache.get(postId);
+      if (postData && postData.authorId && postData.authorId !== currentUser.uid) {
+        try {
+          await addDoc(collection(db, 'notifications'), {
+            toUid: postData.authorId, fromUid: currentUser.uid,
+            fromName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+            fromAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+            text: text.length > 80 ? text.slice(0, 80) + '…' : text,
+            chatType: null, chatId: null, type: 'comment', read: false, createdAt: serverTimestamp()
+          });
+        } catch (e) { console.warn('[CommentNotif]', e); }
+      }
+    };
+
+    /* ── AUTH ── */
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      window._currentUser = user;
+      if (user) {
+        try {
+          const snap = await getDoc(doc(db, 'users', user.uid));
+          currentProfile = snap.exists() ? snap.data() : null;
+          await _ensureSignupBonus(user.uid, snap);
+        } catch (e) { console.warn('[Profile]', e); }
+        _updateUI();
+        _startUserPointsListener(user.uid);
+        _subscribeNotifications(user.uid);
+        _bindNotifMarkAll(user.uid);
+
+        // ── Чей профиль открываем ──
+        // ?uid=<чужой_uid> в URL → просматриваем ЧУЖОЙ профиль (visitor-режим).
+        // Без параметра → просматриваем СВОЙ профиль (owner-режим).
+        // Важно сделать это здесь (await) ДО вызовов _loadMyPosts()/
+        // _loadMyClubs() ниже — иначе они могут выстрелить раньше, чем
+        // profileUid определится (гонка, из-за которой раньше ловили
+        // "⚠️ Ошибка загрузки постов" при заходе по прямой ссылке).
+        const params = new URLSearchParams(window.location.search);
+        const uidParam = params.get('uid');
+        profileUid = uidParam || user.uid;
+        isOwner = (profileUid === user.uid);
+
+        try {
+          if (isOwner) {
+            // Смотрим СВОЙ профиль — currentProfile уже содержит те же данные
+            // (см. getDoc(users/user.uid) чуть выше). Повторный getDoc по
+            // тому же документу — лишний round-trip к Firestore, из-за
+            // которого реальное имя рисовалось на секунду-другую позже, чем
+            // могло бы (и заглушка была видна дольше).
+            if (!currentProfile) {
+              toast('⚠️ Профиль не найден');
+              profileData = null;
+            } else {
+              profileData = currentProfile;
+              if (profileData.role === 'tutor') {
+                window.location.href = 'tutor-profile.html';
+                return;
+              }
+              _applyProfileMode();
+            }
+          } else {
+            const profileSnap = await getDoc(doc(db, 'users', profileUid));
+            if (!profileSnap.exists()) {
+              toast('⚠️ Профиль не найден');
+              profileData = null;
+            } else {
+              profileData = profileSnap.data();
+              // Репетиторы всегда показываются на tutor-profile.html — там
+              // отдельные поля (ставка, предметы, сертификаты и т.д.).
+              if (profileData.role === 'tutor') {
+                window.location.href = `tutor-profile.html?uid=${profileUid}`;
+                return;
+              }
+              _applyProfileMode();
+            }
+          }
+        } catch (e) {
+          console.warn('[ProfileLoad]', e);
+        }
+      } else {
+        document.getElementById('coinsDisplay').textContent = '5';
+        profileUid = null; profileData = null; isOwner = true;
+      }
+      _loadMyPosts();
+      _loadMyClubs();
+      _loadFriendsAndStat();
+      _subscribeFriendStatus();
+      _loadOnlineCount();
+    });
+
+    async function _ensureSignupBonus(uid, existingSnap) {
+      const data = existingSnap.exists() ? existingSnap.data() : null;
+      if (data && typeof data.score === 'number') return;
+      try {
+        await setDoc(doc(db, 'users', uid), {
+          score: SIGNUP_BONUS_SCORE,
+          scoreHistory: arrayUnion({ amount: SIGNUP_BONUS_SCORE, reason: 'signup_bonus', at: Date.now() })
+        }, { merge: true });
+      } catch (e) { console.warn('[SignupBonus]', e); }
+    }
+
+    /* ── Update page chrome (header avatar, compose box, upload inputs,
+       logout) — всегда отражает ТЕКУЩЕГО залогиненного пользователя,
+       а не просматриваемый профиль. ── */
+    function _updateUI() {
+      if (!currentUser) return;
+
+      // Header avatar
+      _updateHeaderAvatar();
+      _updateComposeAvatar();
+
+      // Avatar file input — загрузка фото пишет в currentUser.uid, поэтому
+      // имеет смысл только когда мы смотрим СВОЙ профиль (isOwner). Если
+      // открыт чужой профиль, клик по аватарке ничего не делает — см.
+      // _applyProfileMode(), который снимает onclick с #profileAv.
+      document.getElementById('avatarInput').addEventListener('change', async (e) => {
+        const file = e.target.files[0]; if (!file) return;
+        if (!isOwner) return;
+        toast('⏳ Загружаем аватар...');
+        try {
+          const url = await uploadToCloudinary(file, 'avatars');
+          await setDoc(doc(db, 'users', currentUser.uid), { photoUrl: url }, { merge: true });
+          currentProfile = { ...currentProfile, photoUrl: url };
+          if (profileData) profileData = { ...profileData, photoUrl: url };
+          const avEl = document.getElementById('profileAv');
+          if (avEl) avEl.innerHTML = `<img src="${url}" onerror="this.style.display='none'">`;
+          _updateHeaderAvatar();
+          _updateComposeAvatar();
+          toast('✅ Аватар обновлён!');
+        } catch (e) { console.error('[Avatar]', e); toast('⚠️ Не удалось загрузить аватар.'); }
+      });
+
+      // Banner file input — та же логика, только для владельца.
+      document.getElementById('bannerInput').addEventListener('change', async (e) => {
+        const file = e.target.files[0]; if (!file) return;
+        if (!isOwner) return;
+        toast('⏳ Загружаем обложку...');
+        try {
+          const url = await uploadToCloudinary(file, 'banners');
+          await setDoc(doc(db, 'users', currentUser.uid), { bannerUrl: url }, { merge: true });
+          const banner = document.getElementById('profileBanner');
+          banner.innerHTML = `<img src="${url}" onerror="this.style.display='none'">`;
+          toast('✅ Обложка обновлена!');
+        } catch (e) { console.error('[Banner]', e); toast('⚠️ Не удалось загрузить обложку.'); }
+      });
+
+      // Logout button
+      document.getElementById('logoutBtn').onclick = async () => {
+        await signOut(auth);
+        window.location.href = 'index.html';
+      };
+    }
+
+    /* ── Отрисовка карточки профиля — из profileData (просматриваемый
+       профиль), а НЕ из currentProfile (залогиненный пользователь).
+       Для owner-режима это одни и те же данные. ── */
+    function _renderProfileCard(data) {
+      const name = data?.fullName || (isOwner ? (currentUser.displayName || currentUser.email?.split('@')[0] || 'Пользователь') : 'Пользователь');
+      const handle = data?.handle || (isOwner ? (currentUser.email?.split('@')[0] || currentUser.uid.slice(0, 8)) : '');
+      const bio = data?.bio || '';
+      const photoUrl = data?.photoUrl || (isOwner ? currentUser.photoURL : null) || null;
+
+      const nameEl = document.getElementById('profileName');
+      const handleEl = document.getElementById('profileHandle');
+      const bioEl = document.getElementById('profileBio');
+      if (nameEl) nameEl.textContent = name;
+      if (handleEl) handleEl.textContent = '@' + handle;
+      if (bioEl) bioEl.textContent = bio;
+
+      const avEl = document.getElementById('profileAv');
+      if (avEl) {
+        if (photoUrl) {
+          avEl.innerHTML = `<img src="${photoUrl}" onerror="this.style.display='none'">`;
+        } else {
+          avEl.innerHTML = `<span id="profileAvInit">${(name[0] || '?').toUpperCase()}</span>`;
+        }
+      }
+    }
+
+    /* ── Owner / Visitor режим — переключает видимые блоки в зависимости
+       от того, свой профиль сейчас открыт или чужой (см. AUTH-блок,
+       где вычисляются profileUid/isOwner/profileData). ── */
+    function _applyProfileMode() {
+      _renderProfileCard(profileData);
+
+      const ownerEl = document.getElementById('ownerActions');
+      const visitorEl = document.getElementById('visitorActions');
+      const bannerEl = document.getElementById('visitorProfileBanner');
+      const bannerTextEl = document.getElementById('visitorBannerText');
+      const composeEl = document.getElementById('postComposeArea');
+      const avWrap = document.getElementById('profileAv');
+      const avEditBtn = document.querySelector('.av-edit-btn');
+      const bannerHintEl = document.getElementById('bannerHint');
+      const bannerEditEl = document.getElementById('profileBanner');
+      const postsHeadingEl = document.getElementById('postsHeadingText');
+      const streakEl = document.getElementById('streakWidget');
+
+      if (ownerEl) ownerEl.style.display = isOwner ? 'flex' : 'none';
+      if (visitorEl) visitorEl.classList.toggle('visible', !isOwner);
+      if (bannerEl) bannerEl.classList.toggle('visible', !isOwner);
+      if (bannerTextEl && !isOwner) {
+        bannerTextEl.textContent = `👤 Профиль: ${profileData?.fullName || 'пользователь'}`;
+      }
+      // Блок публикации поста полностью скрыт для гостя.
+      if (composeEl) composeEl.style.display = isOwner ? '' : 'none';
+      // Загрузка аватара/обложки — тоже только для владельца.
+      if (avEditBtn) avEditBtn.style.display = isOwner ? '' : 'none';
+      if (bannerHintEl) bannerHintEl.style.display = isOwner ? '' : 'none';
+      if (avWrap) { avWrap.style.cursor = isOwner ? 'pointer' : 'default'; avWrap.onclick = isOwner ? () => document.getElementById('avatarInput').click() : null; }
+      if (bannerEditEl) { bannerEditEl.style.cursor = isOwner ? 'pointer' : 'default'; bannerEditEl.onclick = isOwner ? () => document.getElementById('bannerInput').click() : null; }
+      if (postsHeadingEl) postsHeadingEl.textContent = isOwner ? 'МОИ ПОСТЫ' : 'ПОСТЫ';
+      // Таймер / серия дней — личная статистика, чужим её не показываем.
+      if (streakEl) streakEl.style.display = isOwner ? '' : 'none';
+    }
+
+    function _updateHeaderAvatar() {
+      const av = document.getElementById('headerAvatar'); if (!av || !currentUser) return;
+      const name = currentProfile?.fullName || currentUser.displayName || 'U';
+      const photo = currentProfile?.photoUrl || currentUser?.photoURL || null;
+      if (photo) { av.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`; }
+      else { av.textContent = name[0].toUpperCase(); }
+    }
+
+    function _updateComposeAvatar() {
+      const av = document.getElementById('composeAv'); if (!av) return;
+      const name = currentProfile?.fullName || currentUser?.displayName || 'U';
+      const photo = currentProfile?.photoUrl || currentUser?.photoURL || null;
+      const init = name[0].toUpperCase();
+      if (photo) { av.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`; }
+      else { av.textContent = init; }
+    }
+
+    /* ── Points listener (realtime from Firebase → updates badge on every page) ── */
+    function _startUserPointsListener(uid) {
+      if (userPointsUnsub) userPointsUnsub();
+      userPointsUnsub = onSnapshot(doc(db, 'users', uid), (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        currentProfile = data;
+        _updateHeaderAvatar();
+        _updateComposeAvatar();
+        const points = typeof data.score === 'number' ? data.score : 5;
+        const el = document.getElementById('coinsDisplay');
+        if (el) {
+          if (_lastKnownPoints !== null && points !== _lastKnownPoints) {
+            _animateCoinsTo(el, _lastKnownPoints, points);
+          } else {
+            el.textContent = points.toLocaleString('ru-RU');
+          }
+        }
+        _lastKnownPoints = points;
+      }, (err) => console.warn('[Points]', err));
+    }
+
+    function _animateCoinsTo(el, from, to, duration = 700) {
+      const badge = document.getElementById('hCoinsBadge');
+      if (badge && to > from) {
+        badge.classList.add('coins-pop');
+        setTimeout(() => badge.classList.remove('coins-pop'), 280);
+      }
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(from + (to - from) * eased);
+        el.textContent = current.toLocaleString('ru-RU');
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.textContent = to.toLocaleString('ru-RU');
+      }
+      requestAnimationFrame(tick);
+    }
+
+    /* ── Notifications ── */
+    function _escN(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }
+    function _relTimeShort(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const diff = Date.now() - d.getTime();
+      const m = Math.floor(diff / 60000);
+      if (m < 1) return 'только что';
+      if (m < 60) return `${m} мин`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h} ч`;
+      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    }
+    function _notifTypeIcon(type) {
+      if (type === 'like') return '<span class="notif-icon-badge like">❤️</span>';
+      if (type === 'comment') return '<span class="notif-icon-badge comment">💬</span>';
+      if (type === 'friend_request') return '<span class="notif-icon-badge friend">👥</span>';
+      return '<span class="notif-icon-badge msg">💬</span>';
+    }
+    function _renderNotifPanel(docs) {
+      const list = document.getElementById('notifPanelList'); if (!list) return;
+      if (!docs.length) { list.innerHTML = '<div class="notif-empty">Нет новых уведомлений</div>'; return; }
+      list.innerHTML = '';
+      docs.forEach(d => {
+        const data = d.data();
+        const item = document.createElement('div');
+        item.className = 'notif-item' + (data.read ? '' : ' unread');
+        const init = (data.fromName || '?')[0].toUpperCase();
+        const avContent = data.fromAvatar
+          ? `<img src="${_escN(data.fromAvatar)}" alt="" onerror="this.parentElement.innerHTML='${init}'">`
+          : init;
+        const showFriendActions = data.type === 'friend_request' && !data.read && data.requestId;
+        item.innerHTML = `
+        <div class="notif-av" style="position:relative;">${avContent}${_notifTypeIcon(data.type || 'message')}</div>
+        <div class="notif-body">
+          <div class="notif-from">${_escN(data.fromName || 'Кто-то')}</div>
+          <div class="notif-text">${_escN(data.text || '')}</div>
+          <div class="notif-time">${_relTimeShort(data.createdAt)}</div>
+          ${showFriendActions ? `
+          <div class="notif-friend-actions">
+            <button class="notif-accept-btn" type="button">Принять</button>
+            <button class="notif-decline-btn" type="button">Отклонить</button>
+          </div>` : ''}
+        </div>`;
+        if (showFriendActions) {
+          const acceptBtn = item.querySelector('.notif-accept-btn');
+          const declineBtn = item.querySelector('.notif-decline-btn');
+          acceptBtn.addEventListener('click', async (ev) => {
+            ev.stopPropagation();
+            try {
+              await updateDoc(doc(db, 'friendRequests', data.requestId), { status: 'accepted', respondedAt: serverTimestamp() });
+              await updateDoc(d.ref, { read: true });
+              toast('✅ Заявка принята!');
+            } catch (e) { console.error('[FriendAccept]', e); toast('⚠️ Не получилось принять заявку.'); }
+          });
+          declineBtn.addEventListener('click', async (ev) => {
+            ev.stopPropagation();
+            try {
+              await deleteDoc(doc(db, 'friendRequests', data.requestId));
+              await updateDoc(d.ref, { read: true });
+            } catch (e) { console.error('[FriendDecline]', e); toast('⚠️ Не получилось отклонить заявку.'); }
+          });
+        } else {
+          item.addEventListener('click', async () => {
+            try { await updateDoc(d.ref, { read: true }); } catch (e) { }
+            if (data.chatId && data.chatType === 'direct') window.location.href = `Chat.html?to=${data.fromUid}`;
+            else if (data.chatId && data.chatType === 'club') window.location.href = `Chat.html?club=${data.chatId}`;
+            else if (data.type === 'like' || data.type === 'comment') window.location.href = 'public.html';
+            else if (data.type === 'friend_request' && data.fromUid) window.location.href = `profile.html?uid=${data.fromUid}`;
+            window.closeNotifPanel();
+          });
+        }
+        list.appendChild(item);
+      });
+    }
+    function _bindNotifMarkAll(uid) {
+      const btn = document.getElementById('notifMarkAll');
+      if (!btn || btn._bound) return; btn._bound = true;
+      btn.addEventListener('click', async () => {
+        const q2 = query(collection(db, 'notifications'), where('toUid', '==', uid), where('read', '==', false));
+        const snap = await getDocs(q2);
+        await Promise.all(snap.docs.map(d => updateDoc(d.ref, { read: true })));
+      });
+    }
+    function _subscribeNotifications(uid) {
+      if (notifsUnsub) notifsUnsub();
+      const q = query(collection(db, 'notifications'), where('toUid', '==', uid), orderBy('createdAt', 'desc'), limit(30));
+      notifsUnsub = onSnapshot(q, snap => {
+        const cnt = snap.docs.filter(d => !d.data().read).length;
+        const badge = document.getElementById('notifBadge');
+        const bell = document.getElementById('hNotif');
+        if (badge) {
+          if (cnt > 0) {
+            badge.textContent = cnt > 9 ? '9+' : cnt;
+            badge.style.display = 'flex';
+            if (bell) { bell.classList.add('notif-pulse'); setTimeout(() => bell.classList.remove('notif-pulse'), 400); }
+          } else { badge.style.display = 'none'; }
+        }
+        _renderNotifPanel(snap.docs);
+      }, (err) => console.warn('[Notif]', err));
+    }
+
+    /* ── ПОСТЫ ПРОФИЛЯ (та же коллекция 'posts', что и в public.html) ── */
+    function _loadMyPosts() {
+      const feedEl = document.getElementById('myPostsFeed'); if (!feedEl) return;
+      const skel = document.getElementById('skelLoad'); if (skel) skel.remove();
+
+      if (!currentUser) {
+        feedEl.innerHTML = `<div style="text-align:center;padding:28px 0;color:var(--muted);font-size:13px;">Войдите чтобы видеть посты</div>`;
+        return;
+      }
+      // Ждём, пока в AUTH-блоке определится profileUid (?uid=... из URL) —
+      // без этой проверки был возможен запрос "вслепую" ещё до того, как
+      // стало известно, чей профиль открыт.
+      if (!profileUid) return;
+
+      if (feedUnsub) { feedUnsub(); feedUnsub = null; }
+      feedEl.innerHTML = `<div style="text-align:center;padding:28px 0;color:var(--muted);font-size:14px;">⏳ Загружаем...</div>`;
+
+      const renderEmpty = () => {
+        feedEl.innerHTML = `<div style="text-align:center;padding:28px 0;color:var(--muted);font-size:13px;">
+        <div style="font-size:36px;margin-bottom:10px;">📝</div>
+        ${isOwner ? 'Ещё нет постов. Поделись чем-нибудь!' : 'У пользователя пока нет постов.'}</div>`;
+        document.getElementById('statPosts').textContent = '0';
+      };
+      const renderDocs = (docs) => {
+        feedEl.innerHTML = '';
+        let count = 0;
+        docs.forEach(d => {
+          const postId = d.id, data = d.data();
+          window.postsCache.set(postId, data);
+          feedEl.appendChild(_buildPostEl(postId, data));
+          count++;
+        });
+        document.getElementById('statPosts').textContent = count;
+      };
+
+      const q = query(collection(db, 'posts'), where('authorId', '==', profileUid), orderBy('createdAt', 'desc'), limit(30));
+      feedUnsub = onSnapshot(q, (snap) => {
+        if (snap.empty) { renderEmpty(); return; }
+        renderDocs(snap.docs);
+      }, (err) => {
+        console.error('[MyPosts]', err);
+        // "The query requires an index" — у составного запроса
+        // (authorId + orderBy createdAt) нет составного индекса в Firestore.
+        // Пока индекс не создан (Firebase сам даёт ссылку в тексте err в
+        // консоли), работаем без orderBy и сортируем на клиенте — чтобы
+        // страница не падала с "⚠️ Ошибка загрузки постов".
+        if (feedUnsub) { feedUnsub(); feedUnsub = null; }
+        const q2 = query(collection(db, 'posts'), where('authorId', '==', profileUid));
+        feedUnsub = onSnapshot(q2, (snap2) => {
+          if (snap2.empty) { renderEmpty(); return; }
+          const sorted = [...snap2.docs].sort((a, b) => (b.data().createdAt?.seconds || 0) - (a.data().createdAt?.seconds || 0));
+          renderDocs(sorted);
+        }, (err2) => {
+          console.error('[MyPosts:fallback]', err2);
+          feedEl.innerHTML = `<div style="color:var(--red);font-size:12px;padding:8px 0;">⚠️ Ошибка загрузки постов.</div>`;
+        });
+      });
+    }
+
+    function _buildPostEl(postId, data) {
+      const article = document.createElement('article');
+      article.className = 'post'; article.dataset.postId = postId;
+      article.style.marginBottom = '14px';
+      const safeText = (data.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      const timeStr = relativeTime(data.createdAt);
+      const avHTML = avatarHTML(data.authorName, data.authorAvatar, 40, 'ph-av');
+      let imgHTML = '';
+      if (data.imageUrl) {
+        imgHTML = `<div style="margin:2px 0 12px;border-radius:12px;overflow:hidden;max-height:420px;">
+        <img src="${_escAttr(data.imageUrl)}" style="width:100%;display:block;object-fit:cover;max-height:420px;cursor:pointer;"
+          onclick="window.open('${_escAttr(data.imageUrl)}','_blank')" onerror="this.parentElement.style.display='none'"></div>`;
+      }
+      const likeCount = data.likesCount || 0, cmtCount = data.commentsCount || 0;
+      article.innerHTML = `
+      <div class="ph">
+        <div style="cursor:pointer;flex-shrink:0;">${avHTML}</div>
+        <div class="ph-info">
+          <div class="ph-name">${_esc(data.authorName || 'Пользователь')}</div>
+          <div class="ph-time">${timeStr}</div>
+        </div>
+        <button class="ph-more" onclick="toast('⚙️ Опции поста скоро!')">···</button>
+      </div>
+      ${data.content ? `<div class="post-text">${safeText}</div>` : ''}
+      ${imgHTML}
+      <div class="actions">
+        <button class="act-btn like-btn" data-post-id="${postId}" onclick="window._fbLikeToggle('${postId}',this)">
+          ${SVG_HEART}<span class="like-count">${likeCount}</span>
+        </button>
+        <button class="comments-toggle" onclick="window.openThread('${postId}')">
+          ${SVG_COMMENT}<span class="comment-count">${cmtCount}</span>
+        </button>
+        <button class="share-btn" onclick="navigator.clipboard&&navigator.clipboard.writeText(window.location.origin+'/public.html?post=${postId}').then(()=>toast('🔗 Ссылка скопирована!'))">
+          ${SVG_SHARE} Поделиться
+        </button>
+        <div class="act-views">${SVG_EYE} ${_fmtNum(data.viewsCount || 0)}</div>
+      </div>`;
+      const textEl = article.querySelector('.post-text');
+      if (textEl) { textEl.style.cursor = 'pointer'; textEl.onclick = () => window.openThread(postId); }
+      return article;
+    }
+
+    /* ── LIKE TOGGLE ── */
+    window._fbLikeToggle = async function (postId, btn) {
+      if (!currentUser) { toast('👤 Войдите, чтобы ставить лайки'); return; }
+      const wasLiked = likedCache.get(postId) === true || btn.classList.contains('liked');
+      btn.classList.toggle('liked', !wasLiked);
+      btn.classList.add('pop'); setTimeout(() => btn.classList.remove('pop'), 380);
+      btn.querySelector('svg').setAttribute('fill', wasLiked ? 'none' : 'currentColor');
+      const span = btn.querySelector('.like-count');
+      span.textContent = Math.max(0, (parseInt(span.textContent) || 0) + (wasLiked ? -1 : 1));
+      likedCache.set(postId, !wasLiked);
+      try {
+        const postRef = doc(db, 'posts', postId);
+        const likeRef = doc(db, 'posts', postId, 'likes', currentUser.uid);
+        await runTransaction(db, async (tx) => {
+          const ps = await tx.get(postRef); if (!ps.exists()) throw new Error('Post gone');
+          if (wasLiked) { tx.delete(likeRef); tx.update(postRef, { likesCount: Math.max(0, (ps.data().likesCount || 0) - 1) }); }
+          else { tx.set(likeRef, { likedAt: serverTimestamp() }); tx.update(postRef, { likesCount: (ps.data().likesCount || 0) + 1 }); }
+        });
+      } catch (e) {
+        console.error('[Like]', e);
+        btn.classList.toggle('liked', wasLiked);
+        btn.querySelector('svg').setAttribute('fill', wasLiked ? 'currentColor' : 'none');
+        span.textContent = Math.max(0, (parseInt(span.textContent) || 0) + (wasLiked ? 1 : -1));
+        likedCache.set(postId, wasLiked);
+        toast('⚠️ Ошибка. Попробуйте снова.');
+      }
+    };
+
+    /* ── THREAD COMMENTS ── */
+    window._commentUnsubs = commentUnsubs;
+    window._startThreadCommentsListener = function (postId) {
+      const listEl = document.getElementById('threadCommentsList');
+      const q = query(collection(db, 'posts', postId, 'comments'), orderBy('createdAt', 'asc'));
+      const unsub = onSnapshot(q, (snap) => {
+        if (window._openThreadPostId !== postId) return;
+        listEl.innerHTML = '';
+        if (snap.empty) { listEl.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:6px 0;">Пока нет ответов. Будь первым!</div>`; return; }
+        snap.forEach(d => {
+          const c = d.data();
+          const item = document.createElement('div');
+          item.className = 'thread-comment-item';
+          item.innerHTML = `
+          ${avatarHTML(c.authorName, c.authorAvatar, 32, 'comment-av')}
+          <div class="thread-comment-body">
+            <div class="thread-comment-name" style="cursor:pointer;" onclick="window.location.href='profile.html?uid=${c.authorId}'">${_esc(c.authorName || 'Пользователь')}</div>
+            <div class="thread-comment-text">${_esc(c.text || '')}</div>
+          </div>`;
+          listEl.appendChild(item);
+        });
+      }, (err) => { console.error('[Comments]', err); });
+      commentUnsubs.set(postId, unsub);
+    };
+    // Override openThread now that Firebase is ready
+    window.openThread = function (postId) {
+      window._openThreadPostId = postId;
+      const overlay = document.getElementById('threadOverlay');
+      const data = postsCache.get(postId);
+      if (data) window._renderThreadOriginalPost(postId, data);
+      overlay.classList.add('open');
+      document.getElementById('threadInput').value = '';
+      document.getElementById('threadCommentsList').innerHTML = `<div style="color:var(--muted);font-size:12px;padding:6px 0;">Загружаем...</div>`;
+      if (!commentUnsubs.has(postId)) window._startThreadCommentsListener(postId);
+      const scrollEl = document.getElementById('threadScroll');
+      if (scrollEl) scrollEl.scrollTop = 0;
+    };
+
+    /* ── MY CLUBS ── */
+    async function _loadMyClubs() {
+      const wrap = document.getElementById('myClubsList');
+      if (!currentUser) { wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;">Войдите чтобы видеть клубы</div>`; return; }
+      if (!profileUid) return;
+      try {
+        const snap = await getDocs(collection(db, 'clubs'));
+        const allClubs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const theirClubs = allClubs.filter(c => (c.members || []).includes(profileUid));
+        document.getElementById('statClubs').textContent = theirClubs.length;
+        if (!theirClubs.length) {
+          wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:4px 0;">${isOwner ? 'Ты пока не в клубах.' : 'Пользователь пока не в клубах.'}</div>`;
+          return;
+        }
+        wrap.innerHTML = '';
+        theirClubs.slice(0, 5).forEach(club => {
+          const count = (club.members || []).length;
+          const row = document.createElement('div');
+          row.className = 'club-row';
+          row.innerHTML = `
+          <div class="club-av">${club.emoji || '📚'}</div>
+          <div class="club-info">
+            <div class="club-name">${_esc(club.name || 'Клуб')}</div>
+            <div class="club-members">${count} участников</div>
+          </div>
+          <button class="club-join-btn joined">✓ Joined</button>`;
+          row.onclick = () => window.location.href = `Chat.html?club=${club.id}`;
+          wrap.appendChild(row);
+        });
+      } catch (e) { console.warn('[Clubs]', e); wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;">Ошибка загрузки клубов</div>`; }
+    }
+
+    /* ── FRIENDS (коллекция 'friendRequests', id документа = отсортированная
+       пара uid'ов, чтобы не гонять query с составным индексом) ── */
+    function _friendPairId(a, b) { return [a, b].sort().join('_'); }
+
+    async function _loadFriendsAndStat() {
+      const wrap = document.getElementById('friendsList');
+      const statEl = document.getElementById('statFriends');
+      if (!profileUid) return;
+      try {
+        // Один простой запрос по равенству (без orderBy) — как и с клубами,
+        // чтобы не зависеть от составного индекса Firestore (см. баг #2).
+        const snap = await getDocs(query(collection(db, 'friendRequests'), where('status', '==', 'accepted')));
+        const friendUids = snap.docs
+          .map(d => d.data())
+          .filter(r => Array.isArray(r.users) && r.users.includes(profileUid))
+          .map(r => r.users.find(u => u !== profileUid))
+          .filter(Boolean);
+        if (statEl) statEl.textContent = friendUids.length;
+        if (!wrap) return;
+        if (!friendUids.length) {
+          wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:4px 0;">${isOwner ? 'У тебя пока нет друзей.' : 'Пока нет друзей.'}</div>`;
+          return;
+        }
+        wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:4px 0;">Загружаем...</div>`;
+        const rows = await Promise.all(friendUids.slice(0, 8).map(async (uid) => {
+          try {
+            const s = await getDoc(doc(db, 'users', uid));
+            const d = s.exists() ? s.data() : {};
+            return { uid, name: d.fullName || 'Пользователь', photoUrl: d.photoUrl || null };
+          } catch { return { uid, name: 'Пользователь', photoUrl: null }; }
+        }));
+        wrap.innerHTML = '';
+        rows.forEach(f => {
+          const row = document.createElement('div');
+          row.className = 'friend-row';
+          const init = (f.name[0] || '?').toUpperCase();
+          row.innerHTML = `
+          <div class="friend-av">${f.photoUrl ? `<img src="${_escAttr(f.photoUrl)}" onerror="this.parentElement.textContent='${init}'">` : init}</div>
+          <div class="friend-info"><div class="friend-name">${_esc(f.name)}</div></div>`;
+          row.onclick = () => window.location.href = `profile.html?uid=${f.uid}`;
+          wrap.appendChild(row);
+        });
+      } catch (e) {
+        console.warn('[Friends]', e);
+        if (wrap) wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;">Ошибка загрузки друзей</div>`;
+      }
+    }
+
+    /* Реалтайм-статус кнопки "Добавить в друзья" (только когда смотрим
+       чужой профиль). onSnapshot на ОДИН документ по детерминированному
+       id — без query, поэтому без риска составного индекса. */
+    function _subscribeFriendStatus() {
+      if (friendStatusUnsub) { friendStatusUnsub(); friendStatusUnsub = null; }
+      if (isOwner || !currentUser || !profileUid) return;
+      const refDoc = doc(db, 'friendRequests', _friendPairId(currentUser.uid, profileUid));
+      friendStatusUnsub = onSnapshot(refDoc, (snap) => {
+        const btn = document.getElementById('addFriendBtn');
+        const label = document.getElementById('addFriendLabel');
+        if (!btn || !label) return;
+        if (!snap.exists()) {
+          btn.classList.remove('added');
+          btn.disabled = false;
+          label.textContent = 'Добавить в друзья';
+          btn.dataset.state = 'none';
+          return;
+        }
+        const data = snap.data();
+        if (data.status === 'accepted') {
+          btn.classList.add('added');
+          btn.disabled = true;
+          label.textContent = '✓ В друзьях';
+          btn.dataset.state = 'accepted';
+        } else if (data.requestedBy === currentUser.uid) {
+          btn.classList.add('added');
+          btn.disabled = true;
+          label.textContent = 'Заявка отправлена';
+          btn.dataset.state = 'pending-sent';
+        } else {
+          btn.classList.remove('added');
+          btn.disabled = false;
+          label.textContent = 'Принять заявку';
+          btn.dataset.state = 'pending-received';
+        }
+      }, (err) => console.warn('[FriendStatus]', err));
+    }
+
+    window._handleAddFriend = async function () {
+      if (!currentUser) { toast('👤 Войдите, чтобы добавлять друзей'); return; }
+      if (isOwner || !profileUid) return;
+      const btn = document.getElementById('addFriendBtn');
+      const state = btn?.dataset.state;
+      const pairId = _friendPairId(currentUser.uid, profileUid);
+      const reqRef = doc(db, 'friendRequests', pairId);
+      try {
+        if (state === 'pending-received') {
+          // На профиле уже видно входящую заявку — принимаем сразу.
+          await updateDoc(reqRef, { status: 'accepted', respondedAt: serverTimestamp() });
+          toast('✅ Теперь вы друзья!');
+          return;
+        }
+        if (state === 'pending-sent' || state === 'accepted') return;
+        await setDoc(reqRef, {
+          users: [currentUser.uid, profileUid].sort(),
+          requestedBy: currentUser.uid,
+          toUid: profileUid,
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+        await addDoc(collection(db, 'notifications'), {
+          toUid: profileUid, fromUid: currentUser.uid,
+          fromName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+          fromAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+          text: 'хочет добавить вас в друзья',
+          chatType: null, chatId: null, type: 'friend_request', requestId: pairId,
+          read: false, createdAt: serverTimestamp()
+        });
+        toast('✅ Заявка отправлена!');
+      } catch (e) { console.error('[AddFriend]', e); toast('⚠️ Не удалось отправить заявку.'); }
+    };
+
+    window._handleMsgUser = function () {
+      if (!currentUser) { toast('👤 Войдите, чтобы писать сообщения'); return; }
+      if (!profileUid || isOwner) return;
+      window.location.href = `Chat.html?to=${profileUid}`;
+    };
+
+    /* ── ACTIVITY (online count) ── */
+    async function _loadOnlineCount() {
+      try {
+        onSnapshot(collection(db, 'presence'), (snap) => {
+          const online = snap.docs.filter(d => d.data().online).length;
+          const el = document.getElementById('activityOnline');
+          if (el) el.textContent = online || '—';
+        });
+      } catch (e) { }
+    }
+
+    /* Sync local postsCache → global so non-module code can read it */
+    window.postsCache = postsCache;
+    window._commentUnsubs = commentUnsubs;
+  </script>
+
+</body>
+
+</html>

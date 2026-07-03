@@ -1,0 +1,3087 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TutorApp — Профиль Репетитора</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Serif+Display&display=swap"
+    rel="stylesheet">
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --teal: #00A896;
+      --teal-dark: #007F72;
+      --teal-mid: #5BBDB5;
+      --teal-light: #E0F5F3;
+      --teal-pale: #F0FAF9;
+      --bg: #F4FAFA;
+      --white: #FFFFFF;
+      --text: #1A2E2C;
+      --text-mid: #4A6360;
+      --text-soft: #7A9A97;
+      --muted: #9AA5B4;
+      --border: #D4EEEA;
+      --gold: #F5B942;
+      --red: #E05A7A;
+      --pink-soft: #FFF0EF;
+      --shadow-xs: 0 1px 4px rgba(0, 168, 150, .07);
+      --shadow-sm: 0 4px 20px rgba(0, 168, 150, .12);
+      --shadow-md: 0 12px 36px rgba(0, 168, 150, .18);
+      --r: 16px;
+      --r-sm: 10px;
+      --header-h: 60px;
+      --subnav-h: 46px;
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    }
+
+    html,
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100%
+    }
+
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 700;
+      height: var(--header-h);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 24px;
+      box-shadow: var(--shadow-xs)
+    }
+
+    .h-ham {
+      display: flex;
+      flex-direction: column;
+      gap: 4.5px;
+      cursor: pointer;
+      flex-shrink: 0
+    }
+
+    .h-ham span {
+      display: block;
+      width: 20px;
+      height: 1.8px;
+      background: var(--text-mid);
+      border-radius: 2px
+    }
+
+    .h-logo {
+      font-weight: 800;
+      font-size: 19px;
+      color: var(--teal);
+      letter-spacing: -.02em;
+      flex-shrink: 0
+    }
+
+    .h-logo span {
+      color: var(--text)
+    }
+
+    /* Header nav */
+    .h-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      margin: 0 8px;
+      justify-content: center;
+    }
+
+    .h-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 7px 13px;
+      border-radius: 8px;
+      transition: all .18s;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .h-nav a:hover {
+      color: var(--teal-dark);
+      background: var(--teal-pale);
+    }
+
+    .h-nav a.active {
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .h-nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 13px;
+      right: 13px;
+      height: 2.5px;
+      background: var(--teal);
+      border-radius: 2px 2px 0 0;
+    }
+
+    .h-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .h-coins {
+      background: var(--teal-pale);
+      border-radius: 50px;
+      padding: 6px 14px;
+      color: var(--teal-dark);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--teal-light)
+    }
+
+    .coins-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #4ADE80
+    }
+
+    .h-notif {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-mid);
+      transition: border-color .2s, background .2s
+    }
+
+    .h-notif:hover {
+      background: var(--teal-light);
+      border-color: var(--teal)
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: 2px solid var(--white);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .h-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2.5px solid var(--teal-mid);
+      cursor: pointer;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #A8D8D4, #5BBDB5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 15px
+    }
+
+    /* ── NOTIFICATION PANEL ── */
+    @keyframes notifPulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.18)
+      }
+    }
+
+    .notif-pulse {
+      animation: notifPulse .4s ease-in-out;
+    }
+
+    .notif-panel {
+      position: fixed;
+      top: calc(var(--header-h, 60px) + 8px);
+      right: 16px;
+      width: 320px;
+      max-height: 460px;
+      background: var(--white, #fff);
+      border: 1.5px solid var(--border, #e0e0e0);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .12);
+      display: none;
+      flex-direction: column;
+      z-index: 900;
+      overflow: hidden;
+    }
+
+    .notif-panel.open {
+      display: flex;
+    }
+
+    .notif-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 850;
+    }
+
+    .notif-overlay.open {
+      display: block;
+    }
+
+    .notif-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border, #e0e0e0);
+      flex-shrink: 0;
+    }
+
+    .notif-panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark, #1a1a1a);
+    }
+
+    .notif-mark-all {
+      background: none;
+      border: none;
+      color: var(--teal, #38B2A8);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .notif-mark-all:hover {
+      background: var(--teal-light, #e6f7f6);
+    }
+
+    .notif-panel-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border, #e0e0e0);
+      cursor: pointer;
+      transition: background .15s;
+      position: relative;
+    }
+
+    .notif-item:hover {
+      background: var(--teal-pale, #f0fafa);
+    }
+
+    .notif-item.unread {
+      background: var(--teal-pale, #f0fafa);
+    }
+
+    .notif-item.unread::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal, #38B2A8);
+    }
+
+    .notif-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #5BBDB5, #38B2A8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .notif-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .notif-icon-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--white, #fff);
+    }
+
+    .notif-icon-badge.msg {
+      background: var(--teal, #38B2A8);
+    }
+
+    .notif-icon-badge.like {
+      background: #E05A7A;
+    }
+
+    .notif-icon-badge.comment {
+      background: #4A90D9;
+    }
+
+    .notif-icon-badge.friend {
+      background: #7C5CBF;
+    }
+
+    .notif-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notif-from {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark, #1a1a1a);
+      margin-bottom: 2px;
+    }
+
+    .notif-text {
+      font-size: 12px;
+      color: var(--text-mid, #666);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notif-time {
+      font-size: 11px;
+      color: #7A9A97;
+      margin-top: 3px;
+    }
+
+    .notif-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: #7A9A97;
+      font-size: 13px;
+    }
+
+    .h-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    /* VISITOR BANNER */
+    .visitor-banner {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 800;
+      height: 38px;
+      background: linear-gradient(90deg, var(--teal-dark), var(--teal));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 16px
+    }
+
+    /* ── Гейт "владелец / гость" ──
+       Пока идёт запрос к Firestore и не известно, свой это профиль или чужой,
+       прячем ОБА набора элементов (и кнопки редактирования, и CTA-кнопки для
+       посетителя), чтобы не было мигания чужого интерфейса. Как только JS
+       определит isOwner, applyOwnerMode()/applyVisitorMode() снимают класс
+       mode-pending с <body> и показывают нужный набор явно. */
+    body.mode-pending .edit-bar,
+    body.mode-pending .btn-change-banner,
+    body.mode-pending .avatar-edit-btn,
+    body.mode-pending .cert-add-btn,
+    body.mode-pending #postComposeArea,
+    body.mode-pending .mobile-sticky-cta,
+    body.mode-pending .cta-panel {
+      display: none;
+    }
+
+    .visitor-banner a {
+      color: #fff;
+      opacity: .8;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 12px
+    }
+
+    /* SUBNAV — скрыт, навигация в header */
+    .subnav {
+      display: none
+    }
+
+    /* PAGE BODY */
+    .page-body {
+      padding-top: var(--header-h);
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-left: 24px;
+      padding-right: 24px;
+      padding-bottom: 80px
+    }
+
+    /* PROFILE LAYOUT */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 24px;
+      margin-top: 28px;
+      align-items: start
+    }
+
+    /* CARD */
+    .card {
+      background: var(--white);
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-xs)
+    }
+
+    /* BANNER */
+    .profile-banner {
+      position: relative;
+      height: 160px;
+      background: linear-gradient(120deg, #5BBDB5 0%, #00A896 60%, #007F72 100%);
+      overflow: hidden
+    }
+
+    .profile-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .profile-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.25) 100%)
+    }
+
+    .btn-change-banner {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .2s;
+      font-family: 'DM Sans', sans-serif
+    }
+
+    .btn-change-banner:hover {
+      background: rgba(0, 0, 0, 0.65)
+    }
+
+    /* IDENTITY */
+    .profile-identity {
+      padding: 0 24px 20px;
+      position: relative
+    }
+
+    .avatar-wrap {
+      position: relative;
+      display: inline-block;
+      margin-top: -44px;
+      margin-bottom: 12px
+    }
+
+    .avatar-img {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 4px solid var(--white);
+      object-fit: cover;
+      display: block;
+      box-shadow: var(--shadow-sm)
+    }
+
+    .avatar-initials {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 4px solid var(--white);
+      background: linear-gradient(135deg, #5BBDB5, #00A896);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+      color: white;
+      box-shadow: var(--shadow-sm)
+    }
+
+    .avatar-edit-btn {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: 2px solid var(--white);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .2s;
+      box-shadow: var(--shadow-xs)
+    }
+
+    .avatar-edit-btn:hover {
+      background: var(--teal-dark)
+    }
+
+    .avatar-edit-btn input[type="file"] {
+      display: none
+    }
+
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border-radius: 50px;
+      padding: 3px 11px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      margin-top: 4px;
+      margin-bottom: 8px
+    }
+
+    .profile-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 2px
+    }
+
+    .profile-name[contenteditable="true"] {
+      outline: 2px solid var(--teal);
+      border-radius: 6px;
+      padding: 2px 6px
+    }
+
+    .profile-role {
+      font-size: 14px;
+      color: var(--text-mid);
+      font-weight: 500;
+      margin-bottom: 4px
+    }
+
+    .profile-location {
+      font-size: 13px;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .location-edit {
+      display: flex;
+      gap: 6px
+    }
+
+    .loc-input {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      color: var(--text);
+      background: var(--teal-pale);
+      border: 1.5px solid var(--teal-light);
+      border-radius: 7px;
+      padding: 4px 8px;
+      width: 100px;
+      outline: none;
+      transition: border-color .18s
+    }
+
+    .loc-input:focus {
+      border-color: var(--teal)
+    }
+
+    .profile-tagline {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.6;
+      padding: 10px 14px;
+      background: var(--teal-pale);
+      border-radius: var(--r-sm);
+      border-left: 3px solid var(--teal)
+    }
+
+    .profile-tagline[contenteditable="true"] {
+      outline: 2px solid var(--teal);
+      border-radius: 6px
+    }
+
+    /* EDIT BAR */
+    .edit-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      gap: 10px
+    }
+
+    .btn-edit-profile {
+      background: var(--white);
+      color: var(--text-mid);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 8px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: border-color .2s, color .2s
+    }
+
+    .btn-edit-profile:hover {
+      border-color: var(--teal);
+      color: var(--teal)
+    }
+
+    .btn-save-profile {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 8px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 7px;
+      transition: background .2s
+    }
+
+    .btn-save-profile:hover {
+      background: var(--teal-dark)
+    }
+
+    .btn-save-profile.active {
+      display: flex
+    }
+
+    .btn-cancel-profile {
+      background: none;
+      color: var(--text-soft);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 8px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 5px;
+      transition: border-color .2s
+    }
+
+    .btn-cancel-profile:hover {
+      border-color: var(--red);
+      color: var(--red)
+    }
+
+    .btn-cancel-profile.active {
+      display: flex
+    }
+
+    .card-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 24px
+    }
+
+    /* SECTIONS */
+    .section {
+      padding: 20px 24px
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .section-title svg {
+      color: var(--teal)
+    }
+
+    /* RATINGS */
+    .rating-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px
+    }
+
+    .rating-item {
+      text-align: center;
+      padding: 10px 6px;
+      background: var(--teal-pale);
+      border-radius: var(--r-sm)
+    }
+
+    .rating-score {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--teal-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px
+    }
+
+    .rating-label {
+      font-size: 11px;
+      color: var(--text-soft);
+      font-weight: 500;
+      margin-top: 3px
+    }
+
+    .rating-note {
+      font-size: 12px;
+      color: var(--text-soft);
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    /* ABOUT */
+    .about-text {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.7;
+      white-space: pre-wrap
+    }
+
+    .about-textarea {
+      width: 100%;
+      min-height: 110px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      border: 1.5px solid var(--teal);
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+      outline: none;
+      resize: vertical;
+      background: var(--teal-pale);
+      line-height: 1.7;
+      display: none
+    }
+
+    .about-textarea.active {
+      display: block
+    }
+
+    .learn-more-link {
+      color: var(--teal);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 8px
+    }
+
+    .learn-more-link:hover {
+      text-decoration: underline
+    }
+
+    /* SUBJECT TAGS */
+    .subject-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px
+    }
+
+    .subj-tag {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border-radius: 50px;
+      padding: 5px 13px;
+      font-size: 13px;
+      font-weight: 600
+    }
+
+    /* STATS */
+    .stats-row {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .stat-item {
+      flex: 1;
+      text-align: center;
+      padding: 18px 10px 14px;
+      border-right: 1px solid var(--border)
+    }
+
+    .stat-item:last-child {
+      border-right: none
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-soft);
+      font-weight: 500;
+      margin-top: 3px
+    }
+
+    /* CTA */
+    .cta-panel {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 11px 16px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: var(--r-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .15s var(--spring);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px
+    }
+
+    .btn-primary:hover {
+      background: var(--teal-dark);
+      transform: translateY(-1px)
+    }
+
+    .btn-outline {
+      width: 100%;
+      padding: 10px 16px;
+      background: var(--white);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px
+    }
+
+    .btn-outline:hover {
+      border-color: var(--teal);
+      color: var(--teal)
+    }
+
+    .rec-tag {
+      margin: 0 16px 16px;
+      padding: 12px 14px;
+      background: var(--pink-soft);
+      border-radius: var(--r-sm);
+      border-left: 3px solid var(--red);
+      font-size: 13px;
+      color: #8B2A2A;
+      font-weight: 500;
+      line-height: 1.5
+    }
+
+    /* CERTS */
+    .cert-panel {
+      padding: 16px
+    }
+
+    .cert-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .cert-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .cert-card {
+      border-radius: var(--r-sm);
+      overflow: hidden;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      aspect-ratio: 3/2;
+      position: relative;
+      cursor: pointer;
+      transition: border-color .2s
+    }
+
+    .cert-card:hover {
+      border-color: var(--teal)
+    }
+
+    .cert-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .cert-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600
+    }
+
+    .cert-add-btn {
+      background: var(--teal-pale);
+      color: var(--teal);
+      border: 1.5px dashed var(--teal-mid);
+      border-radius: var(--r-sm);
+      aspect-ratio: 3/2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      transition: background .2s, border-color .2s;
+      width: 100%;
+      margin-top: 10px
+    }
+
+    .cert-add-btn:hover {
+      background: var(--teal-light);
+      border-color: var(--teal)
+    }
+
+    .cert-add-btn input {
+      display: none
+    }
+
+    /* POSTS */
+    .posts-panel {
+      padding: 16px
+    }
+
+    .post-card {
+      padding: 12px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      transition: border-color .2s
+    }
+
+    .post-card:hover {
+      border-color: var(--teal-mid)
+    }
+
+    .post-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px
+    }
+
+    .post-text {
+      font-size: 13.5px;
+      color: var(--text-mid);
+      line-height: 1.55
+    }
+
+    .post-compose {
+      width: 100%;
+      resize: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color .2s;
+      background: var(--teal-pale);
+      height: 72px
+    }
+
+    .post-compose:focus {
+      border-color: var(--teal)
+    }
+
+    .btn-post {
+      margin-top: 8px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 8px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s
+    }
+
+    .btn-post:hover {
+      background: var(--teal-dark)
+    }
+
+    .post-compose-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px
+    }
+
+    .btn-post-photo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 7px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: border-color .2s, color .2s
+    }
+
+    .btn-post-photo:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark)
+    }
+
+    .post-upload-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--teal-pale)
+    }
+
+    .post-upload-bar.show {
+      display: flex
+    }
+
+    .post-upload-preview {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0
+    }
+
+    .post-upload-clear {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      transition: background .2s, color .2s
+    }
+
+    .post-upload-clear:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--text)
+    }
+
+    .post-image {
+      width: 100%;
+      border-radius: var(--r-sm);
+      margin-top: 8px;
+      max-height: 320px;
+      object-fit: cover;
+      display: block;
+      cursor: pointer
+    }
+
+    /* LOGOUT */
+    .btn-logout {
+      background: none;
+      color: var(--red);
+      border: 1.5px solid var(--red);
+      border-radius: var(--r-sm);
+      padding: 8px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .2s
+    }
+
+    .btn-logout:hover {
+      background: #fff0ef
+    }
+
+    /* SPINNER */
+    .spin {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(18px);
+      background: var(--text);
+      color: #fff;
+      padding: 11px 22px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: opacity .28s, transform .28s;
+      white-space: nowrap
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0)
+    }
+
+    .toast.success {
+      background: #10B981
+    }
+
+    .toast.error {
+      background: #EF4444
+    }
+
+    /* EUREKA */
+    .eureka-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px
+    }
+
+    .eureka-bubble {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 16px 16px 0 16px;
+      padding: 12px 14px;
+      max-width: 220px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      animation: popIn .4s var(--spring);
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.55
+    }
+
+    .eureka-bubble strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 3px
+    }
+
+    .eureka-bubble.hidden {
+      display: none
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(.85) translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0)
+      }
+    }
+
+    .eureka-close {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1
+    }
+
+    .eureka-close:hover {
+      color: var(--red)
+    }
+
+    .eureka-avatar-wrap {
+      position: relative;
+      cursor: pointer;
+      animation: float 3s ease-in-out infinite
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-7px)
+      }
+    }
+
+    .mascot-avatar-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--teal-light);
+      background-image: url('./assets/eureka.png');
+      background-size: 250%;
+      background-position: center 30%;
+      background-repeat: no-repeat;
+      box-shadow: 0 4px 16px rgba(91, 189, 181, .35);
+      transition: transform .2s ease
+    }
+
+    .mascot-avatar-circle:hover {
+      transform: scale(1.08)
+    }
+
+    .eureka-pulse {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #4ADE80;
+      border: 2px solid var(--white)
+    }
+
+    .eureka-pulse::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: rgba(74, 222, 128, .35);
+      animation: pulse-ring 1.5s ease infinite
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        opacity: .8;
+        transform: scale(.9)
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.7)
+      }
+    }
+
+    /* LOADING STATE */
+    .page-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      font-size: 14px;
+      color: var(--text-soft)
+    }
+
+    /* MOBILE STICKY CTA — скрыта на десктопе, см. @media ниже */
+    .mobile-sticky-cta {
+      display: none;
+    }
+
+    /* BOTTOM TAB BAR — виден только на мобильных, см. @media ниже */
+    .mob-nav {
+      display: none;
+    }
+
+    @media(max-width:768px) {
+
+      :root {
+        --header-h: 54px;
+        --mob-nav-h: 60px;
+      }
+
+      /* ── Хедер: компактный, только лого + колокольчик + аватар ── */
+      header {
+        padding: 0 14px;
+        gap: 0;
+        justify-content: space-between;
+      }
+
+      .h-ham,
+      .h-nav {
+        display: none;
+      }
+
+      .h-logo {
+        font-size: 17px;
+      }
+
+      .h-right {
+        gap: 8px;
+      }
+
+      .h-coins {
+        padding: 5px 11px;
+        font-size: 13px;
+      }
+
+      .h-notif {
+        width: 33px;
+        height: 33px;
+      }
+
+      .h-avatar {
+        width: 33px;
+        height: 33px;
+        font-size: 13px;
+      }
+
+      .notif-panel {
+        right: 8px;
+        left: 8px;
+        width: auto;
+      }
+
+      /* ── Страница: убираем боковые паддинги, освобождаем место под таббар ── */
+      .page-body {
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-bottom: calc(var(--mob-nav-h) + 90px);
+      }
+
+      .visitor-banner {
+        top: 0;
+      }
+
+      /* ── ГЛАВНОЕ: превращаем grid в управляемый flex-поток,
+         чтобы расставить карточки в порядке, который реально нужен
+         пользователю на маленьком экране — а не в порядке вёрстки ── */
+      .profile-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      /* Обёртки колонок "растворяются" — их дети становятся
+         прямыми flex-items и подчиняются своему order ниже */
+      .col-left,
+      .col-right {
+        display: contents;
+      }
+
+      /* Порядок на мобильном:
+         1) карточка профиля (банер/имя/about/предметы/оценки)
+         2) статистика + кнопка записи — то самое, что раньше уезжало вниз
+         3) активность (студенты/опыт/ставка)
+         4) сертификаты
+         5) посты — наименее срочное при первом знакомстве */
+      #cardMainProfile {
+        order: 1;
+      }
+
+      #cardStats {
+        order: 2;
+      }
+
+      #cardActivity {
+        order: 3;
+      }
+
+      #cardCertificates {
+        order: 4;
+      }
+
+      #cardPosts {
+        order: 5;
+      }
+
+      .rating-grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      /* ── Карточка статистики на мобиле — без лишнего обрамления,
+         сама панель уже стоит в общем потоке карточек ── */
+      .stats-row {
+        padding: 14px 14px 4px;
+      }
+
+      .cta-panel {
+        padding: 4px 14px 16px;
+      }
+
+      /* ── Баннер компактнее на мобиле ── */
+      .profile-banner {
+        height: 120px;
+      }
+
+      .avatar-wrap {
+        width: 76px;
+        height: 76px;
+        margin-top: -38px;
+      }
+
+      .profile-identity {
+        padding: 0 14px 14px;
+      }
+
+      .profile-name {
+        font-size: 19px;
+      }
+
+      .posts-panel,
+      .cert-panel {
+        padding: 14px;
+      }
+
+      /* ── Сертификаты: компактная сетка на мобиле ── */
+      .cert-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      /* ── Sticky bottom CTA: главная кнопка записи всегда доступна,
+         не нужно искать/листать карточку статистики ── */
+      .mobile-sticky-cta {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: var(--mob-nav-h);
+        z-index: 800;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+        padding: 10px 14px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+        box-shadow: 0 -6px 20px rgba(0, 0, 0, .07);
+      }
+
+      .mobile-sticky-cta button {
+        flex: 1;
+      }
+
+      /* ── Нижний таббар ── */
+      .mob-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 900;
+        background: var(--white);
+        border-top: 1px solid var(--border);
+        height: var(--mob-nav-h);
+        align-items: stretch;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, .09);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      .mob-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        transition: color .18s;
+        padding-bottom: 2px;
+      }
+
+      .mob-nav-item svg {
+        width: 22px;
+        height: 22px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke .18s, transform .18s;
+      }
+
+      .mob-nav-item.active {
+        color: var(--teal);
+      }
+
+      .mob-nav-item.active svg {
+        stroke: var(--teal);
+        transform: translateY(-1px);
+      }
+
+      /* ── Eureka выше таббара ── */
+      .eureka-widget {
+        bottom: calc(var(--mob-nav-h) + 12px);
+        right: 12px;
+      }
+
+      /* ── Toast выше таббара/sticky CTA ── */
+      .toast {
+        bottom: calc(var(--mob-nav-h) + 90px);
+      }
+    }
+  </style>
+</head>
+
+<body class="mode-pending">
+
+  <!-- VISITOR BANNER -->
+  <div class="visitor-banner" id="visitorBanner">
+    <span id="visitorBannerName">👨‍🏫 Профиль репетитора</span>
+    <a onclick="history.back()">← Назад</a>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="h-ham"><span></span><span></span><span></span></div>
+    <a href="index.html" class="h-logo" style="text-decoration:none;">Tutor<span>App</span></a>
+    <nav class="h-nav">
+      <a href="index.html">Лента</a>
+      <a href="Chat.html">Чат</a>
+      <a href="public.html">Обсуждения</a>
+      <a href="unique.html">Unique</a>
+      <a href="exam.html">Экзамены</a>
+      <a href="trainings.html">Тренинги</a>
+      <a href="tutor-profile.html" class="active">Профиль</a>
+    </nav>
+    <div class="h-right">
+      <div class="h-coins"><span class="coins-dot"></span><span id="coinsDisplay">—</span></div>
+      <div class="h-notif" id="hNotif" onclick="window.toggleNotifPanel && window.toggleNotifPanel()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <span class="notif-badge" id="notifBadge" style="display:none;"></span>
+      </div>
+      <div class="h-avatar" id="headerAvatar">?</div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION DROPDOWN PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-head">
+      <span class="notif-panel-title">Уведомления</span>
+      <button class="notif-mark-all" id="notifMarkAll">Прочитать все</button>
+    </div>
+    <div class="notif-panel-list" id="notifPanelList">
+      <div class="notif-empty">Нет новых уведомлений</div>
+    </div>
+  </div>
+  <div class="notif-overlay" id="notifOverlay" onclick="window.closeNotifPanel && window.closeNotifPanel()"></div>
+
+  <!-- SUBNAV -->
+  <nav class="subnav">
+    <a href="index.html">Лента</a>
+    <a href="public.html">Обсуждения</a>
+    <a href="Chat.html">Чат</a>
+    <a href="unique.html">Unique</a>
+    <a href="exam.html">Экзамены</a>
+    <a href="trainings.html">Тренинги</a>
+    <a href="tutor-profile.html" class="active">Профиль</a>
+  </nav>
+
+  <!-- PAGE BODY -->
+  <div class="page-body">
+    <div class="profile-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="col-left" style="display:flex;flex-direction:column;gap:20px;">
+
+        <!-- MAIN PROFILE CARD -->
+        <div class="card" id="cardMainProfile">
+          <!-- Banner -->
+          <div class="profile-banner" id="bannerArea">
+            <img id="bannerImg" src="" alt="banner" style="display:none;">
+            <div class="profile-banner-overlay"></div>
+            <button class="btn-change-banner" id="btnChangeBanner" onclick="triggerBannerUpload()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              Изменить обложку
+            </button>
+            <input type="file" id="bannerInput" accept="image/*" style="display:none;"
+              onchange="handleBannerUpload(event)">
+          </div>
+
+          <!-- Identity -->
+          <div class="profile-identity">
+            <div class="avatar-wrap">
+              <div class="avatar-initials" id="avatarInitials">?</div>
+              <img class="avatar-img" id="avatarImg" src="" alt="avatar" style="display:none;">
+              <label class="avatar-edit-btn" id="avatarEditBtn" title="Изменить фото">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+                <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)">
+              </label>
+            </div>
+
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+              <div>
+                <div class="profile-name" id="profileName">Загрузка...</div>
+                <div class="profile-role">Репетитор</div>
+                <span class="tier-badge" id="tierBadge">Mid Tutor</span>
+              </div>
+              <div class="profile-location" id="profileLocation">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span id="locationText">Кыргызстан, Бишкек</span>
+                <div class="location-edit" id="locationEditGroup" style="display:none;">
+                  <input type="text" id="countryInput" class="loc-input" placeholder="Страна">
+                  <input type="text" id="cityInput" class="loc-input" placeholder="Город">
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-tagline" id="profileTagline">Загрузка данных профиля...</div>
+
+            <!-- Edit Controls (owner only) -->
+            <div class="edit-bar" id="editBar">
+              <div style="display:flex;gap:8px;">
+                <button class="btn-edit-profile" id="btnEdit" onclick="enterEditMode()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                  Редактировать
+                </button>
+                <button class="btn-save-profile" id="btnSave" onclick="saveProfile()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Сохранить
+                </button>
+                <button class="btn-cancel-profile" id="btnCancel" onclick="cancelEdit()">Отмена</button>
+              </div>
+              <button class="btn-logout" onclick="handleLogout()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Выйти
+              </button>
+            </div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <!-- Reviews list -->
+          <div class="section" id="reviewsSection" style="display:none;">
+            <div class="section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              Отзывы учеников
+            </div>
+            <div id="reviewsList" style="display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <!-- About Me -->
+          <div class="section">
+            <div class="section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Обо мне
+            </div>
+            <div class="about-text" id="aboutText">Загрузка...</div>
+            <textarea class="about-textarea" id="aboutTextarea"
+              placeholder="Расскажите о себе, своём опыте, методике преподавания..."></textarea>
+            <a class="learn-more-link" id="learnMoreLink" onclick="toggleAbout(this)">Узнать больше</a>
+          </div>
+
+          <div class="card-divider"></div>
+
+          <!-- Subjects -->
+          <div class="section">
+            <div class="section-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z" />
+              </svg>
+              Предметы
+            </div>
+            <div class="subject-tags" id="subjectTags">
+              <span class="subj-tag" style="background:var(--bg);color:var(--muted);">Загрузка...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- POSTS CARD -->
+        <div class="card" id="cardPosts">
+          <div class="posts-panel">
+            <div class="section-title" style="margin-bottom:14px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              Посты
+            </div>
+            <div id="postComposeArea">
+              <textarea class="post-compose" id="postCompose"
+                placeholder="Поделитесь методикой, советом или новостью..."></textarea>
+              <div class="post-upload-bar" id="postUploadBar">
+                <img src="" alt="preview" class="post-upload-preview" id="postUploadPreview">
+                <span id="postUploadFileName"
+                  style="font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+                <button type="button" class="post-upload-clear" onclick="clearPostUpload()"
+                  title="Убрать фото">✕</button>
+              </div>
+              <div class="post-compose-actions">
+                <input type="file" id="postPhotoInput" accept="image/*" style="display:none;"
+                  onchange="handlePostPhotoSelect(event)">
+                <button type="button" class="btn-post-photo"
+                  onclick="document.getElementById('postPhotoInput').click()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
+                  </svg>
+                  Фото
+                </button>
+                <button class="btn-post" onclick="publishPost()">Опубликовать</button>
+              </div>
+            </div>
+            <div id="postsFeed" style="margin-top:16px;"></div>
+          </div>
+        </div>
+
+      </div><!-- /left col -->
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="col-right" style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- Stats card -->
+        <div class="card" id="cardStats">
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-value">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#F5B942">
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <span id="ratingDisplay">4.8</span>
+              </div>
+              <div class="stat-label">рейтинг</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2">
+                  <path d="M9 11l3 3L22 4" />
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+                <span id="lessonsDisplay">0</span>
+              </div>
+              <div class="stat-label">уроков</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="rateDisplay" style="color:var(--teal-dark);font-size:18px;">—$</div>
+              <div class="stat-label">в месяц</div>
+            </div>
+          </div>
+          <!-- CTAs -->
+          <div class="cta-panel" id="ctaPanel">
+            <button class="btn-primary" onclick="bookLesson()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="16" rx="2" />
+                <path d="M8 2v4M16 2v4M3 10h18" />
+              </svg>
+              Забронировать урок
+            </button>
+            <button class="btn-outline" onclick="window.location.href='Chat.html?uid='+profileUid">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              Написать
+            </button>
+            <button class="btn-outline" onclick="handleShare()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+              Поделиться
+            </button>
+          </div>
+          <div class="rec-tag" id="recTag" style="display:none;"></div>
+        </div>
+
+        <!-- Certificates card -->
+        <div class="card" id="cardCertificates">
+          <div class="cert-panel">
+            <div class="cert-title">
+              <span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="vertical-align:-3px;margin-right:5px;">
+                  <circle cx="12" cy="8" r="6" />
+                  <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+                </svg>
+                Сертификаты
+              </span>
+              <span style="font-size:12px;color:var(--text-soft);" id="certCount">0 шт.</span>
+            </div>
+            <div class="cert-grid" id="certGrid"></div>
+            <label class="cert-add-btn" id="certAddBtn" title="Добавить сертификат">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+              Добавить сертификат
+              <input type="file" accept="image/*" id="certInput" onchange="addCertificate(event)">
+            </label>
+          </div>
+        </div>
+
+        <!-- Activity card -->
+        <div class="card" id="cardActivity" style="padding:16px;">
+          <div class="section-title" style="margin-bottom:12px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+            Активность
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13.5px;">
+              <span style="color:var(--text-mid);">Студентов</span>
+              <span style="font-weight:700;color:var(--teal-dark);" id="studentCount">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13.5px;">
+              <span style="color:var(--text-mid);">Опыт</span>
+              <span style="font-weight:700;color:var(--teal-dark);" id="expDisplay">—</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13.5px;">
+              <span style="color:var(--text-mid);">Страна</span>
+              <span style="font-weight:700;color:var(--teal-dark);" id="countryDisplay">🇰🇬 KG</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13.5px;">
+              <span style="color:var(--text-mid);">Ставка/час</span>
+              <span style="font-weight:700;color:var(--teal-dark);" id="hourlyRate">—</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /right sidebar -->
+    </div>
+  </div>
+
+  <!-- EUREKA MASCOT -->
+  <div class="eureka-widget" id="eurekaWidget" style="display:none;">
+    <div class="eureka-bubble" id="eurekaBubble">
+      <button class="eureka-close" id="eurekaClose" title="Закрыть">×</button>
+      <div class="eureka-text" id="eurekaText">
+        <strong>Привет, я Eureka! 🎓</strong>
+        Обновите профиль, чтобы привлечь больше учеников!
+      </div>
+    </div>
+    <div class="eureka-avatar-wrap" onclick="eurekaToggle()">
+      <div class="mascot-avatar-circle" id="eurekaAvatar"></div>
+      <div class="eureka-pulse"></div>
+    </div>
+  </div>
+
+  <!-- MOBILE STICKY CTA — главная кнопка всегда под рукой, без скролла -->
+  <div class="mobile-sticky-cta" id="mobileStickyCta">
+    <button class="btn-primary" onclick="bookLesson()" id="stickyTrialBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <path d="M8 2v4M16 2v4M3 10h18" />
+      </svg>
+      Забронировать урок
+    </button>
+  </div>
+
+  <!-- BOTTOM TAB BAR (мобильная навигация) -->
+  <nav class="mob-nav" id="mobNav">
+    <a href="index.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+        <polyline points="9 21 9 12 15 12 15 21" />
+      </svg>
+      <span>Лента</span>
+    </a>
+    <a href="public.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      <span>Обсуждения</span>
+    </a>
+    <a href="Chat.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <path
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+      <span>Чат</span>
+    </a>
+    <a href="trainings.html" class="mob-nav-item">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+      <span>Тренинги</span>
+    </a>
+    <a href="tutor-profile.html" class="mob-nav-item active">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+      <span>Профиль</span>
+    </a>
+  </nav>
+
+  <!-- Toast -->
+  <div class="toast" id="toastEl"></div>
+
+  <!-- FIREBASE + LOGIC -->
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut }
+      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, updateDoc, setDoc, arrayUnion, onSnapshot,
+      collection, addDoc, query, where, getDocs, orderBy, limit,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { uploadToCloudinary } from "./cloudinary-upload.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQ9UYY6uh3CgXzytNwt_r2LCwaXval9T8",
+      authDomain: "tutorapp-95f48.firebaseapp.com",
+      projectId: "tutorapp-95f48",
+      storageBucket: "tutorapp-95f48.firebasestorage.app",
+      messagingSenderId: "559214827748",
+      appId: "1:559214827748:web:c77d90b72d607f6df1b4f1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    let currentUid = null;
+    let profileUid = null;
+    let isOwner = false;
+    let currentUserData = null;
+    let isEditMode = false;
+    let certificates = [];
+    let _savedName = '', _savedTagline = '', _savedAbout = '';
+    let _savedCountry = '', _savedCity = '';
+    let _aboutExpanded = false;
+
+    /* ── ENTRY POINT ── */
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = './auth.html';
+        return;
+      }
+      currentUid = user.uid;
+
+      // ── Чей профиль открываем ──
+      // Если в URL есть ?uid=<чужой_uid> (переход по "Посмотреть профиль" —
+      // например, с главной страницы) — открываем ЧУЖОЙ профиль в гостевом
+      // режиме. Если параметра нет — открываем СВОЙ профиль.
+      // isOwner решает всё: именно от него зависит, покажем ли мы кнопки
+      // редактирования (applyOwnerMode) или гостевые CTA-кнопки с кнопкой
+      // "Назад" (applyVisitorMode).
+      const params = new URLSearchParams(window.location.search);
+      const uidParam = params.get('uid');
+      profileUid = uidParam || currentUid;
+      isOwner = (profileUid === currentUid);
+
+      try {
+        const snap = await getDoc(doc(db, 'users', profileUid));
+        if (!snap.exists()) {
+          showError('Профиль не найден 😕');
+          return;
+        }
+        const data = snap.data();
+
+        // Открываем свой профиль, но роль в базе не 'tutor' (репетиторский
+        // статус присваивается при регистрации) — этой странице тут делать
+        // нечего, уводим на обычный profile.html.
+        if (isOwner && data.role !== 'tutor') {
+          window.location.href = './profile.html';
+          return;
+        }
+        // Открываем чужой профиль — он обязан быть репетиторским,
+        // иначе это не тот профиль, который должен показываться здесь.
+        if (!isOwner && data.role !== 'tutor') {
+          showError('Это не профиль репетитора');
+          return;
+        }
+
+        currentUserData = data;
+        hydratePage(data);
+        loadPosts();
+        loadReviews();
+        loadCurrentUserHeader();
+        loadAndApplyRating(profileUid);
+        loadLessonsStat(profileUid);
+        if (isOwner) ensureLessonsFieldInitialized(data);
+
+        if (isOwner) {
+          applyOwnerMode();
+        } else {
+          applyVisitorMode(data);
+        }
+
+      } catch (err) {
+        console.error('Firestore load error:', err);
+        showError('Ошибка загрузки профиля');
+      }
+    });
+
+    /* ── HYDRATE PAGE ── */
+    function hydratePage(data) {
+      const nick = data.nick || data.fullName || 'Репетитор';
+      const fullName = data.fullName || nick;
+      const description = data.description || 'О себе ещё ничего не написано...';
+      const subjects = data.subjects || data.tutorSpecific?.subjects || [];
+      const rate = data.ratePerHour ?? data.tutorSpecific?.price ?? null;
+      const photoUrl = data.photoUrl || '';
+      const bannerUrl = data.bannerUrl || '';
+      // Рейтинг/тир — первичная (быстрая) отрисовка из кэша users-документа.
+      // Окончательное значение подтягивается асинхронно из коллекции `ratings` — см. loadAndApplyRating().
+      const rating = data.rating ?? null;
+      // Кол-во уроков — поле `lessons` в users-документе (см. скрин Firestore).
+      // Окончательное значение подтягивается из коллекции `lessons` — см. loadLessonsStat().
+      const lessonCount = data.lessons ?? 0;
+      const experience = data.experience || '—';
+      const studentCnt = data.studentCount || '—';
+      const tierBadge = data.tierBadge || 'Mid Tutor';
+      const country = data.country || 'Кыргызстан';
+      const city = data.city || 'Бишкек';
+
+      setAvatarDisplay(photoUrl, nick);
+
+      if (bannerUrl) {
+        const bi = document.getElementById('bannerImg');
+        bi.src = bannerUrl;
+        bi.style.display = 'block';
+      }
+
+      document.getElementById('profileName').textContent = fullName;
+      document.getElementById('tierBadge').textContent = tierBadge;
+      document.getElementById('locationText').textContent = `${country}, ${city}`;
+      document.getElementById('countryInput').value = country;
+      document.getElementById('cityInput').value = city;
+
+      const shortBio = description.length > 160 ? description.slice(0, 160) + '…' : description;
+      document.getElementById('profileTagline').textContent = shortBio;
+
+      document.getElementById('ratingDisplay').textContent = rating !== null ? rating : '—';
+      document.getElementById('lessonsDisplay').textContent = lessonCount;
+      document.getElementById('rateDisplay').textContent = rate !== null ? `${rate}$` : '—сом';
+      document.getElementById('studentCount').textContent = studentCnt;
+      document.getElementById('expDisplay').textContent = experience;
+      document.getElementById('hourlyRate').textContent = rate !== null ? `${rate}$/час` : '—';
+
+      // Тег-рекомендация — только если репетитор/админ указал направления
+      const recList = data.recommendedFor || [];
+      const recTag = document.getElementById('recTag');
+      if (recList.length > 0) {
+        recTag.textContent = '🎯 Рекомендуется для подготовки к ' + recList.join(', ');
+        recTag.style.display = 'block';
+      } else {
+        recTag.style.display = 'none';
+      }
+
+      document.getElementById('aboutText').textContent = description;
+      document.getElementById('aboutTextarea').value = description;
+      _savedAbout = description;
+      _savedName = fullName;
+      _savedTagline = shortBio;
+      _savedCountry = country;
+      _savedCity = city;
+
+      document.title = fullName + ' — Репетитор · TutorApp';
+      renderSubjectTags(subjects);
+
+      certificates = data.certificates || [];
+      renderCertGrid();
+    }
+
+    /* ── RATING (коллекция `ratings`, role === 'tutor') ──
+       Документ рейтинга: { tutorUid, role: 'tutor', rating: <1..5>, createdAt }
+       Средний рейтинг >= 4.5 → статус 'Pro Tutor', иначе 'Mid Tutor'.
+       Результат кэшируется обратно в users-документ (rating, tierBadge),
+       чтобы карточки в поиске/листинге могли читать его без пересчёта. */
+    async function loadAndApplyRating(uid) {
+      try {
+        const q = query(
+          collection(db, 'ratings'),
+          where('tutorUid', '==', uid),
+          where('role', '==', 'tutor')
+        );
+        const snap = await getDocs(q);
+
+        let sum = 0, count = 0;
+        snap.forEach(d => {
+          const val = Number(d.data().rating);
+          if (!isNaN(val)) { sum += val; count++; }
+        });
+
+        const average = count > 0 ? Math.round((sum / count) * 10) / 10 : null;
+        const tier = (average !== null && average >= 4.5) ? 'Pro Tutor' : 'Mid Tutor';
+
+        document.getElementById('ratingDisplay').textContent = average !== null ? average : '—';
+        document.getElementById('tierBadge').textContent = tier;
+
+        if (currentUserData) { currentUserData.rating = average; currentUserData.tierBadge = tier; }
+
+        // Кэшируем вычисленные значения в профиль — только владелец может писать в свой users-документ
+        if (isOwner) {
+          try {
+            await updateDoc(doc(db, 'users', uid), { rating: average, tierBadge: tier });
+          } catch (e) {
+            console.log('rating cache update:', e.message);
+          }
+        }
+        return { average, count, tier };
+      } catch (err) {
+        console.error('loadAndApplyRating:', err);
+        return { average: null, count: 0, tier: 'Mid Tutor' };
+      }
+    }
+
+    /* ── LESSONS (коллекция `lessons`) ──
+       Документ урока: { tutorUid, studentUid, status, createdAt }
+       Кол-во уроков репетитора = размер выборки по tutorUid.
+       Если коллекция ещё не используется/недоступна — fallback на поле users.lessons. */
+    async function loadLessonsStat(uid) {
+      try {
+        const q = query(collection(db, 'lessons'), where('tutorUid', '==', uid));
+        const snap = await getDocs(q);
+        document.getElementById('lessonsDisplay').textContent = snap.size;
+        return snap.size;
+      } catch (err) {
+        console.log('loadLessonsStat fallback:', err.message);
+        const fallback = currentUserData?.lessons ?? 0;
+        document.getElementById('lessonsDisplay').textContent = fallback;
+        return fallback;
+      }
+    }
+
+    /* Гарантируем, что у нового аккаунта репетитора есть начальное поле lessons: 0 */
+    async function ensureLessonsFieldInitialized(data) {
+      if (data.lessons === undefined) {
+        try {
+          await updateDoc(doc(db, 'users', currentUid), { lessons: 0 });
+          if (currentUserData) currentUserData.lessons = 0;
+        } catch (e) {
+          console.log('ensureLessonsFieldInitialized:', e.message);
+        }
+      }
+    }
+
+    /* ── OWNER MODE ── */
+    /* ── OWNER MODE ──
+       Вызывается только когда isOwner === true, то есть открыт СВОЙ профиль
+       (profileUid === currentUid) и роль пользователя — 'tutor' (проверено
+       в точке входа выше). Только в этом случае репетитор видит кнопки
+       редактирования и может менять данные о себе. */
+    function applyOwnerMode() {
+      // Снимаем "гейт ожидания" — теперь можно явно показать нужный набор UI
+      document.body.classList.remove('mode-pending');
+      document.body.classList.add('mode-owner');
+
+      // Показываем edit-bar и кнопку смены обложки
+      document.getElementById('editBar').style.display = 'flex';
+      document.getElementById('btnChangeBanner').style.display = 'flex';
+      document.getElementById('avatarEditBtn').style.display = 'flex';
+      document.getElementById('certAddBtn').style.display = 'flex';
+      document.getElementById('postComposeArea').style.display = 'block';
+      // Скрываем CTA (для себя не нужно, в т.ч. "Забронировать урок") —
+      // и десктопную карточку, и мобильную sticky-панель
+      document.getElementById('ctaPanel').style.display = 'none';
+      document.getElementById('mobileStickyCta').style.display = 'none';
+      // Показываем Eureka
+      document.getElementById('eurekaWidget').style.display = 'flex';
+      eurekaInit();
+    }
+
+    /* ── VISITOR MODE ──
+       Вызывается когда isOwner === false, то есть открыт ЧУЖОЙ профиль
+       (например, переход по "Посмотреть профиль" с главной страницы,
+       tutor-profile.html?uid=<чужой_uid>). Гость не может ничего
+       редактировать — все кнопки редактирования скрыты, вместо них
+       показываются кнопки "Забронировать урок" (→ booking.html) /
+       "Написать" (→ чат) / "Поделиться", а сверху появляется баннер
+       с кнопкой "← Назад". */
+    function applyVisitorMode(data) {
+      // Снимаем "гейт ожидания" — теперь можно явно показать нужный набор UI
+      document.body.classList.remove('mode-pending');
+      document.body.classList.add('mode-visitor');
+
+      // Скрываем редакторские элементы
+      document.getElementById('editBar').style.display = 'none';
+      document.getElementById('btnChangeBanner').style.display = 'none';
+      document.getElementById('avatarEditBtn').style.display = 'none';
+      document.getElementById('certAddBtn').style.display = 'none';
+      document.getElementById('postComposeArea').style.display = 'none';
+      // Eureka только для владельца
+      document.getElementById('eurekaWidget').style.display = 'none';
+
+      // CTA для посетителя — заменяем кнопки
+      document.getElementById('ctaPanel').innerHTML = `
+        <button class="btn-primary" onclick="bookLesson()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
+          Забронировать урок
+        </button>
+        <button class="btn-outline" onclick="window.location.href='Chat.html?uid=${profileUid}'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Написать
+        </button>
+        <button class="btn-outline" onclick="handleShare()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Поделиться
+        </button>`;
+
+      // Мобильная sticky-кнопка записи — видна посетителю
+      document.getElementById('mobileStickyCta').style.display = '';
+
+      // Показываем баннер «Вы смотрите чужой профиль»
+      const name = data.fullName || data.nick || 'Репетитор';
+      const banner = document.getElementById('visitorBanner');
+      document.getElementById('visitorBannerName').textContent = '👨‍🏫 Профиль репетитора: ' + name;
+      banner.style.display = 'flex';
+
+      // Сдвигаем header вниз (subnav скрыт)
+      document.querySelector('header').style.top = '38px';
+      document.querySelector('.page-body').style.paddingTop = 'calc(38px + var(--header-h))';
+    }
+
+    /* ── HEADER: АВАТАР, БАЛЛЫ, УВЕДОМЛЕНИЯ (live, как в trainings.html) ── */
+    let pointsUnsub = null, notifsUnsub = null, lastPoints = null;
+
+    window.toggleNotifPanel = function () {
+      const p = document.getElementById('notifPanel');
+      const o = document.getElementById('notifOverlay');
+      const open = p.classList.contains('open');
+      p.classList.toggle('open', !open);
+      o.classList.toggle('open', !open);
+    };
+    window.closeNotifPanel = function () {
+      document.getElementById('notifPanel').classList.remove('open');
+      document.getElementById('notifOverlay').classList.remove('open');
+    };
+
+    function relTime(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const m = Math.floor((Date.now() - d.getTime()) / 60000);
+      if (m < 1) return 'только что'; if (m < 60) return m + ' мин'; const h = Math.floor(m / 60);
+      if (h < 24) return h + ' ч'; return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    }
+
+    function renderNotifs(docs) {
+      const list = document.getElementById('notifPanelList'); if (!list) return;
+      if (!docs.length) { list.innerHTML = '<div class="notif-empty">Нет новых уведомлений</div>'; return; }
+      list.innerHTML = '';
+      docs.forEach(d => {
+        const data = d.data();
+        const item = document.createElement('div');
+        item.className = 'notif-item' + (data.read ? '' : ' unread');
+        const init = (data.fromName || '?')[0].toUpperCase();
+        const avContent = data.fromAvatar ? `<img src="${escapeHtml(data.fromAvatar)}" alt="" onerror="this.parentElement.innerHTML='${init}'">` : init;
+        const typeIcon = data.type === 'like' ? '<span class="notif-icon-badge like">❤️</span>' : data.type === 'comment' ? '<span class="notif-icon-badge comment">💬</span>' : '<span class="notif-icon-badge msg">💬</span>';
+        item.innerHTML = `<div class="notif-av" style="position:relative;">${avContent}${typeIcon}</div><div class="notif-body"><div class="notif-from">${escapeHtml(data.fromName || 'Кто-то')}</div><div class="notif-text">${escapeHtml(data.text || '')}</div><div class="notif-time">${relTime(data.createdAt)}</div></div>`;
+        item.addEventListener('click', async () => {
+          try { await updateDoc(d.ref, { read: true }); } catch (e) { }
+          if (data.chatId && data.chatType === 'direct') window.location.href = `Chat.html?to=${data.fromUid}`;
+          else if (data.type === 'like' || data.type === 'comment') window.location.href = 'public.html';
+          window.closeNotifPanel();
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function subscribeNotifs(uid) {
+      if (notifsUnsub) notifsUnsub();
+      const q = query(collection(db, 'notifications'), where('toUid', '==', uid), orderBy('createdAt', 'desc'), limit(30));
+      notifsUnsub = onSnapshot(q, snap => {
+        const unread = snap.docs.filter(d => !d.data().read).length;
+        const badge = document.getElementById('notifBadge');
+        const bell = document.getElementById('hNotif');
+        if (badge) {
+          if (unread > 0) { badge.textContent = unread > 9 ? '9+' : unread; badge.style.display = 'flex'; if (bell) { bell.classList.add('notif-pulse'); setTimeout(() => bell.classList.remove('notif-pulse'), 400); } }
+          else { badge.style.display = 'none'; }
+        }
+        renderNotifs(snap.docs);
+      }, err => console.warn('[Notifs]', err));
+    }
+
+    function bindMarkAll(uid) {
+      const btn = document.getElementById('notifMarkAll');
+      if (!btn || btn._bound) return; btn._bound = true;
+      btn.addEventListener('click', async () => {
+        const q2 = query(collection(db, 'notifications'), where('toUid', '==', uid), where('read', '==', false));
+        const snap = await getDocs(q2);
+        await Promise.all(snap.docs.map(d => updateDoc(d.ref, { read: true })));
+      });
+    }
+
+    function animateCoins(el, from, to) {
+      const badge = el.closest('.h-coins');
+      if (badge && to > from) { badge.classList.add('coins-pop'); setTimeout(() => badge.classList.remove('coins-pop'), 280); }
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / 700, 1), e = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(from + (to - from) * e).toLocaleString('ru-RU');
+        if (p < 1) requestAnimationFrame(tick); else el.textContent = to.toLocaleString('ru-RU');
+      }
+      requestAnimationFrame(tick);
+    }
+
+    async function loadCurrentUserHeader() {
+      const headerAv = document.getElementById('headerAvatar');
+      const coinsEl = document.getElementById('coinsDisplay');
+      try {
+        const snap = await getDoc(doc(db, 'users', currentUid));
+        if (!snap.exists() || typeof snap.data().score !== 'number') {
+          await setDoc(doc(db, 'users', currentUid), { score: 5, scoreHistory: arrayUnion({ amount: 5, reason: 'signup_bonus', at: Date.now() }) }, { merge: true });
+        }
+      } catch (e) { console.warn('header score init:', e); }
+
+      if (pointsUnsub) pointsUnsub();
+      pointsUnsub = onSnapshot(doc(db, 'users', currentUid), snap => {
+        if (!snap.exists()) return;
+        const me = snap.data();
+        if (headerAv) {
+          if (me.photoUrl) {
+            headerAv.innerHTML = `<img src="${me.photoUrl}" alt="" style="width:100%;height:100%;object-fit:cover;">`;
+          } else {
+            headerAv.textContent = (me.fullName || me.nick || '?')[0].toUpperCase();
+          }
+          headerAv.onclick = () => { window.location.href = isOwner ? 'tutor-profile.html' : 'profile.html'; };
+          headerAv.style.cursor = 'pointer';
+        }
+        if (coinsEl) {
+          const pts = typeof me.score === 'number' ? me.score : 5;
+          if (lastPoints !== null && pts !== lastPoints) animateCoins(coinsEl, lastPoints, pts);
+          else coinsEl.textContent = pts.toLocaleString('ru-RU');
+          lastPoints = pts;
+        }
+      }, err => console.warn('[Points]', err));
+
+      subscribeNotifs(currentUid);
+      bindMarkAll(currentUid);
+    }
+
+    /* ── HELPERS ── */
+    function setAvatarDisplay(photoUrl, name) {
+      const img = document.getElementById('avatarImg');
+      const initials = document.getElementById('avatarInitials');
+      if (photoUrl) {
+        img.src = photoUrl;
+        img.style.display = 'block';
+        initials.style.display = 'none';
+        img.onerror = () => { img.style.display = 'none'; initials.style.display = 'flex'; initials.textContent = (name || '?')[0].toUpperCase(); };
+      } else {
+        img.style.display = 'none';
+        initials.style.display = 'flex';
+        initials.textContent = (name || '?')[0]?.toUpperCase() || '?';
+      }
+    }
+
+    function renderSubjectTags(subjects) {
+      const c = document.getElementById('subjectTags');
+      if (!subjects || subjects.length === 0) {
+        c.innerHTML = '<span class="subj-tag" style="background:var(--bg);color:var(--muted);">Предметы не указаны</span>';
+        return;
+      }
+      c.innerHTML = subjects.map(s => `<span class="subj-tag">${escapeHtml(s)}</span>`).join('');
+    }
+
+    function showError(msg) {
+      document.body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;font-family:'DM Sans',sans-serif;"><div style="font-size:48px;">😕</div><div style="font-size:18px;font-weight:700;">${msg}</div><button onclick="history.back()" style="background:#00A896;color:#fff;border:none;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;">← Назад</button></div>`;
+    }
+
+    /* ── EDIT MODE ── */
+    window.enterEditMode = function () {
+      if (!isOwner || isEditMode) return;
+      isEditMode = true;
+      _savedName = document.getElementById('profileName').textContent.trim();
+      _savedTagline = document.getElementById('profileTagline').textContent.trim();
+      _savedAbout = document.getElementById('aboutTextarea').value;
+      _savedCountry = document.getElementById('countryInput').value.trim();
+      _savedCity = document.getElementById('cityInput').value.trim();
+
+      document.getElementById('profileName').setAttribute('contenteditable', 'true');
+      document.getElementById('profileTagline').setAttribute('contenteditable', 'true');
+      document.getElementById('profileTagline').focus();
+      document.getElementById('aboutText').style.display = 'none';
+      document.getElementById('aboutTextarea').classList.add('active');
+      document.getElementById('locationText').style.display = 'none';
+      document.getElementById('locationEditGroup').style.display = 'flex';
+
+      document.getElementById('btnEdit').style.display = 'none';
+      document.getElementById('btnSave').classList.add('active');
+      document.getElementById('btnCancel').classList.add('active');
+      showToast('✏️ Режим редактирования включён');
+    };
+
+    window.cancelEdit = function () {
+      if (!isEditMode) return;
+      isEditMode = false;
+      document.getElementById('profileName').textContent = _savedName;
+      document.getElementById('profileTagline').textContent = _savedTagline;
+      document.getElementById('aboutTextarea').value = _savedAbout;
+      document.getElementById('aboutText').textContent = _savedAbout;
+      document.getElementById('countryInput').value = _savedCountry;
+      document.getElementById('cityInput').value = _savedCity;
+      document.getElementById('locationText').textContent = `${_savedCountry}, ${_savedCity}`;
+      exitEditVisuals();
+      showToast('↩ Изменения отменены');
+    };
+
+    window.saveProfile = async function () {
+      if (!isOwner || !isEditMode) return;
+      const newName = document.getElementById('profileName').textContent.trim() || _savedName;
+      const newTagline = document.getElementById('profileTagline').textContent.trim();
+      const newAbout = document.getElementById('aboutTextarea').value.trim();
+      const newCountry = document.getElementById('countryInput').value.trim() || _savedCountry || 'Кыргызстан';
+      const newCity = document.getElementById('cityInput').value.trim() || _savedCity || 'Бишкек';
+
+      document.getElementById('profileName').textContent = newName;
+      document.getElementById('profileTagline').textContent = newTagline;
+      document.getElementById('aboutText').textContent = newAbout || 'О себе ещё ничего не написано...';
+      document.getElementById('locationText').textContent = `${newCountry}, ${newCity}`;
+      isEditMode = false;
+      exitEditVisuals();
+
+      const btn = document.getElementById('btnSave');
+      btn.innerHTML = '<span class="spin"></span> Сохранение...';
+
+      try {
+        await updateDoc(doc(db, 'users', currentUid), {
+          fullName: newName,
+          description: newAbout || '',
+          country: newCountry,
+          city: newCity,
+        });
+        if (currentUserData) {
+          currentUserData.fullName = newName;
+          currentUserData.description = newAbout;
+          currentUserData.country = newCountry;
+          currentUserData.city = newCity;
+        }
+        _savedName = newName; _savedTagline = newTagline; _savedAbout = newAbout;
+        _savedCountry = newCountry; _savedCity = newCity;
+        showToast('✅ Профиль сохранён!', 'success');
+      } catch (err) {
+        console.error('Save error:', err);
+        showToast('⚠ Ошибка сохранения', 'error');
+      }
+
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Сохранить';
+      btn.classList.add('active');
+    };
+
+    function exitEditVisuals() {
+      document.getElementById('profileName').removeAttribute('contenteditable');
+      document.getElementById('profileTagline').removeAttribute('contenteditable');
+      document.getElementById('aboutText').style.display = '';
+      document.getElementById('aboutTextarea').classList.remove('active');
+      document.getElementById('locationText').style.display = '';
+      document.getElementById('locationEditGroup').style.display = 'none';
+      document.getElementById('btnEdit').style.display = '';
+      document.getElementById('btnSave').classList.remove('active');
+      document.getElementById('btnCancel').classList.remove('active');
+    }
+
+    /* ── AVATAR UPLOAD ── */
+    window.handleAvatarUpload = async function (e) {
+      if (!isOwner) return;
+      const file = e.target.files[0];
+      if (!file) return;
+      showToast('⏳ Загружаю фото...');
+
+      try {
+        const url = await uploadToCloudinary(file, 'avatars');
+        setAvatarDisplay(url, currentUserData?.fullName || '');
+        document.getElementById('headerAvatar').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+        await updateDoc(doc(db, 'users', currentUid), { photoUrl: url });
+        if (currentUserData) currentUserData.photoUrl = url;
+        showToast('✅ Фото сохранено!', 'success');
+      } catch (err) {
+        // Fallback: base64
+        const dataUrl = await fileToBase64(file, 200, 200);
+        setAvatarDisplay(dataUrl, currentUserData?.fullName || '');
+        document.getElementById('headerAvatar').innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+        try { await updateDoc(doc(db, 'users', currentUid), { photoUrl: dataUrl }); } catch (_) { }
+        showToast('📸 Фото обновлено!', 'success');
+      }
+    };
+
+    /* ── BANNER UPLOAD ── */
+    window.triggerBannerUpload = function () {
+      if (!isOwner) return;
+      document.getElementById('bannerInput').click();
+    };
+
+    window.handleBannerUpload = async function (e) {
+      if (!isOwner) return;
+      const file = e.target.files[0];
+      if (!file) return;
+      showToast('⏳ Загружаю обложку...');
+
+      try {
+        const url = await uploadToCloudinary(file, 'banners');
+        const bi = document.getElementById('bannerImg');
+        bi.src = url; bi.style.display = 'block';
+        await updateDoc(doc(db, 'users', currentUid), { bannerUrl: url });
+        if (currentUserData) currentUserData.bannerUrl = url;
+        showToast('🖼 Обложка сохранена!', 'success');
+      } catch (err) {
+        const dataUrl = await fileToBase64(file, 1200, 320);
+        const bi = document.getElementById('bannerImg');
+        bi.src = dataUrl; bi.style.display = 'block';
+        try { await updateDoc(doc(db, 'users', currentUid), { bannerUrl: dataUrl }); } catch (_) { }
+        showToast('🖼 Обложка обновлена!', 'success');
+      }
+    };
+
+    /* ── CERTIFICATES ── */
+    window.addCertificate = async function (e) {
+      if (!isOwner) return;
+      const file = e.target.files[0];
+      if (!file) return;
+      const dataUrl = await fileToBase64(file, 600, 400);
+      certificates.push({ dataUrl, name: file.name, addedAt: new Date().toISOString() });
+      renderCertGrid();
+      showToast('🏆 Сертификат добавлен!', 'success');
+      try {
+        await updateDoc(doc(db, 'users', currentUid), { certificates });
+      } catch (err) {
+        showToast('⚠ Ошибка сохранения', 'error');
+      }
+      e.target.value = '';
+    };
+
+    function renderCertGrid() {
+      const grid = document.getElementById('certGrid');
+      document.getElementById('certCount').textContent = `${certificates.length} шт.`;
+      if (certificates.length === 0) {
+        grid.innerHTML = `<div class="cert-placeholder" style="grid-column:1/-1;padding:20px 0;border:1.5px dashed var(--border);border-radius:var(--r-sm);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+          ${isOwner ? 'Добавьте ваши сертификаты' : 'Сертификаты не добавлены'}
+        </div>`;
+        return;
+      }
+      grid.innerHTML = certificates.map((cert, i) => `
+        <div class="cert-card" title="${escapeHtml(cert.name)}" onclick="viewCert(${i})">
+          <img src="${cert.dataUrl}" alt="${escapeHtml(cert.name)}">
+          <div style="position:absolute;inset:0;display:flex;align-items:flex-end;padding:6px;">
+            <span style="font-size:10px;color:#fff;background:rgba(0,0,0,0.5);border-radius:4px;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${escapeHtml(cert.name)}</span>
+          </div>
+        </div>`).join('');
+    }
+
+    window.viewCert = function (i) {
+      const cert = certificates[i];
+      if (!cert) return;
+      const win = window.open();
+      win.document.write(`<img src="${cert.dataUrl}" style="max-width:100%;max-height:100vh;">`);
+      win.document.title = cert.name;
+    };
+
+    /* ── POSTS ── */
+    async function loadPosts() {
+      try {
+        const q = query(
+          collection(db, 'posts'),
+          where('authorId', '==', profileUid),
+          orderBy('createdAt', 'desc')
+        );
+        const snap = await getDocs(q);
+        const feed = document.getElementById('postsFeed');
+        if (snap.empty) {
+          feed.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:8px 0;">${isOwner ? 'Постов ещё нет. Напишите первый!' : 'Постов пока нет.'}</div>`;
+          return;
+        }
+        feed.innerHTML = snap.docs.map(d => renderPostCard({ id: d.id, ...d.data() })).join('');
+      } catch (err) {
+        console.log('loadPosts:', err.message);
+        // Если нет индекса — показываем без сортировки
+        try {
+          const q2 = query(collection(db, 'posts'), where('authorId', '==', profileUid));
+          const snap2 = await getDocs(q2);
+          const feed = document.getElementById('postsFeed');
+          if (snap2.empty) {
+            feed.innerHTML = `<div style="color:var(--muted);font-size:13px;padding:8px 0;">${isOwner ? 'Постов ещё нет. Напишите первый!' : 'Постов пока нет.'}</div>`;
+            return;
+          }
+          const sorted = snap2.docs.map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+          feed.innerHTML = sorted.map(p => renderPostCard(p)).join('');
+        } catch (_) { }
+      }
+    }
+
+    function renderPostCard(p) {
+      const date = p.createdAt?.toDate?.() || new Date(p.createdAt || Date.now());
+      const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+      const imgHtml = p.imageUrl
+        ? `<img src="${escapeHtml(p.imageUrl)}" class="post-image" onclick="window.open('${escapeHtml(p.imageUrl)}','_blank')">`
+        : '';
+      return `<div class="post-card"><div class="post-meta">${dateStr}</div><div class="post-text">${escapeHtml(p.content || p.text || '')}</div>${imgHtml}</div>`;
+    }
+
+    /* ── REVIEWS ── */
+    // Документ отзыва (коллекция 'reviews'): { tutorUid, studentName, rating, text, createdAt }
+    async function loadReviews() {
+      const section = document.getElementById('reviewsSection');
+      const list = document.getElementById('reviewsList');
+      try {
+        const q = query(
+          collection(db, 'reviews'),
+          where('tutorUid', '==', profileUid),
+          orderBy('createdAt', 'desc')
+        );
+        const snap = await getDocs(q);
+        renderReviews(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch (err) {
+        console.log('loadReviews:', err.message);
+        // Fallback без orderBy, если в Firestore ещё не создан составной индекс
+        try {
+          const q2 = query(collection(db, 'reviews'), where('tutorUid', '==', profileUid));
+          const snap2 = await getDocs(q2);
+          const sorted = snap2.docs.map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+          renderReviews(sorted);
+        } catch (_) {
+          section.style.display = 'none';
+        }
+      }
+
+      function renderReviews(reviews) {
+        if (!reviews.length) { section.style.display = 'none'; return; }
+        section.style.display = 'block';
+        list.innerHTML = reviews.slice(0, 5).map(renderReviewCard).join('');
+      }
+    }
+
+    function renderReviewCard(r) {
+      const date = r.createdAt?.toDate?.() || new Date(r.createdAt || Date.now());
+      const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+      const name = escapeHtml(r.studentName || 'Ученик');
+      const initial = name[0]?.toUpperCase() || '?';
+      const score = Number(r.rating) || 0;
+      const stars = Array.from({ length: 5 }, (_, i) =>
+        `<svg width="13" height="13" viewBox="0 0 24 24" fill="${i < score ? '#F5B942' : '#E5E9ED'}"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+      ).join('');
+      return `
+        <div style="border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:26px;height:26px;border-radius:50%;background:var(--teal-light);color:var(--teal-dark);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">${initial}</div>
+              <span style="font-size:13px;font-weight:600;color:var(--text);">${name}</span>
+            </div>
+            <span style="font-size:11.5px;color:var(--muted);">${dateStr}</span>
+          </div>
+          <div style="display:flex;gap:2px;margin-bottom:6px;">${stars}</div>
+          <div style="font-size:13px;color:var(--text-mid);line-height:1.5;">${escapeHtml(r.text || '')}</div>
+        </div>`;
+    }
+
+    /* ── PHOTO UPLOAD ДЛЯ ПОСТА ──
+       Превью выбранного файла — точно так же, как в public.html
+       (тот же паттерн: pendingImgFile + FileReader + uploadToCloudinary
+       при публикации). Так посты из tutor-profile.html выглядят
+       и хранятся идентично постам из ленты (public.html). */
+    let pendingPostImgFile = null;
+
+    window.handlePostPhotoSelect = function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      pendingPostImgFile = file;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('postUploadPreview').src = ev.target.result;
+        document.getElementById('postUploadFileName').textContent = file.name;
+        document.getElementById('postUploadBar').classList.add('show');
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    };
+
+    window.clearPostUpload = function () {
+      pendingPostImgFile = null;
+      document.getElementById('postUploadPreview').src = '';
+      document.getElementById('postUploadFileName').textContent = '';
+      document.getElementById('postUploadBar').classList.remove('show');
+    };
+
+    /* ── ПУБЛИКАЦИЯ ПОСТА ──
+       ВАЖНО: схема документа должна СОВПАДАТЬ с той, что использует
+       public.html (window.localSubmitPost), иначе пост, опубликованный
+       здесь, не отобразится корректно в общей ленте/Threads-виде:
+       { authorId, authorName, authorAvatar, content, createdAt,
+         likesCount, commentsCount, imageUrl? } */
+    window.publishPost = async function () {
+      if (!isOwner) return;
+      const ta = document.getElementById('postCompose');
+      const txt = ta.value.trim();
+      if (!txt && !pendingPostImgFile) { showToast('✏️ Напишите что-нибудь'); return; }
+
+      const btn = document.querySelector('#postComposeArea .btn-post');
+      btn.disabled = true;
+      const prevLabel = btn.textContent;
+      btn.textContent = 'Публикация...';
+
+      try {
+        let imageUrl = null;
+        if (pendingPostImgFile) {
+          try {
+            imageUrl = await uploadToCloudinary(pendingPostImgFile, 'post_images');
+          } catch (e) {
+            console.warn('[Post image upload]', e);
+            showToast('⚠ Фото не загрузилось, публикуем без фото', 'error');
+          }
+        }
+
+        const postData = {
+          authorId: currentUid,
+          authorName: currentUserData?.fullName || currentUserData?.nick || 'Репетитор',
+          authorAvatar: currentUserData?.photoUrl || null,
+          content: txt,
+          createdAt: serverTimestamp(),
+          likesCount: 0,
+          commentsCount: 0
+        };
+        if (imageUrl) postData.imageUrl = imageUrl;
+
+        const docRef = await addDoc(collection(db, 'posts'), postData);
+
+        // Локально сразу показываем пост в своей ленте на странице профиля
+        const feed = document.getElementById('postsFeed');
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = renderPostCard({ id: docRef.id, ...postData, createdAt: { toDate: () => new Date() } });
+        if (feed.firstChild) {
+          feed.insertBefore(tempDiv.firstElementChild, feed.firstChild);
+        } else {
+          feed.appendChild(tempDiv.firstElementChild);
+        }
+
+        ta.value = '';
+        clearPostUpload();
+        showToast('✅ Пост опубликован!', 'success');
+      } catch (err) {
+        console.error('Post save error:', err);
+        showToast('⚠ Ошибка публикации поста', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = prevLabel;
+      }
+    };
+
+    /* ── ABOUT TOGGLE ── */
+    window.toggleAbout = function (link) {
+      const full = (currentUserData?.description) || '';
+      const aboutEl = document.getElementById('aboutText');
+      if (_aboutExpanded) {
+        const short = full.length > 160 ? full.slice(0, 160) + '…' : full;
+        aboutEl.textContent = short;
+        link.textContent = 'Узнать больше';
+        _aboutExpanded = false;
+      } else {
+        aboutEl.textContent = full;
+        link.textContent = 'Свернуть';
+        _aboutExpanded = true;
+      }
+    };
+
+    /* ── ЗАБРОНИРОВАТЬ УРОК ──
+       booking.html подхватывает репетитора, пришедшего с внешней страницы,
+       через sessionStorage.getItem('bookingParams') (см. начало <script>
+       в booking.html) — именно туда мы и кладём данные текущего профиля
+       перед переходом. date/time — разумные значения по умолчанию,
+       конкретное время пользователь при желании поменяет уже в booking.html. */
+    window.bookLesson = function () {
+      if (isOwner) return; // владелец не может забронировать урок у самого себя
+      if (!currentUid) { window.location.href = './auth.html'; return; }
+
+      const fullName = currentUserData?.fullName || 'Репетитор';
+      const bookingParams = {
+        tutorId: profileUid,
+        tutorName: fullName,
+        tutorInitials: fullName.trim().charAt(0).toUpperCase() || 'Р',
+        tutorBadge: currentUserData?.tierBadge || 'Mid Tutor',
+        tutorPhoto: currentUserData?.photoUrl || '',
+        date: new Date().toISOString(),
+        time: '20:00'
+      };
+
+      try {
+        sessionStorage.setItem('bookingParams', JSON.stringify(bookingParams));
+      } catch (err) {
+        console.error('bookLesson sessionStorage:', err);
+      }
+
+      window.location.href = 'booking.html';
+    };
+
+    /* ── SHARE ── */
+    window.handleShare = function () {
+      const url = window.location.origin + '/tutor-profile.html?uid=' + profileUid;
+      if (navigator.share) {
+        navigator.share({ title: 'Профиль репетитора', url });
+      } else {
+        navigator.clipboard.writeText(url)
+          .then(() => showToast('🔗 Ссылка скопирована!', 'success'))
+          .catch(() => showToast('📋 ' + url));
+      }
+    };
+
+    /* ── LOGOUT ── */
+    window.handleLogout = async function () {
+      try {
+        await signOut(auth);
+        window.location.href = './auth.html';
+      } catch (err) {
+        showToast('⚠ Ошибка выхода', 'error');
+      }
+    };
+
+    /* ── UTILITIES ── */
+    function fileToBase64(file, maxW, maxH) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ratio = Math.min(maxW / img.width, maxH / img.height, 1);
+            canvas.width = Math.floor(img.width * ratio);
+            canvas.height = Math.floor(img.height * ratio);
+            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.82));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    let _toastTimer;
+    window.showToast = function (msg, type = '') {
+      const el = document.getElementById('toastEl');
+      if (!el) return;
+      el.textContent = msg;
+      el.className = `toast show ${type}`;
+      clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+    };
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    /* ── EUREKA ── */
+    const EUREKA_PHRASES = [
+      { title: "Совет для репетитора! 🎯", body: "Заполните сертификаты — профили с подтверждённой квалификацией получают больше запросов." },
+      { title: "Привет, я Eureka! 🚀", body: "Заполните профиль полностью, чтобы появляться выше в поиске!" },
+      { title: "Сертификаты важны! 🏆", body: "Ученики больше доверяют репетиторам с подтверждёнными квалификациями." },
+      { title: "Быстрый совет! 💡", body: "Отвечайте на сообщения в течение 24 часов — это влияет на ваш рейтинг." },
+      { title: "Растите вместе! 📚", body: "Регулярно обновляйте описание, чтобы отражать ваш текущий опыт." }
+    ];
+    let bubbleOpen = true;
+
+    function eurekaInit() {
+      const phrase = EUREKA_PHRASES[Math.floor(Math.random() * EUREKA_PHRASES.length)];
+      const el = document.getElementById('eurekaText');
+      if (el) el.innerHTML = `<strong>${phrase.title}</strong>${phrase.body}`;
+      document.getElementById('eurekaClose')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('eurekaBubble')?.classList.add('hidden');
+        bubbleOpen = false;
+      });
+    }
+
+    window.eurekaToggle = function () {
+      const bubble = document.getElementById('eurekaBubble');
+      if (!bubble) return;
+      if (bubbleOpen) { bubble.classList.add('hidden'); bubbleOpen = false; }
+      else {
+        bubble.classList.remove('hidden'); bubbleOpen = true;
+        const phrase = EUREKA_PHRASES[Math.floor(Math.random() * EUREKA_PHRASES.length)];
+        document.getElementById('eurekaText').innerHTML = `<strong>${phrase.title}</strong>${phrase.body}`;
+        bubble.style.animation = 'none';
+        requestAnimationFrame(() => { bubble.style.animation = ''; });
+      }
+    };
+
+  </script>
+
+</body>
+
+</html>

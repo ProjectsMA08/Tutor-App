@@ -1,0 +1,2209 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorApp — Экзамены</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --teal: #00A896;
+            --teal-dark: #007F72;
+            --teal-mid: #5BBDB5;
+            --teal-light: #E0F5F3;
+            --teal-pale: #F0FAF9;
+            --accent: #80D1C1;
+            --text-dark: #1A2E2C;
+            --text-mid: #4A6360;
+            --text-soft: #7A9A97;
+            --white: #FFFFFF;
+            --bg: #F4FAFA;
+            --border: #D4EEEA;
+            --gold: #F5B942;
+            --red: #E05A7A;
+            --card-radius: 18px;
+            --header-h: 64px;
+            --subnav-h: 48px;
+            --promo-w: 230px;
+            --shadow-xs: 0 1px 4px rgba(0, 168, 150, .07);
+            --shadow-sm: 0 4px 20px rgba(0, 168, 150, .12);
+            --shadow-md: 0 12px 36px rgba(0, 168, 150, .18);
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ══════════════════════════════════════════
+           SCROLLBAR — identical to trainings.html
+        ══════════════════════════════════════════ */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--teal-mid);
+            border-radius: 3px;
+            opacity: .5;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--teal);
+        }
+
+        /* Firefox */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: var(--teal-mid) transparent;
+        }
+
+        /* Promo panel own scrollbar */
+        .promo-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .promo-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .promo-panel::-webkit-scrollbar-thumb {
+            background: var(--teal-mid);
+            border-radius: 3px;
+        }
+
+        .promo-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--teal);
+        }
+
+        /* ══════════════════════════════════════════
+           HEADER
+        ══════════════════════════════════════════ */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-h);
+            z-index: 700;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 24px;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .h-ham {
+            display: flex;
+            flex-direction: column;
+            gap: 4.5px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .h-ham span {
+            display: block;
+            width: 20px;
+            height: 1.8px;
+            background: var(--text-mid);
+            border-radius: 2px;
+        }
+
+        .h-logo {
+            font-weight: 800;
+            font-size: 19px;
+            color: var(--teal);
+            letter-spacing: -.02em;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .h-logo span {
+            color: var(--text-dark);
+        }
+
+        .h-nav {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+            margin: 0 12px;
+            justify-content: center;
+        }
+
+        .h-nav a {
+            text-decoration: none;
+            color: var(--text-mid);
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all .18s;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .h-nav a:hover {
+            color: var(--teal-dark);
+            background: var(--teal-pale);
+        }
+
+        .h-nav a.active {
+            color: var(--teal-dark);
+            font-weight: 700;
+        }
+
+        .h-nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 14px;
+            right: 14px;
+            height: 2.5px;
+            background: var(--teal);
+            border-radius: 2px 2px 0 0;
+        }
+
+        .h-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .h-coins {
+            background: var(--teal-pale);
+            border-radius: 50px;
+            padding: 6px 14px;
+            color: var(--teal-dark);
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid var(--teal-light);
+        }
+
+        .coins-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #4ADE80;
+        }
+
+        .h-notif {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-mid);
+            transition: border-color .2s, background .2s;
+        }
+
+        .h-notif:hover {
+            background: var(--teal-light);
+            border-color: var(--teal);
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: var(--teal);
+            border: 2px solid var(--white);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes notifPulse {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.15)
+            }
+        }
+
+        .notif-pulse {
+            animation: notifPulse .4s ease-in-out;
+        }
+
+        /* ── NOTIFICATION DROPDOWN ── */
+        .notif-panel {
+            position: fixed;
+            top: calc(var(--header-h) + 8px);
+            right: 16px;
+            width: 340px;
+            max-height: 480px;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow-md);
+            z-index: 900;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .notif-panel.open {
+            display: flex;
+        }
+
+        .notif-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 850;
+        }
+
+        .notif-overlay.open {
+            display: block;
+        }
+
+        .notif-panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px 10px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .notif-panel-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .notif-mark-all {
+            background: none;
+            border: none;
+            color: var(--teal);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background .18s;
+        }
+
+        .notif-mark-all:hover {
+            background: var(--teal-light);
+        }
+
+        .notif-panel-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .notif-panel-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .notif-panel-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 11px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background .15s;
+            position: relative;
+        }
+
+        .notif-item:hover {
+            background: var(--teal-pale);
+        }
+
+        .notif-item.unread {
+            background: var(--teal-pale);
+        }
+
+        .notif-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--teal);
+        }
+
+        .notif-av {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--teal-mid), var(--teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .notif-av img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .notif-icon-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid var(--white);
+        }
+
+        .notif-icon-badge.msg {
+            background: var(--teal);
+        }
+
+        .notif-icon-badge.like {
+            background: var(--red);
+        }
+
+        .notif-icon-badge.comment {
+            background: #4A90D9;
+        }
+
+        .notif-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notif-from {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .notif-text {
+            font-size: 12.5px;
+            color: var(--text-mid);
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .notif-time {
+            font-size: 11px;
+            color: var(--text-soft);
+            margin-top: 3px;
+        }
+
+        .notif-empty {
+            padding: 32px 16px;
+            text-align: center;
+            color: var(--text-soft);
+            font-size: 13px;
+        }
+
+        .h-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2.5px solid var(--teal-mid);
+            cursor: pointer;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #A8D8D4, #5BBDB5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* ══════════════════════════════════════════
+           SUBNAV
+        ══════════════════════════════════════════ */
+        .subnav {
+            display: none;
+        }
+
+        /* ══════════════════════════════════════════
+           APP SHELL
+        ══════════════════════════════════════════ */
+        .app-body {
+            display: flex;
+            padding-top: var(--header-h);
+            min-height: 100vh;
+        }
+
+        /* ══════════════════════════════════════════
+           LEFT PROMO PANEL — identical to trainings.html
+        ══════════════════════════════════════════ */
+        .promo-panel {
+            position: fixed;
+            top: var(--header-h);
+            left: 0;
+            width: var(--promo-w);
+            height: calc(100vh - var(--header-h));
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            z-index: 500;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .promo-top {
+            background: linear-gradient(160deg, #e8faf8 0%, #c8f0eb 100%);
+            padding: 22px 18px 18px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .promo-top .promo-label {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--teal-dark);
+            margin-bottom: 8px;
+        }
+
+        .promo-top h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.25;
+            margin-bottom: 3px;
+        }
+
+        .promo-top h3 span {
+            color: var(--teal);
+        }
+
+        .promo-checklist {
+            list-style: none;
+            margin: 12px 0 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .promo-checklist li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-mid);
+            font-weight: 500;
+        }
+
+        .promo-checklist li::before {
+            content: '';
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--teal);
+            flex-shrink: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .promo-start-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--teal);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 18px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            justify-content: center;
+            transition: background .2s, transform .15s;
+            box-shadow: 0 4px 14px rgba(0, 168, 150, .28);
+        }
+
+        .promo-start-btn:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Tutor photo — identical to trainings.html */
+        .promo-img-wrap {
+            position: relative;
+            height: 160px;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+            background: linear-gradient(170deg, #d4f5f0 0%, #a8e6e0 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .promo-img-wrap img {
+            height: 95%;
+            width: auto;
+            object-fit: contain;
+            object-position: bottom;
+            display: block;
+            filter: drop-shadow(0 4px 12px rgba(0, 120, 110, .18));
+        }
+
+        .promo-sparkle {
+            position: absolute;
+            top: 14px;
+            font-size: 16px;
+            opacity: .55;
+            animation: twinkle 2.5s ease-in-out infinite;
+        }
+
+        .promo-sparkle:nth-child(2) {
+            left: 18px;
+            animation-delay: 0s;
+        }
+
+        .promo-sparkle:nth-child(3) {
+            right: 22px;
+            animation-delay: .9s;
+            font-size: 11px;
+            top: 28px;
+        }
+
+        .promo-sparkle:nth-child(4) {
+            left: 50%;
+            animation-delay: 1.6s;
+            font-size: 13px;
+            top: 8px;
+        }
+
+        .promo-community {
+            padding: 14px 18px 16px;
+            flex-shrink: 0;
+        }
+
+        .promo-community h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .promo-community p {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-bottom: 10px;
+            line-height: 1.45;
+        }
+
+        .promo-avatars {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .promo-avatars .pav {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            margin-right: -8px;
+            overflow: hidden;
+            background: var(--teal-light);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--teal-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .promo-avatars .pav-count {
+            background: var(--teal);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            margin-right: 0;
+            margin-left: 12px;
+        }
+
+        /* ══════════════════════════════════════════
+           MAIN CONTENT
+        ══════════════════════════════════════════ */
+        .main-content {
+            margin-left: var(--promo-w);
+            flex: 1;
+            min-width: 0;
+        }
+
+        main {
+            max-width: 1120px;
+            margin: 28px auto;
+            padding: 0 28px 80px;
+        }
+
+        /* ══════════════════════════════════════════
+           PAGE HEADER
+        ══════════════════════════════════════════ */
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            gap: 16px;
+        }
+
+        .page-header-text h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -.02em;
+            margin-bottom: 4px;
+        }
+
+        .page-header-text p {
+            font-size: 14px;
+            color: var(--text-soft);
+            font-weight: 500;
+        }
+
+        .page-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .search-bar-inline {
+            position: relative;
+        }
+
+        .search-bar-inline input {
+            padding: 9px 14px 9px 36px;
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            color: var(--text-dark);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            outline: none;
+            width: 210px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .search-bar-inline input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0, 168, 150, .1);
+        }
+
+        .search-bar-inline input::placeholder {
+            color: var(--text-soft);
+        }
+
+        .search-bar-inline svg {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-soft);
+            pointer-events: none;
+        }
+
+        .btn-filter {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            color: var(--text-mid);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .18s;
+        }
+
+        .btn-filter:hover {
+            border-color: var(--teal);
+            color: var(--teal-dark);
+            background: var(--teal-pale);
+        }
+
+        /* ══════════════════════════════════════════
+           EXAM CARDS
+        ══════════════════════════════════════════ */
+        .exams-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: listIn .4s ease both;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: .3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: .8;
+                transform: scale(1.3);
+            }
+        }
+
+        @keyframes listIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardSlide {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .exam-card {
+            background: var(--white);
+            border-radius: var(--card-radius);
+            border: 1.5px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 20px 22px;
+            position: relative;
+            transition: box-shadow .22s, border-color .22s, transform .22s;
+            animation: cardSlide .38s ease both;
+        }
+
+        .exam-card:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .exam-card:nth-child(2) {
+            animation-delay: .07s;
+        }
+
+        .exam-card:nth-child(3) {
+            animation-delay: .14s;
+        }
+
+        .exam-card:nth-child(4) {
+            animation-delay: .21s;
+        }
+
+        .exam-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--teal-mid);
+            transform: translateY(-2px);
+        }
+
+        .exam-logo-wrap {
+            width: 80px;
+            height: 80px;
+            border-radius: 14px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .exam-logo-wrap img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+        }
+
+        .logo-ielts {
+            background: linear-gradient(145deg, #FFF5F5, #FFE8E8);
+        }
+
+        .logo-toefl {
+            background: linear-gradient(145deg, #F0F8FF, #E0EFFF);
+        }
+
+        .logo-sat {
+            background: linear-gradient(145deg, #F5F0FF, #EDE0FF);
+        }
+
+        .logo-cambridge {
+            background: linear-gradient(145deg, #FFF8F0, #FFE8D0);
+        }
+
+        .exam-info {
+            min-width: 170px;
+            flex-shrink: 0;
+        }
+
+        .exam-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -.01em;
+            margin-bottom: 4px;
+        }
+
+        .exam-desc {
+            font-size: 12.5px;
+            color: var(--text-soft);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .exam-countdown {
+            flex: 1;
+            min-width: 230px;
+        }
+
+        .countdown-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-soft);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 10px;
+        }
+
+        .countdown-boxes {
+            display: flex;
+            gap: 8px;
+        }
+
+        .cbox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .cbox-val {
+            width: 48px;
+            height: 48px;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -.02em;
+            font-variant-numeric: tabular-nums;
+            transition: background .2s;
+        }
+
+        .cbox-val.tick {
+            background: var(--teal-light);
+            border-color: var(--teal-mid);
+        }
+
+        .cbox-unit {
+            font-size: 10px;
+            color: var(--text-soft);
+            font-weight: 600;
+        }
+
+        .exam-dates {
+            min-width: 160px;
+            flex-shrink: 0;
+        }
+
+        .date-block-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-soft);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 6px;
+        }
+
+        .date-main {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .date-reg {
+            font-size: 12px;
+            color: var(--text-soft);
+            font-weight: 500;
+        }
+
+        .exam-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+            flex-shrink: 0;
+            min-width: 130px;
+            position: relative;
+            padding-top: 40px;
+        }
+
+        .btn-bookmark {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-soft);
+            transition: all .18s;
+        }
+
+        .btn-bookmark:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+            background: var(--teal-pale);
+        }
+
+        .btn-bookmark.bookmarked {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            border-color: var(--teal-mid);
+        }
+
+        .btn-details {
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: var(--teal);
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: background .18s, transform .18s;
+            white-space: nowrap;
+            min-width: 130px;
+            text-align: center;
+        }
+
+        .btn-details:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-visit {
+            padding: 9px 20px;
+            border-radius: 50px;
+            background: var(--white);
+            color: var(--teal-dark);
+            border: 1.5px solid var(--teal-mid);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .18s;
+            white-space: nowrap;
+            min-width: 130px;
+            text-align: center;
+        }
+
+        .btn-visit:hover {
+            background: var(--teal-pale);
+            border-color: var(--teal);
+        }
+
+        /* ══════════════════════════════════════════
+           FOOTER DISCLAIMER
+        ══════════════════════════════════════════ */
+        .page-disclaimer {
+            margin-top: 28px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--text-soft);
+            font-weight: 500;
+        }
+
+        .page-disclaimer svg {
+            flex-shrink: 0;
+            color: var(--teal-mid);
+        }
+
+        /* ══════════════════════════════════════════
+           BOOKING MODAL
+        ══════════════════════════════════════════ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 30, 28, .48);
+            backdrop-filter: blur(6px);
+            z-index: 900;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn .22s ease;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 0;
+            width: 560px;
+            max-width: calc(100vw - 32px);
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0, 100, 90, .22);
+            animation: modalUp .28s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        /* Modal's own scrollbar */
+        .modal::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background: var(--teal-mid);
+            border-radius: 3px;
+        }
+
+        @keyframes modalUp {
+            from {
+                opacity: 0;
+                transform: translateY(28px) scale(.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .modal-header-info {
+            flex: 1;
+        }
+
+        .modal-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: 6px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -.01em;
+            margin-bottom: 4px;
+        }
+
+        .modal-subtitle {
+            font-size: 13px;
+            color: var(--text-soft);
+            font-weight: 500;
+        }
+
+        .modal-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            flex-shrink: 0;
+            transition: all .18s;
+        }
+
+        .modal-close:hover {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            border-color: var(--teal);
+        }
+
+        .modal-body {
+            padding: 24px 28px 28px;
+        }
+
+        .modal-section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 12px;
+        }
+
+        .session-types {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .stype {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            cursor: pointer;
+            text-align: center;
+            transition: all .18s;
+        }
+
+        .stype.active {
+            border-color: var(--teal);
+            background: var(--teal-pale);
+        }
+
+        .stype-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .stype-name {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .stype-desc {
+            font-size: 11px;
+            color: var(--text-soft);
+            margin-top: 2px;
+        }
+
+        .stype.active .stype-name {
+            color: var(--teal-dark);
+        }
+
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .cal-month {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .cal-nav {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .cal-nav:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+            background: var(--teal-pale);
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 20px;
+        }
+
+        .cal-day-name {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-soft);
+            padding: 4px 0;
+        }
+
+        .cal-day {
+            text-align: center;
+            padding: 7px 4px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .cal-day:hover {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+        }
+
+        .cal-day.selected {
+            background: var(--teal);
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .cal-day.today {
+            font-weight: 800;
+            color: var(--teal-dark);
+        }
+
+        .cal-day.empty {
+            cursor: default;
+        }
+
+        .cal-day.disabled {
+            color: var(--border);
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tslot {
+            padding: 9px 8px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .tslot:hover {
+            border-color: var(--teal-mid);
+            background: var(--teal-pale);
+        }
+
+        .tslot.selected {
+            background: var(--teal);
+            color: var(--white);
+            border-color: var(--teal);
+        }
+
+        .tslot.unavailable {
+            color: var(--border);
+            cursor: default;
+            pointer-events: none;
+            background: #fafafa;
+            text-decoration: line-through;
+        }
+
+        .modal-summary {
+            background: var(--teal-pale);
+            border: 1px solid var(--teal-light);
+            border-radius: 14px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-summary svg {
+            color: var(--teal);
+            flex-shrink: 0;
+        }
+
+        #modal-summary-text {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .btn-book {
+            width: 100%;
+            padding: 15px 24px;
+            border-radius: 50px;
+            background: var(--teal);
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: background .18s, transform .18s;
+            letter-spacing: -.01em;
+        }
+
+        .btn-book:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-book:active {
+            transform: translateY(0);
+        }
+
+        /* ══════════════════════════════════════════
+           TOAST
+        ══════════════════════════════════════════ */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(18px);
+            background: var(--text-dark);
+            color: #fff;
+            padding: 11px 22px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity .28s, transform .28s;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .mob-nav {
+            display: none;
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .promo-panel {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .h-nav {
+                display: none;
+            }
+
+            .exam-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .exam-actions {
+                padding-top: 0;
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .btn-bookmark {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="h-ham"><span></span><span></span><span></span></div>
+        <a href="index.html" class="h-logo">Tutor<span>App</span></a>
+        <nav class="h-nav">
+            <a href="index.html">Лента</a>
+            <a href="Chat.html">Чат</a>
+            <a href="public.html">Обсуждения</a>
+            <a href="unique.html">Unique</a>
+            <a href="exam.html" class="active">Экзамены</a>
+            <a href="trainings.html">Тренинги</a>
+            <a href="profile.html">Профиль</a>
+        </nav>
+        <div class="h-right">
+            <div class="h-coins" id="hCoinsBadge"><span class="coins-dot"></span><span id="coinsDisplay">5</span></div>
+            <div class="h-notif" id="hNotif" onclick="toggleNotifPanel()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <span class="notif-badge" id="notifBadge" style="display:none;"></span>
+            </div>
+            <div class="h-avatar" id="headerAvatar" onclick="window.location.href='profile.html'">А</div>
+        </div>
+    </header>
+
+    <!-- NOTIFICATION DROPDOWN -->
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-head">
+            <span class="notif-panel-title">Уведомления</span>
+            <button class="notif-mark-all" id="notifMarkAll">Прочитать все</button>
+        </div>
+        <div class="notif-panel-list" id="notifPanelList">
+            <div class="notif-empty">Нет новых уведомлений</div>
+        </div>
+    </div>
+    <div class="notif-overlay" id="notifOverlay" onclick="closeNotifPanel()"></div>
+
+    <!-- APP BODY -->
+    <div class="app-body">
+
+        <!-- PROMO PANEL — identical to trainings.html -->
+        <aside class="promo-panel">
+            <div class="promo-top">
+                <div class="promo-label">TutorApp Premium</div>
+                <h3>Стань репетитором<br>и <span>меняй жизни!</span></h3>
+                <ul class="promo-checklist">
+                    <li>Больше учеников</li>
+                    <li>Гибкий график</li>
+                    <li>Высокий доход</li>
+                    <li>Тысячи учеников</li>
+                    <li>Поддержка 24/7</li>
+                </ul>
+                <button class="promo-start-btn" onclick="showToast('🚀 Переход на страницу регистрации...')">Начать
+                    сейчас →</button>
+            </div>
+            <!-- Tutor photo — same as trainings.html -->
+            <div class="promo-img-wrap">
+                <span class="promo-sparkle">✦</span>
+                <span class="promo-sparkle">✦</span>
+                <span class="promo-sparkle">✦</span>
+                <img src="./assets/tutor-promo.png" alt="Tutor" onerror="this.style.display='none'">
+            </div>
+            <!-- Community -->
+            <div class="promo-community">
+                <h4>Присоединяйся к сообществу</h4>
+                <p>Более 700+ репетиторов уже с нами</p>
+                <div class="promo-avatars">
+                    <div class="pav" style="background:#c8f0eb;color:var(--teal-dark);">А</div>
+                    <div class="pav" style="background:#fde8ef;color:#c0567a;">М</div>
+                    <div class="pav" style="background:#e8ecff;color:#5060c0;">Д</div>
+                    <div class="pav" style="background:#fef3e2;color:#c07830;">С</div>
+                    <div class="pav pav-count">+700</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <main>
+
+                <div class="page-header">
+                    <div class="page-header-text">
+                        <h1>Экзамены</h1>
+                        <p>Дедлайны и регистрация на популярные международные экзамены</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <div class="search-bar-inline">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                            <input type="text" id="examSearch" placeholder="Поиск экзамена..."
+                                oninput="filterExams(this.value)">
+                        </div>
+                        <button class="btn-filter">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="4" y1="6" x2="20" y2="6" />
+                                <line x1="8" y1="12" x2="16" y2="12" />
+                                <line x1="11" y1="18" x2="13" y2="18" />
+                            </svg>
+                            Фильтры
+                        </button>
+                    </div>
+                </div>
+
+                <!-- EXAM CARDS -->
+                <div class="exams-list" id="examsList">
+
+                    <!-- IELTS -->
+                    <div class="exam-card" data-name="ielts">
+                        <div class="exam-logo-wrap logo-ielts">
+                            <svg width="64" height="40" viewBox="0 0 120 44" xmlns="http://www.w3.org/2000/svg">
+                                <text x="4" y="36" font-family="Arial Black, sans-serif" font-size="36"
+                                    font-weight="900" fill="#D62B2B" letter-spacing="-1">IELTS</text>
+                            </svg>
+                        </div>
+                        <div class="exam-info">
+                            <div class="exam-title">IELTS</div>
+                            <div class="exam-desc">International English<br>Language Testing System</div>
+                        </div>
+                        <div class="exam-countdown">
+                            <div class="countdown-label">До ближайшего дедлайна</div>
+                            <div class="countdown-boxes">
+                                <div class="cbox">
+                                    <div class="cbox-val" id="ielts-d">00</div>
+                                    <div class="cbox-unit">дней</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="ielts-h">00</div>
+                                    <div class="cbox-unit">часов</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="ielts-m">00</div>
+                                    <div class="cbox-unit">минут</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="ielts-s">00</div>
+                                    <div class="cbox-unit">секунд</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exam-dates">
+                            <div class="date-block-label">Дата экзамена</div>
+                            <div class="date-main">24 июня 2026</div>
+                            <div class="date-reg">Регистрация до: 10 июня 2026</div>
+                        </div>
+                        <div class="exam-actions">
+                            <button class="btn-bookmark" onclick="toggleBookmark(this)" title="Сохранить">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                                </svg>
+                            </button>
+                            <button class="btn-details"
+                                onclick="openModal('IELTS','International English Language Testing System','24 июня 2026')">Подробнее</button>
+                            <a class="btn-visit" href="https://www.ielts.org" target="_blank" rel="noopener">Перейти на
+                                сайт</a>
+                        </div>
+                    </div>
+
+                    <!-- TOEFL -->
+                    <div class="exam-card" data-name="toefl">
+                        <div class="exam-logo-wrap logo-toefl">
+                            <svg width="64" height="50" viewBox="0 0 130 50" xmlns="http://www.w3.org/2000/svg">
+                                <text x="2" y="20" font-family="Arial, sans-serif" font-size="13" font-weight="700"
+                                    fill="#1A3A6B">*toefl</text>
+                                <text x="2" y="38" font-family="Arial, sans-serif" font-size="11" font-weight="600"
+                                    fill="#4A7ABF">iBT®</text>
+                            </svg>
+                        </div>
+                        <div class="exam-info">
+                            <div class="exam-title">TOEFL iBT®</div>
+                            <div class="exam-desc">Test of English as a<br>Foreign Language</div>
+                        </div>
+                        <div class="exam-countdown">
+                            <div class="countdown-label">До ближайшего дедлайна</div>
+                            <div class="countdown-boxes">
+                                <div class="cbox">
+                                    <div class="cbox-val" id="toefl-d">00</div>
+                                    <div class="cbox-unit">дней</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="toefl-h">00</div>
+                                    <div class="cbox-unit">часов</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="toefl-m">00</div>
+                                    <div class="cbox-unit">минут</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="toefl-s">00</div>
+                                    <div class="cbox-unit">секунд</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exam-dates">
+                            <div class="date-block-label">Дата экзамена</div>
+                            <div class="date-main">30 июня 2026</div>
+                            <div class="date-reg">Регистрация до: 16 июня 2026</div>
+                        </div>
+                        <div class="exam-actions">
+                            <button class="btn-bookmark" onclick="toggleBookmark(this)" title="Сохранить">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                                </svg>
+                            </button>
+                            <button class="btn-details"
+                                onclick="openModal('TOEFL iBT®','Test of English as a Foreign Language','30 июня 2026')">Подробнее</button>
+                            <a class="btn-visit" href="https://www.ets.org/toefl" target="_blank" rel="noopener">Перейти
+                                на сайт</a>
+                        </div>
+                    </div>
+
+                    <!-- SAT -->
+                    <div class="exam-card" data-name="sat">
+                        <div class="exam-logo-wrap logo-sat">
+                            <svg width="64" height="44" viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg">
+                                <text x="4" y="38" font-family="Arial Black, sans-serif" font-size="42"
+                                    font-weight="900" fill="#1B3A8C" letter-spacing="-2">SAT</text>
+                            </svg>
+                        </div>
+                        <div class="exam-info">
+                            <div class="exam-title">SAT</div>
+                            <div class="exam-desc">Scholastic Assessment Test</div>
+                        </div>
+                        <div class="exam-countdown">
+                            <div class="countdown-label">До ближайшего дедлайна</div>
+                            <div class="countdown-boxes">
+                                <div class="cbox">
+                                    <div class="cbox-val" id="sat-d">00</div>
+                                    <div class="cbox-unit">дней</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="sat-h">00</div>
+                                    <div class="cbox-unit">часов</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="sat-m">00</div>
+                                    <div class="cbox-unit">минут</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="sat-s">00</div>
+                                    <div class="cbox-unit">секунд</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exam-dates">
+                            <div class="date-block-label">Дата экзамена</div>
+                            <div class="date-main">7 июля 2026</div>
+                            <div class="date-reg">Регистрация до: 23 июня 2026</div>
+                        </div>
+                        <div class="exam-actions">
+                            <button class="btn-bookmark" onclick="toggleBookmark(this)" title="Сохранить">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                                </svg>
+                            </button>
+                            <button class="btn-details"
+                                onclick="openModal('SAT','Scholastic Assessment Test','7 июля 2026')">Подробнее</button>
+                            <a class="btn-visit" href="https://www.collegeboard.org" target="_blank"
+                                rel="noopener">Перейти на сайт</a>
+                        </div>
+                    </div>
+
+                    <!-- Cambridge -->
+                    <div class="exam-card" data-name="cambridge">
+                        <div class="exam-logo-wrap logo-cambridge">
+                            <svg width="56" height="64" viewBox="0 0 56 64" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M28 2 L52 12 L52 36 C52 50 28 62 28 62 C28 62 4 50 4 36 L4 12 Z" fill="#8B1A1A"
+                                    stroke="#6B1010" stroke-width="1.5" />
+                                <path d="M28 8 L46 16 L46 36 C46 47 28 57 28 57 C28 57 10 47 10 36 L10 16 Z"
+                                    fill="#A52020" />
+                                <text x="28" y="28" font-family="serif" font-size="11" font-weight="700" fill="#FFD700"
+                                    text-anchor="middle">CAM</text>
+                                <text x="28" y="42" font-family="serif" font-size="9" font-weight="600" fill="#FFD700"
+                                    text-anchor="middle">BRIDGE</text>
+                            </svg>
+                        </div>
+                        <div class="exam-info">
+                            <div class="exam-title">Cambridge English</div>
+                            <div class="exam-desc">Cambridge English<br>Qualifications</div>
+                        </div>
+                        <div class="exam-countdown">
+                            <div class="countdown-label">До ближайшего дедлайна</div>
+                            <div class="countdown-boxes">
+                                <div class="cbox">
+                                    <div class="cbox-val" id="cam-d">00</div>
+                                    <div class="cbox-unit">дней</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="cam-h">00</div>
+                                    <div class="cbox-unit">часов</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="cam-m">00</div>
+                                    <div class="cbox-unit">минут</div>
+                                </div>
+                                <div class="cbox">
+                                    <div class="cbox-val" id="cam-s">00</div>
+                                    <div class="cbox-unit">секунд</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="exam-dates">
+                            <div class="date-block-label">Дата экзамена</div>
+                            <div class="date-main">13 июля 2026</div>
+                            <div class="date-reg">Регистрация до: 29 июня 2026</div>
+                        </div>
+                        <div class="exam-actions">
+                            <button class="btn-bookmark" onclick="toggleBookmark(this)" title="Сохранить">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                                </svg>
+                            </button>
+                            <button class="btn-details"
+                                onclick="openModal('Cambridge English','Cambridge English Qualifications','13 июля 2026')">Подробнее</button>
+                            <a class="btn-visit" href="https://www.cambridgeenglish.org" target="_blank"
+                                rel="noopener">Перейти на сайт</a>
+                        </div>
+                    </div>
+
+                </div><!-- /exams-list -->
+
+                <div class="page-disclaimer">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    Данные предоставлены официальными сайтами экзаменов. Актуально на 30 мая 2026.
+                </div>
+            </main>
+        </div>
+    </div><!-- /app-body -->
+
+    <!-- BOOKING MODAL -->
+    <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <div class="modal-header-info">
+                    <div class="modal-eyebrow">Запись на подготовку</div>
+                    <div class="modal-title" id="modal-exam-title">IELTS</div>
+                    <div class="modal-subtitle" id="modal-exam-sub">International English Language Testing System</div>
+                </div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section-label">Тип занятия</div>
+                <div class="session-types">
+                    <div class="stype active" onclick="selectStype(this)">
+                        <div class="stype-icon">📖</div>
+                        <div class="stype-name">Пробный тест</div>
+                        <div class="stype-desc">Полная симуляция</div>
+                    </div>
+                    <div class="stype" onclick="selectStype(this)">
+                        <div class="stype-icon">🎯</div>
+                        <div class="stype-name">Стратегия</div>
+                        <div class="stype-desc">Разбор тактик</div>
+                    </div>
+                    <div class="stype" onclick="selectStype(this)">
+                        <div class="stype-icon">✍️</div>
+                        <div class="stype-name">Speaking / Writing</div>
+                        <div class="stype-desc">Отдельные секции</div>
+                    </div>
+                </div>
+                <div class="modal-section-label">Выберите дату</div>
+                <div class="cal-header">
+                    <button class="cal-nav" onclick="changeMonth(-1)"><svg width="12" height="12" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg></button>
+                    <div class="cal-month" id="calMonthLabel">Июнь 2026</div>
+                    <button class="cal-nav" onclick="changeMonth(1)"><svg width="12" height="12" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg></button>
+                </div>
+                <div class="cal-grid" id="calGrid"></div>
+                <div class="modal-section-label">Выберите время</div>
+                <div class="time-slots" id="timeSlots">
+                    <div class="tslot" onclick="selectSlot(this)">09:00</div>
+                    <div class="tslot unavailable">10:00</div>
+                    <div class="tslot" onclick="selectSlot(this)">11:00</div>
+                    <div class="tslot" onclick="selectSlot(this)">12:00</div>
+                    <div class="tslot unavailable">13:00</div>
+                    <div class="tslot" onclick="selectSlot(this)">14:00</div>
+                    <div class="tslot" onclick="selectSlot(this)">15:00</div>
+                    <div class="tslot unavailable">16:00</div>
+                    <div class="tslot" onclick="selectSlot(this)">17:00</div>
+                    <div class="tslot" onclick="selectSlot(this)">18:00</div>
+                    <div class="tslot" onclick="selectSlot(this)">19:00</div>
+                    <div class="tslot unavailable">20:00</div>
+                </div>
+                <div class="modal-summary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <span id="modal-summary-text">Выберите дату и время</span>
+                </div>
+                <button class="btn-book" onclick="handleBooking()">Забронировать и перейти к оплате →</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toastEl"></div>
+
+    <!-- FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            getFirestore, collection, doc, getDoc, getDocs, updateDoc,
+            query, where, orderBy, limit, onSnapshot
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQ9UYY6uh3CgXzytNwt_r2LCwaXval9T8",
+            authDomain: "tutorapp-95f48.firebaseapp.com",
+            projectId: "tutorapp-95f48",
+            storageBucket: "tutorapp-95f48.firebasestorage.app",
+            messagingSenderId: "559214827748",
+            appId: "1:559214827748:web:c77d90b72d607f6df1b4f1"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const $ = id => document.getElementById(id);
+        let me = null, notifsUnsub = null;
+        function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        window.toggleNotifPanel = function () {
+            const p = $('notifPanel'), o = $('notifOverlay');
+            const open = p.classList.contains('open');
+            p.classList.toggle('open', !open);
+            o.classList.toggle('open', !open);
+        };
+        window.closeNotifPanel = function () {
+            $('notifPanel').classList.remove('open');
+            $('notifOverlay').classList.remove('open');
+        };
+
+        function notifTypeIcon(type) {
+            if (type === 'like') return '<span class="notif-icon-badge like">❤️</span>';
+            if (type === 'comment') return '<span class="notif-icon-badge comment">💬</span>';
+            return '<span class="notif-icon-badge msg">💬</span>';
+        }
+        function relTimeShort(ts) {
+            if (!ts) return '';
+            const d = ts.toDate ? ts.toDate() : new Date(ts);
+            const diff = Date.now() - d.getTime(), m = Math.floor(diff / 60000);
+            if (m < 1) return 'только что';
+            if (m < 60) return `${m} мин`;
+            const h = Math.floor(m / 60);
+            if (h < 24) return `${h} ч`;
+            return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+        }
+        function renderNotifPanel(docs) {
+            const list = $('notifPanelList');
+            if (!docs.length) { list.innerHTML = '<div class="notif-empty">Нет новых уведомлений</div>'; return; }
+            list.innerHTML = '';
+            docs.forEach(d => {
+                const data = d.data();
+                const item = document.createElement('div');
+                item.className = 'notif-item' + (data.read ? '' : ' unread');
+                const init = (data.fromName || '?')[0].toUpperCase();
+                const avContent = data.fromAvatar ? `<img src="${esc(data.fromAvatar)}" alt="" onerror="this.parentElement.innerHTML='${init}'">` : init;
+                item.innerHTML = `<div class="notif-av" style="position:relative;">${avContent}${notifTypeIcon(data.type || 'message')}</div><div class="notif-body"><div class="notif-from">${esc(data.fromName || 'Кто-то')}</div><div class="notif-text">${esc(data.text || '')}</div><div class="notif-time">${relTimeShort(data.createdAt)}</div></div>`;
+                item.addEventListener('click', async () => {
+                    try { await updateDoc(d.ref, { read: true }); } catch (e) { }
+                    if (data.chatId && data.chatType === 'direct') window.location.href = `Chat.html?to=${data.fromUid}`;
+                    else if (data.chatId && data.chatType === 'club') window.location.href = `Chat.html?club=${data.chatId}`;
+                    closeNotifPanel();
+                });
+                list.appendChild(item);
+            });
+        }
+        function bindNotifMarkAll() {
+            $('notifMarkAll')?.addEventListener('click', async () => {
+                if (!me) return;
+                const q2 = query(collection(db, 'notifications'), where('toUid', '==', me.uid), where('read', '==', false));
+                const snap = await getDocs(q2);
+                await Promise.all(snap.docs.map(d => updateDoc(d.ref, { read: true })));
+            });
+        }
+        function subscribeNotifications() {
+            if (notifsUnsub) notifsUnsub();
+            const q = query(collection(db, 'notifications'), where('toUid', '==', me.uid), orderBy('createdAt', 'desc'), limit(30));
+            notifsUnsub = onSnapshot(q, snap => {
+                const cnt = snap.docs.filter(d => !d.data().read).length;
+                const badge = $('notifBadge');
+                if (cnt > 0) {
+                    badge.textContent = cnt > 9 ? '9+' : cnt;
+                    badge.style.display = 'flex';
+                    $('hNotif').classList.add('notif-pulse');
+                    setTimeout(() => $('hNotif').classList.remove('notif-pulse'), 400);
+                } else { badge.style.display = 'none'; }
+                renderNotifPanel(snap.docs);
+            }, () => { });
+        }
+
+        onAuthStateChanged(auth, async user => {
+            if (!user) return;
+            let name = user.displayName || user.email?.split('@')[0] || 'Пользователь';
+            let photo = user.photoURL || null;
+            let score = 5;
+            try {
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                if (snap.exists()) {
+                    const d = snap.data();
+                    name = d.fullName || d.nick || name;
+                    photo = d.photoUrl || photo;
+                    score = typeof d.score === 'number' ? d.score : 5;
+                }
+            } catch (e) { console.error('Profile:', e); }
+            me = { uid: user.uid, name, photoUrl: photo };
+            const hav = $('headerAvatar');
+            if (hav) {
+                if (photo) { hav.innerHTML = `<img src="${esc(photo)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.innerHTML='${name[0].toUpperCase()}'">`; hav.style.background = 'transparent'; }
+                else { hav.textContent = name[0].toUpperCase(); }
+            }
+            const coinsEl = $('coinsDisplay');
+            if (coinsEl) coinsEl.textContent = score;
+            onSnapshot(doc(db, 'users', user.uid), snap => {
+                if (snap.exists() && coinsEl) { const sv = snap.data().score; coinsEl.textContent = typeof sv === 'number' ? sv : 5; }
+            }, () => { });
+            subscribeNotifications();
+            bindNotifMarkAll();
+        });
+    </script>
+
+    <!-- SCRIPTS -->
+    <script>
+        /* COUNTDOWN */
+        const DEADLINES = {
+            ielts: new Date('2026-06-10T23:59:00'),
+            toefl: new Date('2026-06-16T23:59:00'),
+            sat: new Date('2026-06-23T23:59:00'),
+            cam: new Date('2026-06-29T23:59:00'),
+        };
+        function pad(n) { return String(n).padStart(2, '0'); }
+        function updateCountdown(id, target) {
+            const diff = target - new Date();
+            const dEl = document.getElementById(id + '-d'), hEl = document.getElementById(id + '-h');
+            const mEl = document.getElementById(id + '-m'), sEl = document.getElementById(id + '-s');
+            if (diff <= 0) { [dEl, hEl, mEl, sEl].forEach(el => el && (el.textContent = '00')); return; }
+            const days = Math.floor(diff / 86400000), hours = Math.floor((diff % 86400000) / 3600000);
+            const mins = Math.floor((diff % 3600000) / 60000), secs = Math.floor((diff % 60000) / 1000);
+            const prevSec = sEl ? sEl.textContent : '';
+            const newSec = pad(secs);
+            if (dEl) dEl.textContent = pad(days);
+            if (hEl) hEl.textContent = pad(hours);
+            if (mEl) mEl.textContent = pad(mins);
+            if (sEl) {
+                sEl.textContent = newSec;
+                if (prevSec !== newSec) {
+                    sEl.classList.remove('tick'); void sEl.offsetWidth; sEl.classList.add('tick');
+                    setTimeout(() => sEl.classList.remove('tick'), 350);
+                }
+            }
+        }
+        function tickAll() { Object.entries(DEADLINES).forEach(([id, t]) => updateCountdown(id, t)); }
+        tickAll(); setInterval(tickAll, 1000);
+
+        /* BOOKMARK */
+        function toggleBookmark(el) {
+            el.classList.toggle('bookmarked');
+            showToast(el.classList.contains('bookmarked') ? '🔖 Экзамен сохранён' : '🔖 Удалено из сохранённых');
+        }
+
+        /* SEARCH */
+        function filterExams(q) {
+            const query = q.toLowerCase();
+            document.querySelectorAll('.exam-card').forEach(card => {
+                const match = (card.dataset.name || '').includes(query) || card.textContent.toLowerCase().includes(query);
+                card.style.display = match ? '' : 'none';
+            });
+        }
+
+        /* MODAL */
+        let selectedDate = null, selectedTime = null, currentExam = '';
+        let calYear = 2026, calMonth = 5;
+        const RU_MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        const RU_MONTHS_GEN = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+        const DAY_NAMES = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+        function openModal(name, sub, date) {
+            currentExam = name;
+            document.getElementById('modal-exam-title').textContent = name;
+            document.getElementById('modal-exam-sub').textContent = sub + ' · ' + date;
+            selectedDate = null; selectedTime = null; updateSummary(); renderCalendar();
+            document.getElementById('modalOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        function handleOverlayClick(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+        function selectStype(el) { document.querySelectorAll('.stype').forEach(s => s.classList.remove('active')); el.classList.add('active'); updateSummary(); }
+        function changeMonth(delta) {
+            calMonth += delta;
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            if (calMonth < 0) { calMonth = 11; calYear--; }
+            selectedDate = null; updateSummary(); renderCalendar();
+        }
+        function renderCalendar() {
+            const grid = document.getElementById('calGrid'), label = document.getElementById('calMonthLabel');
+            label.textContent = RU_MONTHS[calMonth] + ' ' + calYear;
+            grid.innerHTML = '';
+            DAY_NAMES.forEach(d => { const el = document.createElement('div'); el.className = 'cal-day-name'; el.textContent = d; grid.appendChild(el); });
+            const firstDay = new Date(calYear, calMonth, 1).getDay();
+            const offset = firstDay === 0 ? 6 : firstDay - 1;
+            const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+            const today = new Date();
+            for (let i = 0; i < offset; i++) { const el = document.createElement('div'); el.className = 'cal-day empty'; grid.appendChild(el); }
+            for (let day = 1; day <= daysInMonth; day++) {
+                const el = document.createElement('div');
+                const d = new Date(calYear, calMonth, day);
+                const isPast = d < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                el.className = 'cal-day' + (isPast ? ' disabled' : '');
+                if (!isPast && d.toDateString() === today.toDateString()) el.classList.add('today');
+                if (selectedDate && d.toDateString() === selectedDate.toDateString()) el.classList.add('selected');
+                el.textContent = day;
+                if (!isPast) el.addEventListener('click', () => { selectedDate = d; renderCalendar(); updateSummary(); });
+                grid.appendChild(el);
+            }
+        }
+        function selectSlot(el) {
+            document.querySelectorAll('.tslot').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected'); selectedTime = el.textContent.trim(); updateSummary();
+        }
+        function updateSummary() {
+            const t = document.getElementById('modal-summary-text');
+            if (selectedDate && selectedTime) {
+                t.textContent = currentExam + ' · ' + selectedDate.getDate() + ' ' + RU_MONTHS_GEN[selectedDate.getMonth()] + ' ' + selectedDate.getFullYear() + ' · ' + selectedTime;
+            } else if (selectedDate) {
+                t.textContent = 'Дата: ' + selectedDate.getDate() + ' ' + RU_MONTHS_GEN[selectedDate.getMonth()] + ' — выберите время';
+            } else { t.textContent = 'Выберите дату и время'; }
+        }
+        function handleBooking() {
+            if (!selectedDate || !selectedTime) { showToast('⚠️ Пожалуйста, выберите дату и время'); return; }
+            closeModal(); showToast('🔒 Redirecting to secure payment gateway...');
+            setTimeout(() => alert('Redirecting to secure payment gateway...\n\nЭкзамен: ' + currentExam + '\nДата: ' + selectedDate.toLocaleDateString('ru-RU') + '\nВремя: ' + selectedTime), 800);
+        }
+
+        /* TOAST */
+        let _tt;
+        function showToast(msg) {
+            const el = document.getElementById('toastEl');
+            if (!el) return;
+            el.textContent = msg; el.classList.add('show');
+            clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 2800);
+        }
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    </script>
+</body>
+
+</html>

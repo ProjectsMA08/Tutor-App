@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ · Заявки на оплату — TutorApp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --teal: #00A896;
+            --teal-dark: #007F72;
+            --teal-mid: #5BBDB5;
+            --teal-light: #E0F5F3;
+            --teal-pale: #F0FAF9;
+            --text-dark: #1A2E2C;
+            --text-mid: #4A6360;
+            --text-soft: #7A9A97;
+            --white: #FFFFFF;
+            --bg: #F4FAFA;
+            --border: #D4EEEA;
+            --gold: #F5B942;
+            --red: #E05A7A;
+            --card-radius: 18px;
+            --shadow-xs: 0 1px 4px rgba(0, 168, 150, .07);
+            --shadow-sm: 0 4px 20px rgba(0, 168, 150, .12);
+            --shadow-md: 0 12px 36px rgba(0, 168, 150, .18);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* ── Gate screen (пока не проверили доступ) ── */
+        #gateScreen,
+        #deniedScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            gap: 14px;
+            text-align: center;
+            padding: 24px;
+        }
+
+        #deniedScreen {
+            display: none;
+        }
+
+        .gate-spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--teal-light);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .denied-emoji {
+            font-size: 42px;
+        }
+
+        .denied-text {
+            color: var(--text-mid);
+            font-size: 14px;
+            max-width: 320px;
+        }
+
+        /* ── App shell ── */
+        #app {
+            display: none;
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 28px 20px 80px;
+        }
+
+        header.admin-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .admin-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -.01em;
+        }
+
+        .admin-title span {
+            color: var(--teal-dark);
+        }
+
+        .admin-sub {
+            font-size: 13px;
+            color: var(--text-soft);
+            margin-top: 2px;
+        }
+
+        .admin-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-mid);
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            padding: 6px 14px;
+        }
+
+        /* ── Tabs ── */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 5px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-soft);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .18s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn.active {
+            background: var(--teal);
+            color: var(--white);
+        }
+
+        .tab-count {
+            background: rgba(0, 0, 0, .12);
+            border-radius: 50px;
+            font-size: 11px;
+            padding: 1px 7px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .tab-btn.active .tab-count {
+            background: rgba(255, 255, 255, .25);
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-soft);
+        }
+
+        .empty-state .emoji {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        /* ── Request card ── */
+        .req-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .req-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow-xs);
+            padding: 18px 20px;
+            animation: fadeUp .3s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .req-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .req-people {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .req-people .arrow {
+            color: var(--teal-mid);
+            font-weight: 400;
+        }
+
+        .req-meta {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-top: 4px;
+        }
+
+        .req-amount {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--teal-dark);
+            white-space: nowrap;
+        }
+
+        .req-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .req-status.payment_submitted {
+            background: #FEF3D9;
+            color: #B8860B;
+        }
+
+        .req-status.confirmed {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+        }
+
+        .req-status.rejected {
+            background: #FCE4EA;
+            color: var(--red);
+        }
+
+        .req-body {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .receipt-thumb {
+            width: 92px;
+            height: 92px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            overflow: hidden;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .15s;
+        }
+
+        .receipt-thumb:hover {
+            transform: scale(1.03);
+        }
+
+        .receipt-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .receipt-thumb.no-receipt {
+            color: var(--text-soft);
+            font-size: 11px;
+            text-align: center;
+            padding: 6px;
+        }
+
+        .req-details {
+            flex: 1;
+            min-width: 180px;
+            font-size: 13px;
+            color: var(--text-mid);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .req-details b {
+            color: var(--text-dark);
+        }
+
+        .req-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+            align-self: flex-end;
+        }
+
+        .req-btn {
+            border: none;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 9px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .18s;
+            white-space: nowrap;
+        }
+
+        .req-btn.confirm {
+            background: var(--teal);
+            color: var(--white);
+        }
+
+        .req-btn.confirm:hover {
+            background: var(--teal-dark);
+        }
+
+        .req-btn.reject {
+            background: var(--white);
+            color: var(--red);
+            border: 1.5px solid #F5C7D3;
+        }
+
+        .req-btn.reject:hover {
+            background: #FCE4EA;
+        }
+
+        .req-btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        /* ── Receipt lightbox ── */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 20, 20, .85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 24px;
+            cursor: zoom-out;
+        }
+
+        .lightbox.open {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 26px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text-dark);
+            color: #fff;
+            padding: 11px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s, transform .25s;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .req-actions {
+                width: 100%;
+                align-self: stretch;
+            }
+
+            .req-btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Экран проверки доступа -->
+    <div id="gateScreen">
+        <div class="gate-spinner"></div>
+        <div style="color:var(--text-soft);font-size:13px;">Проверяем доступ...</div>
+    </div>
+
+    <!-- Экран "доступ запрещён" -->
+    <div id="deniedScreen">
+        <div class="denied-emoji">🔒</div>
+        <div style="font-size:17px;font-weight:800;">Доступ только для администратора</div>
+        <div class="denied-text">
+            Эта страница видна только владельцу TutorApp. Если это вы — убедитесь, что вошли в правильный аккаунт.
+        </div>
+    </div>
+
+    <!-- Основной интерфейс -->
+    <div id="app">
+        <header class="admin-head">
+            <div>
+                <div class="admin-title">Tutor<span>App</span> · Заявки на оплату</div>
+                <div class="admin-sub">Проверка чеков и подтверждение бронирований</div>
+            </div>
+            <div class="admin-me" id="adminMe"></div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-status="payment_submitted" onclick="switchTab(this)">
+                ⏳ На проверке <span class="tab-count" id="countPending">0</span>
+            </button>
+            <button class="tab-btn" data-status="confirmed" onclick="switchTab(this)">
+                ✅ Подтверждённые <span class="tab-count" id="countConfirmed">0</span>
+            </button>
+            <button class="tab-btn" data-status="rejected" onclick="switchTab(this)">
+                ❌ Отклонённые <span class="tab-count" id="countRejected">0</span>
+            </button>
+        </div>
+
+        <div class="req-list" id="reqList">
+            <div class="empty-state">
+                <div class="emoji">⏳</div>
+                Загружаем заявки...
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox для просмотра чека в полный размер -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <img id="lightboxImg" src="" alt="Чек">
+    </div>
+
+    <div class="toast" id="toastEl"></div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+        import {
+            getFirestore, collection, doc, addDoc, updateDoc, onSnapshot,
+            query, where, orderBy, serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+        /* ══════════════════════════════════════════
+           ⚠️ ВАЖНО: впишите сюда свой реальный UID
+           Найти его: откройте Chat.html / public.html под своим аккаунтом,
+           в консоли браузера (F12) выполните: console.log(window.currentUser?.uid)
+           — или временно добавьте в любую страницу вывод currentUser.uid на экран.
+        ══════════════════════════════════════════ */
+        const ADMIN_UID = 'ВПИШИ_СЮДА_СВОЙ_UID';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQ9UYY6uh3CgXzytNwt_r2LCwaXval9T8",
+            authDomain: "tutorapp-95f48.firebaseapp.com",
+            projectId: "tutorapp-95f48",
+            storageBucket: "tutorapp-95f48.firebasestorage.app",
+            messagingSenderId: "559214827748",
+            appId: "1:559214827748:web:c77d90b72d607f6df1b4f1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const makeChatId = (a, b) => [a, b].sort().join('_');
+
+        let currentTab = 'payment_submitted';
+        let unsubscribers = {}; // по одной realtime-подписке на каждый статус, чтобы считать badge-цифры всегда
+
+        onAuthStateChanged(auth, (user) => {
+            const gate = document.getElementById('gateScreen');
+            const denied = document.getElementById('deniedScreen');
+            const appEl = document.getElementById('app');
+
+            if (!user || user.uid !== ADMIN_UID) {
+                gate.style.display = 'none';
+                denied.style.display = 'flex';
+                return;
+            }
+
+            gate.style.display = 'none';
+            appEl.style.display = 'block';
+            document.getElementById('adminMe').textContent = `👤 ${user.email || user.uid}`;
+
+            // Подписываемся на все три статуса сразу — чтобы badge-цифры на табах
+            // обновлялись в реальном времени, даже если открыта другая вкладка
+            ['payment_submitted', 'confirmed', 'rejected'].forEach(status => {
+                const q = query(collection(db, 'bookingRequests'), where('status', '==', status), orderBy('createdAt', 'desc'));
+                unsubscribers[status] = onSnapshot(q, (snap) => {
+                    const docs = [];
+                    snap.forEach(d => docs.push({ id: d.id, ...d.data() }));
+                    cacheByStatus[status] = docs;
+                    updateCounts();
+                    if (currentTab === status) renderList(docs);
+                }, (err) => console.error(`[bookingRequests:${status}]`, err));
+            });
+        });
+
+        const cacheByStatus = { payment_submitted: [], confirmed: [], rejected: [] };
+
+        function updateCounts() {
+            document.getElementById('countPending').textContent = cacheByStatus.payment_submitted.length;
+            document.getElementById('countConfirmed').textContent = cacheByStatus.confirmed.length;
+            document.getElementById('countRejected').textContent = cacheByStatus.rejected.length;
+        }
+
+        window.switchTab = function (btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTab = btn.dataset.status;
+            renderList(cacheByStatus[currentTab] || []);
+        };
+
+        const STATUS_LABELS = {
+            payment_submitted: '⏳ На проверке',
+            confirmed: '✅ Подтверждено',
+            rejected: '❌ Отклонено'
+        };
+
+        function fmtDate(req) {
+            if (!req.lessonDate) return 'дата не указана';
+            try {
+                const d = new Date(req.lessonDate);
+                return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + (req.lessonTime ? `, ${req.lessonTime}` : '');
+            } catch { return req.lessonDate; }
+        }
+
+        function renderList(docs) {
+            const listEl = document.getElementById('reqList');
+            if (!docs.length) {
+                const emptyMessages = {
+                    payment_submitted: ['🎉', 'Все заявки проверены — новых нет.'],
+                    confirmed: ['✅', 'Подтверждённых заявок пока нет.'],
+                    rejected: ['🗑️', 'Отклонённых заявок пока нет.']
+                };
+                const [emoji, text] = emptyMessages[currentTab] || ['📭', 'Пусто.'];
+                listEl.innerHTML = `<div class="empty-state"><div class="emoji">${emoji}</div>${text}</div>`;
+                return;
+            }
+
+            listEl.innerHTML = docs.map(req => {
+                const amount = (req.amount || 0).toLocaleString('ru-RU') + ' ' + (req.currency === 'KGS' ? 'сом' : (req.currency || ''));
+                const receiptHtml = req.receiptUrl
+                    ? `<div class="receipt-thumb" onclick="openLightbox('${esc(req.receiptUrl)}')"><img src="${esc(req.receiptUrl)}" alt="Чек" onerror="this.parentElement.classList.add('no-receipt');this.parentElement.textContent='Чек не загрузился';"></div>`
+                    : `<div class="receipt-thumb no-receipt">Без чека</div>`;
+
+                const isPending = req.status === 'payment_submitted';
+                const actionsHtml = isPending ? `
+                    <div class="req-actions">
+                        <button class="req-btn reject" onclick="rejectRequest('${req.id}', this)">Отклонить</button>
+                        <button class="req-btn confirm" onclick="confirmRequest('${req.id}', this)">Подтвердить</button>
+                    </div>` : '';
+
+                return `
+                <div class="req-card" data-id="${req.id}">
+                    <div class="req-top">
+                        <div>
+                            <div class="req-people">
+                                ${esc(req.studentName || 'Ученик')} <span class="arrow">→</span> ${esc(req.tutorName || 'Репетитор')}
+                            </div>
+                            <div class="req-meta">Урок: ${fmtDate(req)} · ${req.durationMins || 50} мин</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div class="req-amount">${amount}</div>
+                            <span class="req-status ${req.status}">${STATUS_LABELS[req.status] || req.status}</span>
+                        </div>
+                    </div>
+                    <div class="req-body">
+                        ${receiptHtml}
+                        <div class="req-details">
+                            <div><b>Ученик ID:</b> ${esc(req.studentId || '—')}</div>
+                            <div><b>Репетитор ID:</b> ${esc(req.tutorId || '—')}</div>
+                        </div>
+                        ${actionsHtml}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function esc(s) {
+            return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        window.openLightbox = function (url) {
+            document.getElementById('lightboxImg').src = url;
+            document.getElementById('lightbox').classList.add('open');
+        };
+        window.closeLightbox = function () {
+            document.getElementById('lightbox').classList.remove('open');
+        };
+
+        /* ══════════════════════════════════════════
+           ПОДТВЕРДИТЬ ЗАЯВКУ
+           — меняет статус на confirmed
+           — отправляет системное сообщение в чат (ученик ↔ репетитор)
+           — отправляет уведомление обоим участникам
+        ══════════════════════════════════════════ */
+        window.confirmRequest = async function (reqId, btn) {
+            const req = cacheByStatus.payment_submitted.find(r => r.id === reqId);
+            if (!req) return;
+
+            btn.disabled = true;
+            const otherBtn = btn.parentElement.querySelector('.req-btn:not(.confirm)');
+            if (otherBtn) otherBtn.disabled = true;
+            btn.textContent = 'Подтверждаем...';
+
+            try {
+                await updateDoc(doc(db, 'bookingRequests', reqId), {
+                    status: 'confirmed',
+                    confirmedAt: serverTimestamp(),
+                    confirmedBy: auth.currentUser.uid
+                });
+
+                const chatId = makeChatId(req.studentId, req.tutorId);
+                const lessonInfo = fmtDate(req);
+                const amountStr = (req.amount || 0).toLocaleString('ru-RU') + ' сом';
+
+                // Системное сообщение в чат — увидят и ученик, и репетитор
+                await addDoc(collection(db, 'messages'), {
+                    chatId,
+                    senderId: 'system',
+                    senderName: 'TutorApp',
+                    receiverId: req.tutorId, // для совместимости со счётчиками непрочитанного у репетитора
+                    text: `💳 Оплата подтверждена! ${req.studentName} забронировал урок с ${req.tutorName} на ${lessonInfo}. Сумма: ${amountStr}.`,
+                    type: 'text',
+                    isSystem: true,
+                    timestamp: serverTimestamp(),
+                    read: false
+                });
+
+                // Уведомления обоим участникам
+                await addDoc(collection(db, 'notifications'), {
+                    toUid: req.studentId, fromUid: 'system', fromName: 'TutorApp', fromAvatar: null,
+                    text: `Оплата подтверждена! Урок с ${req.tutorName} забронирован на ${lessonInfo}.`,
+                    chatType: 'direct', chatId, type: 'system', read: false, createdAt: serverTimestamp()
+                });
+                await addDoc(collection(db, 'notifications'), {
+                    toUid: req.tutorId, fromUid: 'system', fromName: 'TutorApp', fromAvatar: null,
+                    text: `Новое бронирование от ${req.studentName} на ${lessonInfo}. Оплата подтверждена.`,
+                    chatType: 'direct', chatId, type: 'system', read: false, createdAt: serverTimestamp()
+                });
+
+                toast('✅ Подтверждено! Чат создан, участники уведомлены.');
+            } catch (e) {
+                console.error('[confirmRequest]', e);
+                toast('⚠️ Ошибка при подтверждении. Попробуйте снова.');
+                btn.disabled = false;
+                if (otherBtn) otherBtn.disabled = false;
+                btn.textContent = 'Подтвердить';
+            }
+        };
+
+        /* ══════════════════════════════════════════
+           ОТКЛОНИТЬ ЗАЯВКУ
+        ══════════════════════════════════════════ */
+        window.rejectRequest = async function (reqId, btn) {
+            if (!confirm('Отклонить эту заявку? Ученику будет отправлено уведомление.')) return;
+
+            const req = cacheByStatus.payment_submitted.find(r => r.id === reqId);
+            if (!req) return;
+
+            btn.disabled = true;
+            const otherBtn = btn.parentElement.querySelector('.req-btn.confirm');
+            if (otherBtn) otherBtn.disabled = true;
+            btn.textContent = 'Отклоняем...';
+
+            try {
+                await updateDoc(doc(db, 'bookingRequests', reqId), {
+                    status: 'rejected',
+                    rejectedAt: serverTimestamp(),
+                    rejectedBy: auth.currentUser.uid
+                });
+
+                await addDoc(collection(db, 'notifications'), {
+                    toUid: req.studentId, fromUid: 'system', fromName: 'TutorApp', fromAvatar: null,
+                    text: `Не удалось подтвердить оплату урока с ${req.tutorName}. Проверьте чек и попробуйте снова или свяжитесь с поддержкой.`,
+                    chatType: 'direct', chatId: null, type: 'system', read: false, createdAt: serverTimestamp()
+                });
+
+                toast('❌ Заявка отклонена.');
+            } catch (e) {
+                console.error('[rejectRequest]', e);
+                toast('⚠️ Ошибка. Попробуйте снова.');
+                btn.disabled = false;
+                if (otherBtn) otherBtn.disabled = false;
+                btn.textContent = 'Отклонить';
+            }
+        };
+
+        let _tt;
+        function toast(msg) {
+            const el = document.getElementById('toastEl');
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(_tt);
+            _tt = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+
+</html>

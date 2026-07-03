@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TutorApp — Войти</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --teal: #5BBDB5;
+      --teal-dark: #3FA9A1;
+      --teal-light: #EBF8F7;
+      --teal-glow: rgba(91, 189, 181, 0.18);
+      --grey-input: #F2F4F7;
+      --grey-label: #9CA3AF;
+      --grey-text: #6B7280;
+      --dark: #0F1923;
+      --dark-2: #1C2833;
+      --error: #EF4444;
+      --success: #10B981;
+      --warn: #F59E0B;
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #fff;
+      color: var(--dark);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════ SPLIT LAYOUT ══════════════════════ */
+    .auth-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── LEFT PANEL ── */
+    .auth-img {
+      position: relative;
+      overflow: hidden;
+      background: var(--dark-2);
+    }
+
+    .auth-img__photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 25%;
+      display: block;
+      filter: brightness(0.72) saturate(1.1);
+      transition: transform 10s ease;
+    }
+
+    .auth-img:hover .auth-img__photo {
+      transform: scale(1.05);
+    }
+
+    .auth-img__overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(160deg, rgba(15, 25, 35, 0.15) 0%, rgba(91, 189, 181, 0.12) 50%, rgba(15, 25, 35, 0.55) 100%);
+    }
+
+    .auth-img__brand {
+      position: absolute;
+      bottom: 40px;
+      left: 36px;
+      z-index: 4;
+    }
+
+    .auth-img__logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      color: #fff;
+      letter-spacing: 0.01em;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .auth-img__logo span {
+      color: var(--teal);
+    }
+
+    .auth-img__tagline {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 6px;
+      letter-spacing: 0.05em;
+      font-weight: 400;
+    }
+
+    /* Decorative teal accent lines */
+    .auth-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background:
+        linear-gradient(to right, var(--teal) 0%, var(--teal) 5px, transparent 5px),
+        linear-gradient(to bottom, var(--teal) 0%, var(--teal) 5px, transparent 5px);
+      pointer-events: none;
+    }
+
+    /* Floating badge */
+    .auth-badge {
+      position: absolute;
+      top: 36px;
+      left: 36px;
+      z-index: 5;
+      background: rgba(91, 189, 181, 0.22);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(91, 189, 181, 0.35);
+      border-radius: 50px;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── RIGHT PANEL ── */
+    .auth-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 48px 56px;
+      background: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--teal) 0%, #3FCFD5 100%);
+    }
+
+    /* Subtle background texture */
+    .auth-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse 60% 50% at 80% 10%, var(--teal-glow) 0%, transparent 70%);
+    }
+
+    .auth-form-box {
+      width: 100%;
+      max-width: 368px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════ TABS ══════════════════════ */
+    .auth-tabs {
+      display: flex;
+      background: var(--grey-input);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 32px;
+      gap: 0;
+    }
+
+    .auth-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--grey-label);
+      padding: 9px 0;
+      cursor: pointer;
+      border-radius: 7px;
+      transition: all 0.22s var(--ease);
+      position: relative;
+    }
+
+    .auth-tab.active {
+      background: #fff;
+      color: var(--dark);
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ══════════════════════ TITLES ══════════════════════ */
+    .auth-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 27px;
+      color: var(--dark);
+      margin-bottom: 5px;
+      letter-spacing: -0.01em;
+    }
+
+    .auth-subtitle {
+      font-size: 13.5px;
+      color: var(--grey-text);
+      margin-bottom: 26px;
+      line-height: 1.55;
+    }
+
+    /* ══════════════════════ FORMS ══════════════════════ */
+    .auth-form {
+      transition: opacity 0.3s var(--ease), transform 0.35s var(--ease);
+    }
+
+    .auth-form.hidden {
+      display: none;
+    }
+
+    .auth-form.slide-out-left {
+      animation: slideOutLeft 0.28s var(--ease) forwards;
+    }
+
+    .auth-form.slide-out-right {
+      animation: slideOutRight 0.28s var(--ease) forwards;
+    }
+
+    .auth-form.slide-in-right {
+      animation: slideInRight 0.32s var(--ease) forwards;
+    }
+
+    .auth-form.slide-in-left {
+      animation: slideInLeft 0.32s var(--ease) forwards;
+    }
+
+    @keyframes slideOutLeft {
+      to {
+        opacity: 0;
+        transform: translateX(-20px)
+      }
+    }
+
+    @keyframes slideOutRight {
+      to {
+        opacity: 0;
+        transform: translateX(20px)
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    /* ══════════════════════ FIELD ══════════════════════ */
+    .field {
+      margin-bottom: 13px;
+      position: relative;
+    }
+
+    .field__label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--grey-label);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+    }
+
+    .field__input {
+      width: 100%;
+      height: 48px;
+      background: var(--grey-input);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 0 44px 0 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14.5px;
+      font-weight: 400;
+      color: var(--dark);
+      outline: none;
+      transition: border-color 0.2s var(--ease), background 0.2s, box-shadow 0.2s;
+    }
+
+    .field__input::placeholder {
+      color: #C4C4C4;
+    }
+
+    .field__input:focus {
+      background: #fff;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(91, 189, 181, 0.13);
+    }
+
+    .field__input.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+
+    .field__input.success {
+      border-color: var(--success);
+    }
+
+    .field__input.warn {
+      border-color: var(--warn);
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
+    }
+
+    .field__input-wrap {
+      position: relative;
+    }
+
+    .field__icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 17px;
+      pointer-events: none;
+      color: #C4C4C4;
+      transition: color 0.2s;
+    }
+
+    .field__input:focus~.field__icon {
+      color: var(--teal);
+    }
+
+    .field__eye {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #C4C4C4;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .field__eye:hover {
+      color: var(--grey-text);
+    }
+
+    .field__error {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0;
+      transform: translateY(-3px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+
+    .field__error.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Username status hint */
+    .field__hint {
+      font-size: 12px;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .field__hint.show {
+      opacity: 1;
+    }
+
+    .field__hint.ok {
+      color: var(--success);
+    }
+
+    .field__hint.bad {
+      color: var(--error);
+    }
+
+    .field__hint.check {
+      color: var(--warn);
+    }
+
+    /* ══════════════════════ PASSWORD STRENGTH ══════════════════════ */
+    .pw-strength {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .pw-bar {
+      flex: 1;
+      height: 3px;
+      background: #E5E7EB;
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+
+    .pw-bar.weak {
+      background: var(--error);
+    }
+
+    .pw-bar.medium {
+      background: var(--warn);
+    }
+
+    .pw-bar.strong {
+      background: var(--success);
+    }
+
+    .pw-label {
+      font-size: 11px;
+      color: var(--grey-label);
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* ══════════════════════ BUTTON ══════════════════════ */
+    .btn-submit {
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      margin-top: 18px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s, box-shadow 0.25s;
+      box-shadow: 0 4px 18px rgba(91, 189, 181, 0.38);
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -70%;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.55s ease;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 26px rgba(91, 189, 181, 0.48);
+    }
+
+    .btn-submit:hover::before {
+      left: 130%;
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    .btn-submit.loading {
+      pointer-events: none;
+    }
+
+    .btn-submit.loading .btn-text {
+      opacity: 0;
+    }
+
+    .btn-spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      opacity: 0;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .btn-submit.loading .btn-spinner {
+      opacity: 1;
+    }
+
+    @keyframes spin {
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    /* Google button */
+    .btn-google {
+      width: 100%;
+      height: 46px;
+      background: #fff;
+      border: 2px solid var(--grey-input);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark);
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+
+    .btn-google:hover {
+      border-color: #D0D5DD;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .btn-google:active {
+      transform: scale(0.98);
+    }
+
+    .btn-google svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════ DIVIDER ══════════════════════ */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #F0F0F0;
+    }
+
+    .auth-divider span {
+      font-size: 12px;
+      color: var(--grey-label);
+      font-weight: 500;
+    }
+
+    /* ══════════════════════ FOOTER ══════════════════════ */
+    .auth-footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--grey-text);
+    }
+
+    .auth-footer a {
+      color: var(--teal);
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .auth-footer a:hover {
+      color: var(--teal-dark);
+      text-decoration: underline;
+    }
+
+    /* Checkbox */
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .check-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      accent-color: var(--teal);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-row label {
+      font-size: 13px;
+      color: var(--grey-text);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .check-row label a {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* ══════════════════════ TOAST ══════════════════════ */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--dark);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+      transition: opacity 0.28s var(--ease), transform 0.28s var(--ease);
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast--success {
+      background: var(--success);
+    }
+
+    .toast--error {
+      background: var(--error);
+    }
+
+    /* ══════════════════════ SURVEY PANELS ══════════════════════ */
+    .survey-panel {
+      display: none;
+      animation: slideInRight 0.32s var(--ease) forwards;
+    }
+
+    .survey-panel.active {
+      display: block;
+    }
+
+    .survey-steps {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .survey-step {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--grey-label);
+      transition: all 0.25s var(--ease);
+      flex-shrink: 0;
+    }
+
+    .survey-step.done {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+
+    .survey-step.active {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .survey-step-line {
+      flex: 1;
+      height: 2px;
+      background: #E5E7EB;
+      border-radius: 2px;
+      transition: background 0.25s;
+    }
+
+    .survey-step-line.done {
+      background: var(--teal);
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .role-card {
+      border: 2px solid #F0F0F0;
+      padding: 20px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s, transform 0.17s;
+      background: #FAFBFC;
+    }
+
+    .role-card:hover {
+      border-color: var(--teal-dark);
+      transform: translateY(-2px);
+    }
+
+    .role-card.selected {
+      border-color: var(--teal);
+      background: var(--teal-light);
+    }
+
+    .role-card__icon {
+      font-size: 32px;
+      margin-bottom: 9px;
+    }
+
+    .role-card__title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .role-card__desc {
+      font-size: 11.5px;
+      color: var(--grey-text);
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    .tag-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .tag-chip {
+      padding: 7px 13px;
+      border-radius: 50px;
+      border: 1.5px solid #E5E7EB;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--grey-text);
+      cursor: pointer;
+      transition: all 0.18s var(--ease);
+      user-select: none;
+    }
+
+    .tag-chip:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .tag-chip.selected {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .rate-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .currency-select {
+      height: 48px;
+      background: var(--grey-input);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 0 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--dark);
+      outline: none;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 0.2s var(--ease), background 0.2s;
+    }
+
+    .currency-select:focus {
+      background: #fff;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(91, 189, 181, 0.13);
+    }
+
+    .survey-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--grey-text);
+      cursor: pointer;
+      margin-bottom: 20px;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .survey-back:hover {
+      color: var(--dark);
+    }
+
+    /* Summary card */
+    .summary-card {
+      background: var(--teal-light);
+      border: 1.5px solid rgba(91, 189, 181, 0.4);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      font-size: 13.5px;
+      line-height: 1.85;
+      color: var(--dark);
+    }
+
+    /* Login role overlay */
+    .login-role-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(6px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      z-index: 10;
+      animation: slideInRight 0.32s var(--ease) forwards;
+    }
+
+    .login-role-overlay.active {
+      display: flex;
+    }
+
+    /* ══════════════════════ RESPONSIVE ══════════════════════ */
+    @media (max-width: 768px) {
+      .auth-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-img {
+        height: 220px;
+      }
+
+      .auth-img::before {
+        background:
+          linear-gradient(to bottom, var(--teal) 0%, var(--teal) 4px, transparent 4px),
+          linear-gradient(to right, var(--teal) 0%, var(--teal) 4px, transparent 4px);
+      }
+
+      .auth-panel {
+        padding: 36px 28px;
+      }
+
+      .auth-panel::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .auth-img {
+        height: 170px;
+      }
+
+      .auth-panel {
+        padding: 28px 20px;
+      }
+
+      .auth-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="auth-wrap">
+
+    <!-- LEFT: Hero image -->
+    <div class="auth-img">
+      <img class="auth-img__photo"
+        src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&q=85&auto=format&fit=crop"
+        alt="Students learning"
+        onerror="this.src='https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=900&q=85'">
+      <div class="auth-img__overlay"></div>
+      <div class="auth-badge">✦ Платформа для обучения</div>
+      <div class="auth-img__brand">
+        <div class="auth-img__logo">Tutor<span>App</span></div>
+        <div class="auth-img__tagline">Репетиторы и ученики — вместе</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Auth panel -->
+    <div class="auth-panel">
+      <div class="auth-form-box">
+
+        <!-- TABS -->
+        <div class="auth-tabs" id="auth-tabs">
+          <button class="auth-tab active" id="tab-signup" onclick="switchTab('signup')">Регистрация</button>
+          <button class="auth-tab" id="tab-login" onclick="switchTab('login')">Войти</button>
+        </div>
+
+        <!-- ═══════════ SIGN UP FORM ═══════════ -->
+        <div class="auth-form" id="form-signup">
+          <h1 class="auth-title">Создать аккаунт</h1>
+          <p class="auth-subtitle">Присоединяйтесь к тысячам учеников и репетиторов.</p>
+
+          <!-- Nickname field with uniqueness check -->
+          <div class="field">
+            <label class="field__label" for="su-nick">
+              <span>@</span> Никнейм
+            </label>
+            <div class="field__input-wrap">
+              <input class="field__input" id="su-nick" type="text" placeholder="Например: asel_nur"
+                autocomplete="username" oninput="onNickInput(this.value)">
+              <span class="field__icon">🪪</span>
+            </div>
+            <div class="field__hint" id="nick-hint"></div>
+            <div class="field__error" id="su-nick-err">⚠ Введите никнейм (только буквы, цифры, _)</div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="su-email">Gmail</label>
+            <div class="field__input-wrap">
+              <input class="field__input" id="su-email" type="email" placeholder="you@gmail.com" autocomplete="email">
+              <span class="field__icon">✉</span>
+            </div>
+            <div class="field__error" id="su-email-err">⚠ Введите корректный Gmail</div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="su-pass">Пароль</label>
+            <div class="field__input-wrap">
+              <input class="field__input" id="su-pass" type="password" placeholder="Мин. 8 символов"
+                autocomplete="new-password" oninput="checkStrength(this.value)">
+              <button class="field__eye" type="button" onclick="togglePw('su-pass',this)">👁</button>
+            </div>
+            <div class="field__error" id="su-pass-err">⚠ Пароль должен быть не менее 8 символов</div>
+            <div class="pw-strength" id="pw-bars">
+              <div class="pw-bar" id="pb1"></div>
+              <div class="pw-bar" id="pb2"></div>
+              <div class="pw-bar" id="pb3"></div>
+              <div class="pw-bar" id="pb4"></div>
+            </div>
+            <div class="pw-label" id="pw-label"></div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="su-pass2">Повторите пароль</label>
+            <div class="field__input-wrap">
+              <input class="field__input" id="su-pass2" type="password" placeholder="Повторите пароль"
+                autocomplete="new-password">
+              <button class="field__eye" type="button" onclick="togglePw('su-pass2',this)">👁</button>
+            </div>
+            <div class="field__error" id="su-pass2-err">⚠ Пароли не совпадают</div>
+          </div>
+
+          <div class="check-row">
+            <input type="checkbox" id="su-terms">
+            <label for="su-terms">Я принимаю <a href="#">Условия</a> и <a href="#">Политику
+                конфиденциальности</a></label>
+          </div>
+          <div class="field__error" id="su-terms-err" style="margin-top:4px;">⚠ Примите условия использования</div>
+
+          <button class="btn-submit" id="btn-signup" onclick="handleSignup()">
+            <span class="btn-text">Создать аккаунт</span>
+            <div class="btn-spinner"></div>
+          </button>
+
+          <div class="auth-divider"><span>или</span></div>
+
+          <button class="btn-google" onclick="handleGoogleSignup()">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#FFC107"
+                d="M43.6 20.1H42V20H24v8h11.3C33.6 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z" />
+              <path fill="#FF3D00"
+                d="M6.3 14.7l6.6 4.8C14.6 16 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 16.3 4 9.7 8.4 6.3 14.7z" />
+              <path fill="#4CAF50"
+                d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.2 26.7 36 24 36c-5.1 0-9.5-3.2-11.2-7.8l-6.6 5.1C9.5 39.4 16.3 44 24 44z" />
+              <path fill="#1976D2"
+                d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.4 4.3-4.5 5.6l6.2 5.2C40.8 36.2 44 30.6 44 24c0-1.3-.1-2.6-.4-3.9z" />
+            </svg>
+            Войти через Google
+          </button>
+
+          <div class="auth-footer">
+            Уже есть аккаунт? <a onclick="switchTab('login')">Войти</a>
+          </div>
+        </div>
+
+        <!-- ═══════════ LOGIN FORM ═══════════ -->
+        <div class="auth-form hidden" id="form-login">
+          <h1 class="auth-title">Добро пожаловать!</h1>
+          <p class="auth-subtitle">Войдите, чтобы продолжить обучение.</p>
+
+          <div class="field">
+            <label class="field__label" for="li-email">Gmail</label>
+            <div class="field__input-wrap">
+              <input class="field__input" id="li-email" type="email" placeholder="you@gmail.com" autocomplete="email">
+              <span class="field__icon">✉</span>
+            </div>
+            <div class="field__error" id="li-email-err">⚠ Введите корректный email</div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="li-pass">Пароль</label>
+            <div class="field__input-wrap">
+              <input class="field__input" id="li-pass" type="password" placeholder="Ваш пароль"
+                autocomplete="current-password">
+              <button class="field__eye" type="button" onclick="togglePw('li-pass',this)">👁</button>
+            </div>
+            <div class="field__error" id="li-pass-err">⚠ Неверный email или пароль</div>
+          </div>
+
+          <div class="check-row" style="justify-content:space-between;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--grey-text);">
+              <input type="checkbox" id="li-remember"
+                style="accent-color:var(--teal);cursor:pointer;width:16px;height:16px;">
+              Запомнить меня
+            </label>
+            <a href="#" style="font-size:13px;color:var(--teal);font-weight:600;text-decoration:none;"
+              onclick="handleForgotPassword(event)">Забыли пароль?</a>
+          </div>
+
+          <button class="btn-submit" id="btn-login" onclick="handleLogin()">
+            <span class="btn-text">Войти</span>
+            <div class="btn-spinner"></div>
+          </button>
+
+          <div class="auth-divider"><span>или</span></div>
+
+          <button class="btn-google" onclick="handleGoogleLogin()">
+            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#FFC107"
+                d="M43.6 20.1H42V20H24v8h11.3C33.6 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z" />
+              <path fill="#FF3D00"
+                d="M6.3 14.7l6.6 4.8C14.6 16 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.5 29.5 4 24 4 16.3 4 9.7 8.4 6.3 14.7z" />
+              <path fill="#4CAF50"
+                d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.2 26.7 36 24 36c-5.1 0-9.5-3.2-11.2-7.8l-6.6 5.1C9.5 39.4 16.3 44 24 44z" />
+              <path fill="#1976D2"
+                d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.4 4.3-4.5 5.6l6.2 5.2C40.8 36.2 44 30.6 44 24c0-1.3-.1-2.6-.4-3.9z" />
+            </svg>
+            Войти через Google
+          </button>
+
+          <div class="auth-footer">
+            Нет аккаунта? <a onclick="switchTab('signup')">Зарегистрироваться</a>
+          </div>
+        </div>
+
+        <!-- ═══════════ SURVEY STEP 1: Role ═══════════ -->
+        <div class="survey-panel" id="survey-step1">
+          <button class="survey-back" onclick="backToSignup()">← Назад</button>
+          <div class="survey-steps">
+            <div class="survey-step active" id="dot1">1</div>
+            <div class="survey-step-line" id="line1"></div>
+            <div class="survey-step" id="dot2">2</div>
+            <div class="survey-step-line" id="line2"></div>
+            <div class="survey-step" id="dot3">✓</div>
+          </div>
+          <h1 class="auth-title">Кто вы?</h1>
+          <p class="auth-subtitle">Выберите роль — это повлияет на ваш опыт в Кодексе.</p>
+          <div class="role-grid">
+            <div class="role-card" id="role-student" onclick="selectRole('student')">
+              <div class="role-card__icon">🎓</div>
+              <div class="role-card__title">Я ученик</div>
+              <div class="role-card__desc">Ищу наставника для своего роста</div>
+            </div>
+            <div class="role-card" id="role-tutor" onclick="selectRole('tutor')">
+              <div class="role-card__icon">👨‍🏫</div>
+              <div class="role-card__title">Я репетитор</div>
+              <div class="role-card__desc">Хочу делиться знаниями</div>
+            </div>
+          </div>
+          <button class="btn-submit" id="btn-step1-next" onclick="goStep2()" disabled style="opacity:0.45;">
+            <span class="btn-text">Далее →</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </div>
+
+        <!-- ═══════════ SURVEY STEP 2a: Student ═══════════ -->
+        <div class="survey-panel" id="survey-step2-student">
+          <button class="survey-back" onclick="goStep(1)">← Назад</button>
+          <div class="survey-steps">
+            <div class="survey-step done">✓</div>
+            <div class="survey-step-line done"></div>
+            <div class="survey-step active">2</div>
+            <div class="survey-step-line"></div>
+            <div class="survey-step">✓</div>
+          </div>
+          <h1 class="auth-title">Что изучаете?</h1>
+          <p class="auth-subtitle">Выберите направления (можно несколько).</p>
+          <div class="tag-grid" id="student-tags">
+            <div class="tag-chip" onclick="toggleTag(this)">🇬🇧 Английский</div>
+            <div class="tag-chip" onclick="toggleTag(this)">🇷🇺 Русский</div>
+            <div class="tag-chip" onclick="toggleTag(this)">📐 Математика</div>
+            <div class="tag-chip" onclick="toggleTag(this)">🧪 Химия</div>
+            <div class="tag-chip" onclick="toggleTag(this)">⚛️ Физика</div>
+            <div class="tag-chip" onclick="toggleTag(this)">💻 Программирование</div>
+            <div class="tag-chip" onclick="toggleTag(this)">🎨 Рисование</div>
+            <div class="tag-chip" onclick="toggleTag(this)">🎵 Музыка</div>
+          </div>
+          <div class="field" style="margin-bottom:8px;">
+            <label class="field__label" for="student-custom">Другое (необязательно)</label>
+            <input class="field__input" id="student-custom" type="text" placeholder="Свой предмет...">
+          </div>
+          <button class="btn-submit" onclick="goStep3()">
+            <span class="btn-text">Продолжить →</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </div>
+
+        <!-- ═══════════ SURVEY STEP 2b: Tutor ═══════════ -->
+        <div class="survey-panel" id="survey-step2-tutor">
+          <button class="survey-back" onclick="goStep(1)">← Назад</button>
+          <div class="survey-steps">
+            <div class="survey-step done">✓</div>
+            <div class="survey-step-line done"></div>
+            <div class="survey-step active">2</div>
+            <div class="survey-step-line"></div>
+            <div class="survey-step">✓</div>
+          </div>
+          <h1 class="auth-title">Чему учите?</h1>
+          <p class="auth-subtitle">Выберите предметы и укажите стоимость.</p>
+          <div class="tag-grid" id="tutor-tags">
+            <div class="tag-chip" onclick="toggleTag(this)">🇬🇧 Английский</div>
+            <div class="tag-chip" onclick="toggleTag(this)">🇷🇺 Русский</div>
+            <div class="tag-chip" onclick="toggleTag(this)">📐 Математика</div>
+            <div class="tag-chip" onclick="toggleTag(this)">🧪 Химия</div>
+            <div class="tag-chip" onclick="toggleTag(this)">⚛️ Физика</div>
+            <div class="tag-chip" onclick="toggleTag(this)">💻 Программирование</div>
+            <div class="tag-chip" onclick="toggleTag(this)">🎨 Рисование</div>
+            <div class="tag-chip" onclick="toggleTag(this)">🎵 Музыка</div>
+          </div>
+          <div class="field" style="margin-bottom:8px;">
+            <label class="field__label" for="tutor-custom">Другой предмет (необязательно)</label>
+            <input class="field__input" id="tutor-custom" type="text" placeholder="Напишите предмет...">
+          </div>
+          <div class="field">
+            <label class="field__label" for="tutor-rate">Стоимость (за час)</label>
+            <div class="rate-row">
+              <select class="currency-select" id="tutor-currency">
+                <option value="KGS">сом</option>
+                <option value="KZT">тенге</option>
+                <option value="UZS">сум</option>
+              </select>
+              <input class="field__input" id="tutor-rate" type="number" min="0" placeholder="500"
+                style="padding-left:12px;">
+            </div>
+            <div class="field__error" id="tutor-rate-err">⚠ Укажите стоимость занятия</div>
+          </div>
+          <button class="btn-submit" onclick="goStep3()">
+            <span class="btn-text">Продолжить →</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </div>
+
+        <!-- ═══════════ SURVEY STEP 3: Confirm ═══════════ -->
+        <div class="survey-panel" id="survey-step3">
+          <button class="survey-back" onclick="goStep(2)">← Назад</button>
+          <div class="survey-steps">
+            <div class="survey-step done">✓</div>
+            <div class="survey-step-line done"></div>
+            <div class="survey-step done">✓</div>
+            <div class="survey-step-line done"></div>
+            <div class="survey-step active">3</div>
+          </div>
+          <h1 class="auth-title">Всё готово!</h1>
+          <p class="auth-subtitle">Проверьте данные и создайте аккаунт.</p>
+          <div class="summary-card" id="summary-card"></div>
+          <button class="btn-submit" id="btn-finish-reg" onclick="completeRegistration()">
+            <span class="btn-text">🚀 Создать аккаунт</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </div>
+
+        <!-- ═══════════ LOGIN ROLE OVERLAY ═══════════ -->
+        <div class="login-role-overlay" id="login-role-overlay">
+          <h1 class="auth-title" style="text-align:center;">Ещё один шаг</h1>
+          <p class="auth-subtitle" style="text-align:center;">Укажите свою роль, чтобы продолжить.</p>
+          <div class="role-grid" style="width:100%;">
+            <div class="role-card" id="lr-student" onclick="selectLoginRole('student')">
+              <div class="role-card__icon">🎓</div>
+              <div class="role-card__title">Ученик</div>
+            </div>
+            <div class="role-card" id="lr-tutor" onclick="selectLoginRole('tutor')">
+              <div class="role-card__icon">👨‍🏫</div>
+              <div class="role-card__title">Репетитор</div>
+            </div>
+          </div>
+          <button class="btn-submit" id="btn-save-login-role" onclick="saveLoginRole()" disabled
+            style="opacity:0.45;width:100%;">
+            <span class="btn-text">Сохранить и войти</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </div>
+
+        <!-- ═══════════ GOOGLE NICKNAME OVERLAY ═══════════ -->
+        <div class="login-role-overlay" id="google-nick-overlay">
+          <h1 class="auth-title" style="text-align:center;">Выберите никнейм</h1>
+          <p class="auth-subtitle" style="text-align:center;">Нужен уникальный @никнейм для вашего профиля.</p>
+          <div class="field" style="width:100%;">
+            <label class="field__label" for="google-nick">@ Никнейм</label>
+            <input class="field__input" id="google-nick" type="text" placeholder="my_unique_nick"
+              oninput="onGoogleNickInput(this.value)">
+            <div class="field__hint" id="google-nick-hint"></div>
+            <div class="field__error" id="google-nick-err">⚠ Введите никнейм (только буквы, цифры, _)</div>
+          </div>
+          <button class="btn-submit" id="btn-save-google-nick" onclick="saveGoogleNick()" style="width:100%;">
+            <span class="btn-text">Сохранить и продолжить</span>
+            <div class="btn-spinner"></div>
+          </button>
+        </div>
+
+      </div><!-- /auth-form-box -->
+    </div><!-- /auth-panel -->
+
+  </div><!-- /auth-wrap -->
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    /* ═══════════════════════════════════════════════════════════════
+       FIREBASE
+    ═══════════════════════════════════════════════════════════════ */
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.3.1/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signInWithPopup,
+      GoogleAuthProvider,
+      updateProfile,
+      sendPasswordResetEmail,
+      setPersistence,
+      browserLocalPersistence,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      updateDoc,
+      query,
+      collection,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.3.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQ9UYY6uh3CgXzytNwt_r2LCwaXval9T8",
+      authDomain: "tutorapp-95f48.firebaseapp.com",
+      projectId: "tutorapp-95f48",
+      storageBucket: "tutorapp-95f48.firebasestorage.app",
+      messagingSenderId: "559214827748",
+      appId: "1:559214827748:web:c77d90b72d607f6df1b4f1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    setPersistence(auth, browserLocalPersistence).catch(console.error);
+
+    /* ═══════════════════════════════════════════════════════════════
+       АВТО-ВХОД: если сессия уже есть — сразу на профиль
+    ═══════════════════════════════════════════════════════════════ */
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return; // не залогинен — остаёмся на странице входа
+
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (snap.exists() && snap.data().role) {
+          const role = snap.data().role;
+          window.location.replace(role === 'tutor' ? './tutor-profile.html' : './profile.html');
+        }
+        // если роль не задана — остаёмся, пусть выберет
+      } catch (_) {
+        // ошибка Firestore — просто показываем страницу входа
+      }
+    });
+
+    /* ═══════════════════════════════════════════════════════════════
+       STATE
+    ═══════════════════════════════════════════════════════════════ */
+    let currentTab = 'signup';
+    let currentStep = 0;
+    let selectedRole = null;
+    let tempUserData = null;   // { nick, email, password }
+    let loginUid = null;
+    const CURRENCY_LABELS = { KGS: 'сом', KZT: 'тенге', UZS: 'сум' };
+    let loginSelectedRole = null;
+    let googleUser = null;   // temp Google user before nickname saved
+    let nickCheckTimer = null;
+
+    /* ═══════════════════════════════════════════════════════════════
+       HELPERS
+    ═══════════════════════════════════════════════════════════════ */
+    const isValidEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+    const isValidNick = n => /^[a-zA-Z0-9_]{3,20}$/.test(n);
+
+    function showError(id, show = true) {
+      document.getElementById(id)?.classList.toggle('show', show);
+    }
+    function setInputState(id, state) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('error', 'success', 'warn');
+      if (state) el.classList.add(state);
+    }
+    function clearAllErrors() {
+      document.querySelectorAll('.field__error').forEach(e => e.classList.remove('show'));
+    }
+    function setLoading(id, on) {
+      document.getElementById(id)?.classList.toggle('loading', on);
+    }
+    function showToast(msg, type = '') {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.className = 'toast' + (type ? ` toast--${type}` : '');
+      t.classList.add('show');
+      clearTimeout(t._tt);
+      t._tt = setTimeout(() => t.classList.remove('show'), 3500);
+    }
+    window.showToast = showToast;
+
+    function setHint(id, msg, cls) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg;
+      el.className = `field__hint show ${cls}`;
+    }
+    function clearHint(id) {
+      const el = document.getElementById(id);
+      if (el) { el.className = 'field__hint'; el.textContent = ''; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       NICKNAME UNIQUENESS CHECK
+       Wrapped in try/catch — if Firestore blocks the read (no auth yet),
+       we assume the nick is available and let the server validate on write.
+    ═══════════════════════════════════════════════════════════════ */
+    async function checkNickAvailable(nick) {
+      try {
+        const q = query(collection(db, 'users'), where('nick', '==', nick.toLowerCase()));
+        const snap = await getDocs(q);
+        return snap.empty; // true = available
+      } catch (e) {
+        // If read is blocked (user not yet authenticated), skip the check
+        console.warn('Nick check skipped (no auth yet):', e.code);
+        return true;
+      }
+    }
+
+    window.onNickInput = function (val) {
+      clearTimeout(nickCheckTimer);
+      const errEl = document.getElementById('su-nick-err');
+      errEl?.classList.remove('show');
+      setInputState('su-nick', '');
+      clearHint('nick-hint');
+
+      if (!val) return;
+
+      if (!isValidNick(val)) {
+        setHint('nick-hint', '✗ Только буквы, цифры и _ (3–20 символов)', 'bad');
+        setInputState('su-nick', 'error');
+        return;
+      }
+
+      setHint('nick-hint', '⟳ Проверяем доступность...', 'check');
+      setInputState('su-nick', 'warn');
+
+      nickCheckTimer = setTimeout(async () => {
+        try {
+          const available = await checkNickAvailable(val);
+          if (available) {
+            setHint('nick-hint', '✓ Никнейм свободен!', 'ok');
+            setInputState('su-nick', 'success');
+          } else {
+            setHint('nick-hint', '✗ Этот никнейм уже занят', 'bad');
+            setInputState('su-nick', 'error');
+          }
+        } catch (e) {
+          clearHint('nick-hint');
+          setInputState('su-nick', '');
+        }
+      }, 600);
+    };
+
+    /* Google nick overlay check */
+    window.onGoogleNickInput = function (val) {
+      clearTimeout(nickCheckTimer);
+      clearHint('google-nick-hint');
+      document.getElementById('google-nick-err')?.classList.remove('show');
+      setInputState('google-nick', '');
+      if (!val) return;
+
+      if (!isValidNick(val)) {
+        setHint('google-nick-hint', '✗ Только буквы, цифры и _ (3–20 символов)', 'bad');
+        setInputState('google-nick', 'error');
+        return;
+      }
+
+      setHint('google-nick-hint', '⟳ Проверяем доступность...', 'check');
+      setInputState('google-nick', 'warn');
+
+      nickCheckTimer = setTimeout(async () => {
+        try {
+          const available = await checkNickAvailable(val);
+          if (available) {
+            setHint('google-nick-hint', '✓ Никнейм свободен!', 'ok');
+            setInputState('google-nick', 'success');
+          } else {
+            setHint('google-nick-hint', '✗ Этот никнейм уже занят', 'bad');
+            setInputState('google-nick', 'error');
+          }
+        } catch (e) {
+          clearHint('google-nick-hint');
+        }
+      }, 600);
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       TAB SWITCHING
+    ═══════════════════════════════════════════════════════════════ */
+    window.switchTab = function (tab) {
+      if (tab === currentTab) return;
+      const outDir = (tab === 'login') ? 'slide-out-left' : 'slide-out-right';
+      const inDir = (tab === 'login') ? 'slide-in-right' : 'slide-in-left';
+      const outId = (tab === 'login') ? 'form-signup' : 'form-login';
+      const inId = (tab === 'login') ? 'form-login' : 'form-signup';
+
+      const outEl = document.getElementById(outId);
+      const inEl = document.getElementById(inId);
+      clearAllErrors();
+
+      outEl.classList.add(outDir);
+      setTimeout(() => {
+        outEl.classList.add('hidden');
+        outEl.classList.remove(outDir);
+        inEl.classList.remove('hidden');
+        inEl.classList.add(inDir);
+        setTimeout(() => inEl.classList.remove(inDir), 350);
+      }, 280);
+
+      currentTab = tab;
+      document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       PASSWORD VISIBILITY
+    ═══════════════════════════════════════════════════════════════ */
+    window.togglePw = function (id, btn) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const isPass = el.type === 'password';
+      el.type = isPass ? 'text' : 'password';
+      btn.textContent = isPass ? '🙈' : '👁';
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       PASSWORD STRENGTH
+    ═══════════════════════════════════════════════════════════════ */
+    window.checkStrength = function (pw) {
+      const bars = ['pb1', 'pb2', 'pb3', 'pb4'];
+      const label = document.getElementById('pw-label');
+      let score = 0;
+      if (pw.length >= 8) score++;
+      if (/[A-Z]/.test(pw)) score++;
+      if (/[0-9]/.test(pw)) score++;
+      if (/[^A-Za-z0-9]/.test(pw)) score++;
+      bars.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.className = 'pw-bar';
+        if (i < score) {
+          el.classList.add(score <= 1 ? 'weak' : score <= 2 ? 'medium' : 'strong');
+        }
+      });
+      if (label) label.textContent = score <= 1 ? 'Слабый' : score <= 2 ? 'Средний' : score === 3 ? 'Хороший' : 'Надёжный';
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       SIGN UP (email/password)
+    ═══════════════════════════════════════════════════════════════ */
+    window.handleSignup = async function () {
+      clearAllErrors();
+      const nick = document.getElementById('su-nick').value.trim();
+      const email = document.getElementById('su-email').value.trim();
+      const pass = document.getElementById('su-pass').value;
+      const pass2 = document.getElementById('su-pass2').value;
+      const terms = document.getElementById('su-terms').checked;
+
+      let valid = true;
+      if (!isValidNick(nick)) { showError('su-nick-err'); setInputState('su-nick', 'error'); valid = false; }
+      if (!isValidEmail(email)) { showError('su-email-err'); setInputState('su-email', 'error'); valid = false; }
+      if (pass.length < 8) { showError('su-pass-err'); setInputState('su-pass', 'error'); valid = false; }
+      if (pass !== pass2) { showError('su-pass2-err'); setInputState('su-pass2', 'error'); valid = false; }
+      if (!terms) { showError('su-terms-err'); valid = false; }
+      if (!valid) return;
+
+      // Double-check nickname availability
+      setLoading('btn-signup', true);
+      try {
+        const available = await checkNickAvailable(nick);
+        if (!available) {
+          showError('su-nick-err');
+          setInputState('su-nick', 'error');
+          setHint('nick-hint', '✗ Этот никнейм уже занят', 'bad');
+          showToast('⚠ Никнейм уже занят, выберите другой', 'error');
+          setLoading('btn-signup', false);
+          return;
+        }
+      } catch (e) {
+        // If check fails, proceed anyway
+      }
+
+      tempUserData = { nick: nick.toLowerCase(), email, password: pass };
+      setLoading('btn-signup', false);
+
+      // Show survey
+      document.getElementById('auth-tabs').style.display = 'none';
+      document.getElementById('form-signup').classList.add('hidden');
+      goStep(1);
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       GOOGLE SIGN IN/SIGN UP
+    ═══════════════════════════════════════════════════════════════ */
+    async function handleGoogleAuth() {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        const uid = user.uid;
+
+        // Check if user already exists in Firestore
+        const snap = await getDoc(doc(db, 'users', uid));
+
+        if (snap.exists()) {
+          // Existing user → go to profile
+          showToast('👋 С возвращением!', 'success');
+          setTimeout(() => { window.location.href = './profile.html'; }, 1200);
+        } else {
+          // New Google user → need nickname + role
+          googleUser = user;
+          document.getElementById('google-nick-overlay').classList.add('active');
+          document.getElementById('google-nick').focus();
+        }
+      } catch (err) {
+        console.error('Google Auth Error:', err);
+        if (err.code !== 'auth/popup-closed-by-user') {
+          showToast(`⚠ Ошибка входа через Google: ${err.message}`, 'error');
+        }
+      }
+    }
+
+    window.handleGoogleSignup = handleGoogleAuth;
+    window.handleGoogleLogin = handleGoogleAuth;
+
+    /* Save nickname chosen after Google auth */
+    window.saveGoogleNick = async function () {
+      const nick = document.getElementById('google-nick').value.trim();
+      if (!isValidNick(nick)) {
+        showError('google-nick-err');
+        setInputState('google-nick', 'error');
+        return;
+      }
+
+      setLoading('btn-save-google-nick', true);
+
+      try {
+        const available = await checkNickAvailable(nick);
+        if (!available) {
+          setHint('google-nick-hint', '✗ Этот никнейм уже занят', 'bad');
+          setInputState('google-nick', 'error');
+          setLoading('btn-save-google-nick', false);
+          return;
+        }
+
+        const user = googleUser || auth.currentUser;
+        if (!user) { showToast('⚠ Сессия истекла. Попробуйте снова.', 'error'); return; }
+
+        const uid = user.uid;
+        await setDoc(doc(db, 'users', uid), {
+          uid,
+          nick: nick.toLowerCase(),
+          fullName: user.displayName || nick,
+          email: user.email?.toLowerCase() || '',
+          role: null,
+          searchKeywords: [nick.toLowerCase(), (user.displayName || nick).toLowerCase()],
+          subjects: [],
+          createdAt: new Date(),
+          description: 'О себе еще ничего не написано...',
+          photoUrl: user.photoURL || '',
+          bannerUrl: '',
+          clubs: [],
+          postsCount: 0,
+          friendsCount: 0,
+          clubsCount: 0,
+          streakDays: 0,
+          courses: [],
+          achievements: []
+        });
+
+        // Show role selection
+        document.getElementById('google-nick-overlay').classList.remove('active');
+        loginUid = uid;
+        showToast('✅ Никнейм сохранён! Выберите роль.', 'success');
+        document.getElementById('login-role-overlay').classList.add('active');
+
+      } catch (err) {
+        console.error('saveGoogleNick error:', err);
+        showToast(`⚠ Ошибка: ${err.message}`, 'error');
+      } finally {
+        setLoading('btn-save-google-nick', false);
+      }
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       SURVEY NAVIGATION
+    ═══════════════════════════════════════════════════════════════ */
+    window.backToSignup = function () {
+      document.querySelectorAll('.survey-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('form-signup').classList.remove('hidden');
+      document.getElementById('auth-tabs').style.display = '';
+      currentStep = 0; selectedRole = null;
+    };
+
+    window.goStep = function (n) {
+      document.querySelectorAll('.survey-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('form-login')?.classList.add('hidden');
+      document.getElementById('form-signup')?.classList.add('hidden');
+
+      if (n === 1) {
+        document.getElementById('survey-step1').classList.add('active');
+      } else if (n === 2) {
+        const panel = selectedRole === 'student' ? 'survey-step2-student' : 'survey-step2-tutor';
+        document.getElementById(panel).classList.add('active');
+      } else if (n === 3) {
+        buildSummary();
+        document.getElementById('survey-step3').classList.add('active');
+      }
+      currentStep = n;
+    };
+
+    window.selectRole = function (role) {
+      selectedRole = role;
+      document.getElementById('role-student').classList.toggle('selected', role === 'student');
+      document.getElementById('role-tutor').classList.toggle('selected', role === 'tutor');
+      const btn = document.getElementById('btn-step1-next');
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    };
+
+    window.goStep2 = function () {
+      if (!selectedRole) return;
+      goStep(2);
+    };
+
+    window.toggleTag = function (chip) { chip.classList.toggle('selected'); };
+
+    function getSelectedTags(id) {
+      return [...document.querySelectorAll(`#${id} .tag-chip.selected`)].map(c => c.textContent.trim());
+    }
+
+    window.goStep3 = function () {
+      if (selectedRole === 'tutor') {
+        const rate = document.getElementById('tutor-rate').value;
+        if (!rate || Number(rate) <= 0) {
+          showError('tutor-rate-err');
+          setInputState('tutor-rate', 'error');
+          return;
+        }
+        document.getElementById('tutor-rate-err')?.classList.remove('show');
+      }
+      goStep(3);
+    };
+
+    function buildSummary() {
+      const card = document.getElementById('summary-card');
+      if (!card || !tempUserData) return;
+
+      let tags = [], extra = '';
+      if (selectedRole === 'student') {
+        tags = getSelectedTags('student-tags');
+        extra = document.getElementById('student-custom')?.value.trim();
+      } else {
+        tags = getSelectedTags('tutor-tags');
+        extra = document.getElementById('tutor-custom')?.value.trim();
+      }
+      const roleLabel = selectedRole === 'student' ? '🎓 Ученик' : '👨‍🏫 Репетитор';
+      const subjectLabel = selectedRole === 'student' ? 'Хочу изучить' : 'Преподаю';
+      const tagList = [...tags, ...(extra ? [extra] : [])].join(', ') || '—';
+      const rateCurrency = document.getElementById('tutor-currency')?.value || 'KGS';
+      const rateRow = selectedRole === 'tutor'
+        ? `<div><strong>Стоимость:</strong> ${document.getElementById('tutor-rate')?.value} ${CURRENCY_LABELS[rateCurrency] || rateCurrency} / час</div>` : '';
+
+      card.innerHTML = `
+    <div><strong>Никнейм:</strong> @${tempUserData.nick}</div>
+    <div><strong>Email:</strong> ${tempUserData.email}</div>
+    <div><strong>Роль:</strong> ${roleLabel}</div>
+    <div><strong>${subjectLabel}:</strong> ${tagList}</div>
+    ${rateRow}
+  `;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       COMPLETE REGISTRATION
+    ═══════════════════════════════════════════════════════════════ */
+    window.completeRegistration = async function () {
+      setLoading('btn-finish-reg', true);
+
+      // ── ШАГ 1: Создаём аккаунт в Firebase Auth ──────────────────────
+      let cred;
+      try {
+        cred = await createUserWithEmailAndPassword(auth, tempUserData.email, tempUserData.password);
+        // Ник в displayName — не критично, поэтому не прерываем при ошибке
+        try { await updateProfile(cred.user, { displayName: tempUserData.nick }); } catch (_) { }
+      } catch (authErr) {
+        const msgs = {
+          'auth/email-already-in-use': '⚠ Этот email уже зарегистрирован.',
+          'auth/weak-password': '⚠ Пароль слишком слабый.',
+          'auth/invalid-email': '⚠ Некорректный email адрес.',
+        };
+        showToast(msgs[authErr.code] || `⚠ Ошибка: ${authErr.message}`, 'error');
+        setLoading('btn-finish-reg', false);
+        return;
+      }
+
+      const user = cred.user;
+      if (!user) {
+        showToast('⚠ Сессия не создана. Попробуйте ещё раз.', 'error');
+        setLoading('btn-finish-reg', false);
+        return;
+      }
+
+      // ── ШАГ 2: Принудительно обновляем JWT-токен ────────────────────
+      // Без этого Firestore может вернуть permission-denied для нового аккаунта.
+      try { await user.getIdToken(true); } catch (_) { }
+
+      const uid = user.uid;
+
+      // ── ШАГ 3: Собираем данные из опросника ─────────────────────────
+      let subjects = [];
+      let customSubject = '';
+      let ratePerHour = 0;
+      let currency = 'KGS'; // сом по умолчанию — приложение локализовано под Кыргызстан
+
+      if (selectedRole === 'student') {
+        subjects = getSelectedTags('student-tags');
+        customSubject = document.getElementById('student-custom')?.value.trim() || '';
+      } else {
+        subjects = getSelectedTags('tutor-tags');
+        customSubject = document.getElementById('tutor-custom')?.value.trim() || '';
+        ratePerHour = Number(document.getElementById('tutor-rate')?.value) || 0;
+        currency = document.getElementById('tutor-currency')?.value || 'KGS';
+      }
+
+      const allSubjects = [...subjects, ...(customSubject ? [customSubject] : [])];
+
+      // ── ШАГ 4: Формируем документ по структуре ТЗ ───────────────────
+      // Поля из ТЗ Этапа 1 выделены комментарием [ТЗ].
+      // Ваши "рабочие" поля для UI оставлены без изменений.
+
+      const userDoc = {
+        // [ТЗ] Обязательные поля
+        uid,                                             // ID пользователя
+        role: selectedRole,                         // 'student' | 'tutor'
+        fullName: tempUserData.nick,                    // Имя (пока = ник)
+        photoUrl: '',                                   // URL аватара (Storage)
+        friends: [],                                   // [ТЗ] Массив UID друзей
+        createdAt: new Date(),                           // [ТЗ] Timestamp
+        bio: '',                                   // [ТЗ] Описание профиля
+
+        // [ТЗ] tutorSpecific — объект-заглушка для репетиторов.
+        // Для студентов тоже добавляем (с нулями) для единообразия схемы.
+        tutorSpecific: selectedRole === 'tutor'
+          ? { subjects: allSubjects, price: ratePerHour, currency }
+          : { subjects: [], price: 0, currency: '' },
+
+        // ── Дополнительные поля вашего приложения ─────────────────────
+        nick: tempUserData.nick,
+        email: tempUserData.email.toLowerCase(),
+
+        // Индексы для поиска
+        searchKeywords: [
+          tempUserData.nick.toLowerCase(),
+          tempUserData.email.toLowerCase().split('@')[0],
+        ],
+
+        // Поля для профиля / статистики
+        description: 'О себе ещё ничего не написано...',
+        bannerUrl: '',
+        clubs: [],
+        courses: [],
+        achievements: [],
+        postsCount: 0,
+        friendsCount: 0,
+        clubsCount: 0,
+        streakDays: 0,
+
+        // Для совместимости: flat-список предметов (дублирует tutorSpecific.subjects)
+        // Удалите, если хотите хранить subjects только в tutorSpecific
+        subjects: allSubjects,
+        // currency: код валюты ставки репетитора — 'KGS' (сом) | 'KZT' (тенге) | 'UZS' (сум)
+        ...(selectedRole === 'tutor' ? { ratePerHour, currency } : {}),
+      };
+
+      // ── ШАГ 5: Записываем в Firestore ───────────────────────────────
+      try {
+        await setDoc(doc(db, 'users', uid), userDoc);
+
+        showToast('🎉 Аккаунт создан! Добро пожаловать в TutorApp!', 'success');
+        setTimeout(() => {
+          window.location.href = selectedRole === 'tutor'
+            ? './tutor-profile.html'
+            : './profile.html';
+        }, 1400);
+
+      } catch (fsErr) {
+        if (fsErr.code === 'permission-denied') {
+          showToast('⚠ Firestore: нет прав на запись. Проверьте правила.', 'error');
+        } else {
+          showToast(`⚠ Ошибка Firestore: ${fsErr.code || fsErr.message}`, 'error');
+        }
+      } finally {
+        setLoading('btn-finish-reg', false);
+      }
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       LOGIN
+    ═══════════════════════════════════════════════════════════════ */
+    window.handleLogin = async function () {
+      clearAllErrors();
+      const email = document.getElementById('li-email').value.trim();
+      const password = document.getElementById('li-pass').value;
+      let valid = true;
+      if (!isValidEmail(email)) { showError('li-email-err'); setInputState('li-email', 'error'); valid = false; }
+      if (!password) { showError('li-pass-err'); setInputState('li-pass', 'error'); valid = false; }
+      if (!valid) return;
+
+      setLoading('btn-login', true);
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        loginUid = cred.user.uid;
+        const snap = await getDoc(doc(db, 'users', loginUid));
+
+        if (snap.exists() && snap.data().role) {
+          const urole = snap.data().role;
+          showToast('👋 С возвращением!', 'success');
+          setTimeout(() => { window.location.href = urole === 'tutor' ? './tutor-profile.html' : './profile.html'; }, 1200);
+        } else {
+          setLoading('btn-login', false);
+          showToast('✅ Вход выполнен! Выберите роль.', 'success');
+          document.getElementById('login-role-overlay').classList.add('active');
+        }
+      } catch (err) {
+        const msgs = {
+          'auth/user-not-found': '⚠ Пользователь не найден.',
+          'auth/wrong-password': '⚠ Неверный пароль.',
+          'auth/invalid-email': '⚠ Некорректный email.',
+          'auth/too-many-requests': '⚠ Слишком много попыток. Попробуйте позже.',
+          'auth/invalid-credential': '⚠ Неверный email или пароль.',
+        };
+        showError('li-pass-err');
+        showToast(msgs[err.code] || `⚠ Ошибка входа: ${err.message}`, 'error');
+      } finally {
+        setLoading('btn-login', false);
+      }
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       FORGOT PASSWORD
+    ═══════════════════════════════════════════════════════════════ */
+    window.handleForgotPassword = async function (e) {
+      e.preventDefault();
+      const email = document.getElementById('li-email').value.trim();
+      if (!isValidEmail(email)) {
+        showError('li-email-err');
+        setInputState('li-email', 'error');
+        showToast('⚠ Введите ваш email для сброса пароля', 'error');
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showToast('📧 Письмо для сброса пароля отправлено!', 'success');
+      } catch (err) {
+        showToast(`⚠ ${err.message}`, 'error');
+      }
+    };
+
+    /* ═══════════════════════════════════════════════════════════════
+       LOGIN ROLE OVERLAY
+    ═══════════════════════════════════════════════════════════════ */
+    window.selectLoginRole = function (role) {
+      loginSelectedRole = role;
+      document.querySelectorAll('#login-role-overlay .role-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById(`lr-${role}`)?.classList.add('selected');
+      const btn = document.getElementById('btn-save-login-role');
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+    };
+
+    window.saveLoginRole = async function () {
+      if (!loginSelectedRole || !loginUid) return;
+      setLoading('btn-save-login-role', true);
+      try {
+        const userObj = auth.currentUser;
+        await setDoc(doc(db, 'users', loginUid), {
+          role: loginSelectedRole,
+          uid: loginUid,
+          email: userObj?.email?.toLowerCase() || '',
+          fullName: userObj?.displayName || userObj?.email?.split('@')[0] || '',
+          updatedAt: new Date(),
+        }, { merge: true });
+
+        showToast('✅ Роль сохранена!', 'success');
+        setTimeout(() => { window.location.href = loginSelectedRole === 'tutor' ? './tutor-profile.html' : './profile.html'; }, 1200);
+      } catch (err) {
+        showToast('⚠ Не удалось сохранить роль.', 'error');
+      } finally {
+        setLoading('btn-save-login-role', false);
+      }
+    };
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,2732 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorApp — Бронирование урока</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ══════════════════════════════════════════
+           RESET & CSS VARIABLES  (shared with exam.html / trainings.html)
+        ══════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --teal: #00A896;
+            --teal-dark: #007F72;
+            --teal-mid: #5BBDB5;
+            --teal-light: #E0F5F3;
+            --teal-pale: #F0FAF9;
+            --text-dark: #1A2E2C;
+            --text-mid: #4A6360;
+            --text-soft: #7A9A97;
+            --white: #FFFFFF;
+            --bg: #F4FAFA;
+            --border: #D4EEEA;
+            --gold: #F5B942;
+            --red: #E05A7A;
+            --card-radius: 18px;
+            --sidebar-w: 168px;
+            --header-h: 64px;
+            --subnav-h: 48px;
+            --shadow-xs: 0 1px 4px rgba(0, 168, 150, .07);
+            --shadow-sm: 0 4px 20px rgba(0, 168, 150, .12);
+            --shadow-md: 0 12px 36px rgba(0, 168, 150, .18);
+        }
+
+        html,
+        body {
+            min-height: 100%;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ══════════════════════════════════════════
+           FIXED HEADER
+        ══════════════════════════════════════════ */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-h);
+            z-index: 700;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 24px;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .h-ham {
+            display: flex;
+            flex-direction: column;
+            gap: 4.5px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .h-ham span {
+            display: block;
+            width: 20px;
+            height: 1.8px;
+            background: var(--text-mid);
+            border-radius: 2px;
+        }
+
+        .h-logo {
+            font-weight: 800;
+            font-size: 19px;
+            color: var(--teal);
+            letter-spacing: -.02em;
+            flex-shrink: 0;
+        }
+
+        .h-logo span {
+            color: var(--text-dark);
+        }
+
+        .h-search {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .h-search input {
+            width: 100%;
+            padding: 9px 40px 9px 36px;
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            color: var(--text-dark);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+
+        .h-search input:focus {
+            border-color: var(--teal);
+            background: var(--white);
+        }
+
+        .h-search input::placeholder {
+            color: var(--text-soft);
+        }
+
+        .h-search .si-left {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-soft);
+            pointer-events: none;
+        }
+
+        .h-search .si-right {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--teal);
+            pointer-events: none;
+        }
+
+        .h-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .h-lang {
+            background: none;
+            color: var(--text-mid);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            padding: 6px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: border-color .2s;
+        }
+
+        .h-lang:hover {
+            border-color: var(--teal);
+            color: var(--teal-dark);
+        }
+
+        .h-coins {
+            background: var(--teal-pale);
+            border-radius: 50px;
+            padding: 6px 14px;
+            color: var(--teal-dark);
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid var(--teal-light);
+        }
+
+        .coins-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #4ADE80;
+        }
+
+        .h-notif {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-mid);
+            transition: border-color .2s, background .2s;
+        }
+
+        .h-notif:hover {
+            background: var(--teal-light);
+            border-color: var(--teal);
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: var(--teal);
+            border: 2px solid var(--white);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .h-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2.5px solid var(--teal-mid);
+            cursor: pointer;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #A8D8D4, #5BBDB5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* ══════════════════════════════════════════
+           SUBNAV
+        ══════════════════════════════════════════ */
+        .subnav {
+            position: fixed;
+            top: var(--header-h);
+            left: 0;
+            right: 0;
+            z-index: 600;
+            height: var(--subnav-h);
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 24px;
+        }
+
+        .subnav a {
+            text-decoration: none;
+            color: var(--text-mid);
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 6px 16px;
+            border-radius: 50px;
+            transition: all .18s;
+            white-space: nowrap;
+        }
+
+        .subnav a:hover {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+        }
+
+        .subnav a.active {
+            color: var(--teal-dark);
+            font-weight: 700;
+            border-bottom: 2px solid var(--teal);
+            border-radius: 0;
+            padding-bottom: 4px;
+        }
+
+        /* ══════════════════════════════════════════
+           APP SHELL
+        ══════════════════════════════════════════ */
+        .app-body {
+            display: flex;
+            padding-top: calc(var(--header-h) + var(--subnav-h));
+            min-height: 100vh;
+        }
+
+        /* ══════════════════════════════════════════
+           LEFT SIDEBAR
+        ══════════════════════════════════════════ */
+        .sidebar {
+            position: fixed;
+            top: calc(var(--header-h) + var(--subnav-h));
+            left: 0;
+            width: var(--sidebar-w);
+            height: calc(100vh - var(--header-h) - var(--subnav-h));
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 18px 12px 24px;
+            gap: 4px;
+            z-index: 500;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background .18s, color .18s;
+            text-decoration: none;
+            color: var(--text-mid);
+            border: none;
+            background: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-item svg {
+            width: 19px;
+            height: 19px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-item:hover {
+            background: var(--teal-pale);
+            color: var(--teal-dark);
+        }
+
+        .sidebar-item.active {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            font-weight: 700;
+        }
+
+        .sidebar-spacer {
+            flex: 1;
+        }
+
+        /* ══════════════════════════════════════════
+           MAIN CONTENT AREA
+        ══════════════════════════════════════════ */
+        .main-content {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            min-width: 0;
+        }
+
+        main {
+            max-width: 1020px;
+            margin: 32px auto;
+            padding: 0 28px 80px;
+        }
+
+        /* ══════════════════════════════════════════
+           TUTOR CARDS GRID  (Phase 0 — landing)
+        ══════════════════════════════════════════ */
+        .page-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 18px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            outline: none;
+            transition: border-color .2s;
+            min-width: 180px;
+        }
+
+        .filter-select:focus {
+            border-color: var(--teal);
+        }
+
+        .tutors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .tutor-card {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: box-shadow .22s, border-color .22s, transform .22s;
+            animation: cardIn .35s ease both;
+        }
+
+        .tutor-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--teal-mid);
+            transform: translateY(-2px);
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tutor-card:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .tutor-card:nth-child(2) {
+            animation-delay: .06s;
+        }
+
+        .tutor-card:nth-child(3) {
+            animation-delay: .12s;
+        }
+
+        .tc-header {
+            display: flex;
+            gap: 14px;
+            padding: 18px 18px 14px;
+            align-items: flex-start;
+        }
+
+        .tc-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 14px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #A8D8D4, #5BBDB5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            border: 2px solid var(--border);
+        }
+
+        .tc-meta {
+            flex: 1;
+        }
+
+        .tc-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .tc-badge {
+            display: inline-block;
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+            margin-bottom: 6px;
+        }
+
+        .tc-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: var(--text-mid);
+            font-weight: 600;
+        }
+
+        .tc-rating .star {
+            color: var(--gold);
+        }
+
+        .tc-price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .tc-price span {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-soft);
+            display: block;
+        }
+
+        .tc-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 0 18px 12px;
+        }
+
+        .tc-tag {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-mid);
+        }
+
+        .tc-desc {
+            padding: 0 18px 14px;
+            font-size: 13px;
+            color: var(--text-soft);
+            line-height: 1.55;
+        }
+
+        .tc-footer {
+            padding: 14px 18px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-trial {
+            flex: 1;
+            padding: 10px 16px;
+            background: var(--teal);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .18s, transform .18s;
+        }
+
+        .btn-trial:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-profile {
+            padding: 10px 16px;
+            background: var(--white);
+            color: var(--teal-dark);
+            border: 1.5px solid var(--teal-mid);
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .18s;
+            white-space: nowrap;
+        }
+
+        .btn-profile:hover {
+            background: var(--teal-pale);
+            border-color: var(--teal);
+        }
+
+        /* ══════════════════════════════════════════
+           PHASE 1 — BOOKING MODAL
+        ══════════════════════════════════════════ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 30, 28, .5);
+            backdrop-filter: blur(6px);
+            z-index: 900;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            animation: fadeOverlay .22s ease;
+        }
+
+        @keyframes fadeOverlay {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .bk-modal {
+            background: var(--white);
+            border-radius: 24px;
+            width: 380px;
+            max-width: calc(100vw - 32px);
+            max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0, 100, 90, .24);
+            animation: modalPop .28s cubic-bezier(.34, 1.56, .64, 1);
+            padding-bottom: 8px;
+        }
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: translateY(28px) scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .bk-modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 22px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .bk-modal-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .bk-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 17px;
+            line-height: 1;
+            transition: all .15s;
+        }
+
+        .bk-close:hover {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            border-color: var(--teal);
+        }
+
+        .bk-duration-badge {
+            display: block;
+            text-align: center;
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            font-size: 14px;
+            font-weight: 800;
+            padding: 9px 28px;
+            border-radius: 50px;
+            margin: 16px auto;
+            width: fit-content;
+        }
+
+        .bk-tz {
+            text-align: center;
+            font-size: 12.5px;
+            color: var(--text-soft);
+            margin-bottom: 18px;
+            padding: 0 22px;
+        }
+
+        .bk-section {
+            padding: 0 22px 16px;
+        }
+
+        .bk-section-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 10px;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .time-btn {
+            padding: 9px 6px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            text-align: center;
+            transition: all .15s;
+        }
+
+        .time-btn:hover {
+            border-color: var(--teal-mid);
+            background: var(--teal-pale);
+        }
+
+        .time-btn.selected {
+            background: var(--teal);
+            color: var(--white);
+            border-color: var(--teal);
+        }
+
+        /* Week calendar */
+        .week-cal {
+            padding: 0 22px 20px;
+        }
+
+        .week-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .week-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .week-arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .week-arrow:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+            background: var(--teal-pale);
+        }
+
+        .week-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .week-day-name {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-soft);
+            padding: 3px 0;
+        }
+
+        .week-day {
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all .15s;
+            border: 1.5px solid transparent;
+        }
+
+        .week-day:hover {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+        }
+
+        .week-day.selected {
+            background: var(--teal);
+            color: var(--white);
+        }
+
+        .week-day.today {
+            border-color: var(--teal-mid);
+            color: var(--teal-dark);
+            font-weight: 800;
+        }
+
+        .week-day.disabled {
+            color: var(--border);
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .bk-continue {
+            display: block;
+            width: calc(100% - 44px);
+            margin: 0 22px 20px;
+            padding: 14px 24px;
+            border-radius: 50px;
+            background: var(--teal);
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: background .18s, transform .18s;
+        }
+
+        .bk-continue:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+
+        .bk-continue:active {
+            transform: translateY(0);
+        }
+
+        /* ══════════════════════════════════════════
+           CHECKOUT LAYOUT  (Phases 2 & 3)
+        ══════════════════════════════════════════ */
+        #checkoutView {
+            display: none;
+        }
+
+        #checkoutView.visible {
+            display: block;
+            animation: fadeIn .3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 28px;
+            align-items: flex-start;
+        }
+
+        /* Right sidebar */
+        .co-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .co-tutor-card {
+            background: var(--teal-pale);
+            border: 1.5px solid var(--teal-light);
+            border-radius: var(--card-radius);
+            padding: 18px;
+        }
+
+        .co-tutor-head {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .co-tutor-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #A8D8D4, #5BBDB5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            border: 2px solid var(--teal-light);
+            overflow: hidden;
+        }
+
+        .co-tutor-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .co-tutor-badge {
+            display: inline-block;
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+            margin-bottom: 5px;
+        }
+
+        .co-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12.5px;
+            color: var(--text-mid);
+            font-weight: 600;
+        }
+
+        .co-rating .star {
+            color: var(--gold);
+        }
+
+        .co-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .co-metric {
+            background: var(--teal-light);
+            border-radius: 10px;
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        .co-metric-val {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--teal-dark);
+        }
+
+        .co-metric-label {
+            font-size: 10px;
+            color: var(--text-soft);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .btn-visit-profile {
+            display: block;
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            border: 1.5px solid var(--teal-mid);
+            border-radius: 50px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all .18s;
+            text-decoration: none;
+        }
+
+        .btn-visit-profile:hover {
+            background: var(--teal);
+            color: var(--white);
+            border-color: var(--teal);
+        }
+
+        .co-lesson-detail {
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: var(--card-radius);
+            padding: 18px;
+        }
+
+        .co-lesson-detail h3 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+        }
+
+        .co-lesson-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .co-date-badge {
+            background: var(--teal);
+            color: var(--white);
+            border-radius: 10px;
+            padding: 4px 8px;
+            text-align: center;
+            flex-shrink: 0;
+            min-width: 44px;
+        }
+
+        .co-date-badge .month {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .co-date-badge .day {
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .co-lesson-info {
+            flex: 1;
+        }
+
+        .co-lesson-day {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .co-lesson-time {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-top: 2px;
+        }
+
+        .btn-cancel {
+            display: block;
+            width: 100%;
+            padding: 9px;
+            background: none;
+            color: var(--red);
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: color .15s;
+            text-align: center;
+        }
+
+        .btn-cancel:hover {
+            color: #c0304e;
+        }
+
+        /* ══════════════════════════════════════════
+           PAYMENT METHOD SELECTION
+        ══════════════════════════════════════════ */
+        .pay-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 22px;
+        }
+
+        .pay-methods-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .pay-method {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all .18s;
+            position: relative;
+        }
+
+        .pay-method:hover {
+            border-color: var(--teal-mid);
+            background: var(--teal-pale);
+        }
+
+        .pay-method.active {
+            border-color: var(--teal);
+            background: var(--teal-pale);
+            color: var(--teal-dark);
+        }
+
+        .pay-method.disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .pay-method.disabled:hover {
+            border-color: var(--border);
+            background: var(--white);
+        }
+
+        .pay-method.full {
+            grid-column: 1 / -1;
+        }
+
+        .soon-badge {
+            position: absolute;
+            top: -8px;
+            right: -4px;
+            background: var(--gold);
+            color: var(--text-dark);
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 50px;
+            white-space: nowrap;
+        }
+
+        /* ══════════════════════════════════════════
+           CARD PAYMENT FIELDS
+        ══════════════════════════════════════════ */
+        .card-form {
+            margin-bottom: 20px;
+        }
+
+        .card-form-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .card-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color .2s;
+            margin-bottom: 10px;
+            background: var(--white);
+        }
+
+        .card-input:focus {
+            border-color: var(--teal);
+        }
+
+        .card-input::placeholder {
+            color: var(--text-soft);
+        }
+
+        .card-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* ══════════════════════════════════════════
+           QR PAYMENT VIEW
+        ══════════════════════════════════════════ */
+        #qrView {
+            display: none;
+        }
+
+        #qrView.visible {
+            display: block;
+            animation: fadeIn .25s ease;
+        }
+
+        .qr-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .qr-top {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 22px;
+        }
+
+        .qr-code-wrap {
+            width: 160px;
+            height: 160px;
+            flex-shrink: 0;
+            border-radius: 14px;
+            border: 2px solid var(--border);
+            overflow: hidden;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-code-wrap svg {
+            width: 140px;
+            height: 140px;
+        }
+
+        .receipt-upload {
+            flex: 1;
+            min-height: 160px;
+            border: 2px dashed var(--border);
+            border-radius: 14px;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: border-color .2s, background .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .receipt-upload:hover {
+            border-color: var(--teal-mid);
+            background: var(--teal-pale);
+        }
+
+        .receipt-upload.has-file {
+            border-color: var(--teal);
+            background: var(--teal-pale);
+        }
+
+        .receipt-upload input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .receipt-icon {
+            color: var(--text-soft);
+            transition: color .2s;
+        }
+
+        .receipt-upload:hover .receipt-icon {
+            color: var(--teal);
+        }
+
+        .receipt-upload.has-file .receipt-icon {
+            color: var(--teal-dark);
+        }
+
+        .receipt-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-soft);
+        }
+
+        .receipt-upload.has-file .receipt-label {
+            color: var(--teal-dark);
+        }
+
+        #receiptFileName {
+            font-size: 11px;
+            color: var(--teal);
+            font-weight: 600;
+            display: none;
+        }
+
+        /* ══════════════════════════════════════════
+           CONFIRM BUTTON & FOOTER
+        ══════════════════════════════════════════ */
+        .btn-confirm {
+            display: block;
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 50px;
+            background: var(--teal);
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: background .18s, transform .18s;
+        }
+
+        .btn-confirm:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+
+        .pay-footer {
+            font-size: 12px;
+            color: var(--text-soft);
+            line-height: 1.6;
+        }
+
+        .pay-footer a {
+            color: var(--teal);
+            text-decoration: underline;
+        }
+
+        /* ══════════════════════════════════════════
+           TOAST
+        ══════════════════════════════════════════ */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(18px);
+            background: var(--text-dark);
+            color: #fff;
+            padding: 11px 22px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity .28s, transform .28s;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ══════════════════════════════════════════
+           MOBILE ADAPTIVE — App Style
+        ══════════════════════════════════════════ */
+        .mob-nav {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+
+            html,
+            body {
+                overflow: auto;
+                height: auto;
+            }
+
+            :root {
+                --header-h: 54px;
+                --mob-nav-h: 60px;
+                --sidebar-w: 0px;
+            }
+
+            /* ── Хедер ── */
+            header {
+                padding: 0 16px;
+                height: var(--header-h);
+                gap: 0;
+                justify-content: space-between;
+            }
+
+            .h-ham {
+                display: none;
+            }
+
+            .h-search {
+                display: none;
+            }
+
+            .h-lang {
+                display: none;
+            }
+
+            .h-coins {
+                display: none;
+            }
+
+            .h-logo {
+                font-size: 18px;
+            }
+
+            .h-right {
+                gap: 10px;
+                margin-left: 0;
+            }
+
+            .h-notif {
+                width: 34px;
+                height: 34px;
+            }
+
+            .h-avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+                border: 2.5px solid var(--teal);
+                box-shadow: 0 0 0 3px rgba(0, 168, 150, .15);
+            }
+
+            /* ── Subnav ── */
+            .subnav {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding: 0 12px;
+                gap: 2px;
+                scrollbar-width: none;
+            }
+
+            .subnav::-webkit-scrollbar {
+                display: none;
+            }
+
+            .subnav a {
+                font-size: 12px;
+                padding: 6px 10px;
+                white-space: nowrap;
+            }
+
+            /* ── Боковая панель ── */
+            .sidebar {
+                display: none;
+            }
+
+            /* ── App body ── */
+            .app-body {
+                padding-top: calc(var(--header-h) + var(--subnav-h));
+                padding-bottom: calc(var(--mob-nav-h) + 16px);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            main {
+                margin: 16px auto;
+                padding: 0 14px 24px;
+            }
+
+            /* ── Нижний таббар ── */
+            .mob-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 900;
+                background: var(--white);
+                border-top: 1px solid var(--border);
+                height: var(--mob-nav-h);
+                align-items: stretch;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, .09);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+
+            .mob-nav-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                text-decoration: none;
+                color: #9AA5B4;
+                font-size: 10px;
+                font-weight: 600;
+                font-family: 'DM Sans', sans-serif;
+                transition: color .18s;
+                padding-bottom: 2px;
+            }
+
+            .mob-nav-item svg {
+                width: 22px;
+                height: 22px;
+                stroke: currentColor;
+                fill: none;
+                stroke-width: 1.8;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                transition: stroke .18s, transform .18s;
+            }
+
+            .mob-nav-item.active {
+                color: var(--teal);
+            }
+
+            .mob-nav-item.active svg {
+                stroke: var(--teal);
+                transform: translateY(-1px);
+            }
+
+            /* ════════════════════════════════
+             ТУТОРЫ — мобильные карточки
+          ════════════════════════════════ */
+            .page-filters {
+                flex-direction: column;
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .filter-select {
+                min-width: 0;
+                width: 100%;
+                font-size: 13px;
+            }
+
+            #tutorsGrid {
+                gap: 12px;
+            }
+
+            .tutor-card {
+                border-radius: 18px;
+                padding: 14px 14px 12px;
+                box-shadow: 0 2px 14px rgba(0, 168, 150, .10);
+            }
+
+            .tc-header {
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .tc-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 16px;
+                flex-shrink: 0;
+            }
+
+            .tc-name {
+                font-size: 15px;
+            }
+
+            .tc-price {
+                font-size: 18px;
+            }
+
+            .tc-price span {
+                font-size: 11px;
+            }
+
+            .tc-rating {
+                font-size: 11.5px;
+            }
+
+            .tc-desc {
+                font-size: 12.5px;
+                line-height: 1.55;
+            }
+
+            .tc-footer {
+                gap: 8px;
+            }
+
+            .btn-trial {
+                padding: 10px 16px;
+                font-size: 13px;
+                border-radius: 50px;
+            }
+
+            .btn-profile {
+                padding: 9px 14px;
+                font-size: 12.5px;
+                border-radius: 50px;
+            }
+
+            /* ════════════════════════════════
+             МОДАЛ БРОНИРОВАНИЯ
+          ════════════════════════════════ */
+            .modal-overlay {
+                align-items: flex-end;
+                padding: 0;
+            }
+
+            .bk-modal {
+                border-radius: 24px 24px 0 0;
+                max-height: 92vh;
+                width: 100%;
+                padding: 20px 16px 24px;
+                overflow-y: auto;
+            }
+
+            .bk-modal-head {
+                margin-bottom: 14px;
+            }
+
+            .bk-modal-title {
+                font-size: 17px;
+            }
+
+            .bk-duration-badge {
+                font-size: 13px;
+                padding: 7px 18px;
+            }
+
+            .bk-tz {
+                font-size: 11.5px;
+                margin-bottom: 14px;
+            }
+
+            .time-grid {
+                gap: 8px;
+            }
+
+            .time-btn {
+                padding: 9px 16px;
+                font-size: 13px;
+                border-radius: 10px;
+            }
+
+            .week-cal {
+                margin-bottom: 18px;
+            }
+
+            .week-label {
+                font-size: 13px;
+            }
+
+            .week-day-num {
+                width: 36px;
+                height: 36px;
+                font-size: 13px;
+            }
+
+            .bk-continue {
+                padding: 13px 24px;
+                font-size: 14px;
+                border-radius: 50px;
+            }
+
+            /* ════════════════════════════════
+             CHECKOUT — оплата
+          ════════════════════════════════ */
+            .checkout-layout {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .co-sidebar {
+                order: -1;
+            }
+
+            /* Туторкарточка в чекауте */
+            .co-tutor-card {
+                border-radius: 16px;
+                padding: 14px 14px 12px;
+            }
+
+            .co-tc-inner {
+                gap: 10px;
+            }
+
+            .co-tc-avatar {
+                width: 52px;
+                height: 52px;
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+
+            .co-tc-name {
+                font-size: 15px;
+            }
+
+            .co-tc-stats {
+                gap: 6px;
+            }
+
+            .stat-pill {
+                padding: 6px 10px;
+                font-size: 11px;
+                gap: 4px;
+            }
+
+            /* Детали урока */
+            .co-lesson-detail {
+                border-radius: 16px;
+                padding: 14px;
+            }
+
+            .co-lesson-detail h3 {
+                font-size: 15px;
+                margin-bottom: 12px;
+            }
+
+            /* Способы оплаты */
+            .pay-title {
+                font-size: 17px;
+                margin-bottom: 16px;
+            }
+
+            .pay-methods-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 16px;
+            }
+
+            .pay-method {
+                padding: 12px 10px;
+                font-size: 12.5px;
+                border-radius: 12px;
+            }
+
+            .pay-method.full {
+                grid-column: span 2;
+            }
+
+            /* QR оплата */
+            .qr-title {
+                font-size: 17px;
+                margin-bottom: 14px;
+            }
+
+            .qr-top {
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+                margin-bottom: 16px;
+            }
+
+            .qr-code-wrap {
+                width: 140px;
+                height: 140px;
+            }
+
+            .receipt-upload {
+                width: 140px;
+                height: 130px;
+            }
+
+            .receipt-icon svg {
+                width: 36px;
+                height: 36px;
+            }
+
+            .receipt-label {
+                font-size: 12px;
+            }
+
+            /* Форма карты */
+            .card-form-title {
+                font-size: 14px;
+            }
+
+            .card-input {
+                padding: 11px 14px;
+                font-size: 14px;
+            }
+
+            .btn-confirm {
+                padding: 13px 24px;
+                font-size: 14px;
+                border-radius: 50px;
+            }
+
+            .pay-footer {
+                font-size: 11.5px;
+            }
+
+            /* Toast выше таббара */
+            .toast {
+                bottom: calc(var(--mob-nav-h) + 12px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ════════════ HEADER ════════════ -->
+    <header>
+        <div class="h-ham"><span></span><span></span><span></span></div>
+        <div class="h-logo">Tutor<span>App</span></div>
+        <div class="h-search">
+            <svg class="si-left" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" placeholder="Поиск репетиторов, тем...">
+            <svg class="si-right" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+        </div>
+        <div class="h-right">
+            <button class="h-lang">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <path
+                        d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+                Рус
+            </button>
+            <div class="h-coins"><span class="coins-dot"></span><span>1236</span></div>
+            <div class="h-notif">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <span class="notif-badge">3</span>
+            </div>
+            <div class="h-avatar">А</div>
+        </div>
+    </header>
+
+    <!-- ════════════ SUBNAV ════════════ -->
+    <nav class="subnav">
+        <a href="#">чат</a>
+        <a href="#">видео</a>
+        <a href="#">паблик</a>
+        <a href="#">Uniqe</a>
+        <a href="exam.html">экзамены</a>
+        <a href="trainings.html">треннинги</a>
+        <a href="#" class="active">прочие программы</a>
+    </nav>
+
+    <!-- ════════════ APP BODY ════════════ -->
+    <div class="app-body">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                Лента
+            </a>
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                Обсуждения
+            </a>
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Чат
+            </a>
+            <a href="exam.html" class="sidebar-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                    <rect x="9" y="3" width="6" height="4" rx="2" />
+                    <line x1="9" y1="12" x2="15" y2="12" />
+                    <line x1="9" y1="16" x2="13" y2="16" />
+                </svg>
+                Репетиторы
+            </a>
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                Профиль
+            </a>
+            <div class="sidebar-spacer"></div>
+            <a href="#" class="sidebar-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                Настройки
+            </a>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <main>
+
+                <!-- ═══ PHASE 0 — TUTOR LISTING ═══ -->
+                <div id="listingView">
+                    <div class="page-filters">
+                        <select class="filter-select">
+                            <option>Я хочу изучать: Английский</option>
+                            <option>Математику</option>
+                            <option>Русский язык</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>У меня уровень: Начальный</option>
+                            <option>Средний</option>
+                            <option>Продвинутый</option>
+                        </select>
+                    </div>
+                    <div class="tutors-grid" id="tutorsGrid"></div>
+                </div>
+
+                <!-- ═══ PHASE 2 / 3 — CHECKOUT ═══ -->
+                <div id="checkoutView">
+                    <div class="checkout-layout">
+
+                        <!-- LEFT — Payment area -->
+                        <div>
+                            <!-- Payment method selection -->
+                            <div id="payMethodView">
+                                <div class="pay-title">Выберите способ оплаты</div>
+                                <div class="pay-methods-grid">
+                                    <button class="pay-method disabled" onclick="showComingSoon(this)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <rect x="1" y="4" width="22" height="16" rx="2" />
+                                            <line x1="1" y1="10" x2="23" y2="10" />
+                                        </svg>
+                                        Карта
+                                        <span class="soon-badge">Скоро</span>
+                                    </button>
+                                    <button class="pay-method disabled" onclick="showComingSoon(this)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path
+                                                d="M12 20.94c1.5 0 2.75-.72 3.5-1.82A4 4 0 0 0 20 15V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a4 4 0 0 0 4.5 3.94" />
+                                        </svg>
+                                        Apple Pay
+                                        <span class="soon-badge">Скоро</span>
+                                    </button>
+                                    <button class="pay-method full disabled" onclick="showComingSoon(this)">
+                                        <svg width="20" height="14" viewBox="0 0 24 17" fill="none"><text x="0" y="14"
+                                                font-family="Arial" font-size="13" font-weight="700"
+                                                fill="#4285F4">G</text><text x="10" y="14" font-family="Arial"
+                                                font-size="13" font-weight="700" fill="#EA4335">o</text><text x="18"
+                                                y="14" font-family="Arial" font-size="13" font-weight="700"
+                                                fill="#FBBC05">o</text><text x="26" y="14" font-family="Arial"
+                                                font-size="13" font-weight="700" fill="#4285F4">g</text><text x="33"
+                                                y="14" font-family="Arial" font-size="13" font-weight="700"
+                                                fill="#34A853">l</text><text x="38" y="14" font-family="Arial"
+                                                font-size="13" font-weight="700" fill="#EA4335">e</text></svg>
+                                        GooglePay
+                                        <span class="soon-badge">Скоро</span>
+                                    </button>
+                                    <!-- MBANK — ACTIVE -->
+                                    <button class="pay-method" id="mbankBtn" onclick="selectMbank()">
+                                        <svg width="22" height="22" viewBox="0 0 40 40"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="40" height="40" rx="8" fill="#00B140" />
+                                            <text x="6" y="27" font-family="Arial Black" font-size="16"
+                                                font-weight="900" fill="white">m</text>
+                                        </svg>
+                                        mbank
+                                    </button>
+                                    <button class="pay-method disabled" onclick="showComingSoon(this)">
+                                        <svg width="22" height="22" viewBox="0 0 40 40"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="40" height="40" rx="8" fill="#0052CC" />
+                                            <text x="4" y="26" font-family="Arial" font-size="10" font-weight="700"
+                                                fill="white">BAKAI</text>
+                                        </svg>
+                                        BAKAI BANK
+                                        <span class="soon-badge">Скоро</span>
+                                    </button>
+                                </div>
+
+                                <!-- Generic card form (shown by default until QR selected) -->
+                                <div class="card-form" id="genericCardForm">
+                                    <div class="card-form-title">Введите данные карты</div>
+                                    <input class="card-input" type="text" placeholder="1234 1234 1234 1234"
+                                        maxlength="19">
+                                    <div class="card-row">
+                                        <input class="card-input" type="text" placeholder="ММ/ГГ" maxlength="5">
+                                        <input class="card-input" type="text" placeholder="CVC" maxlength="3">
+                                    </div>
+                                </div>
+
+                                <button class="btn-confirm" onclick="handleConfirm()">Подтвердить платеж
+                                    2500сом</button>
+                                <p class="pay-footer">
+                                    Нажимая на кнопку "Подтвердить платеж 2500сом", вы соглашетесь в
+                                    <a href="#">Политикой денежных средств Tutor</a>.<br>
+                                    Оплатна на Tutot абсолютно безопасна. Все транзакции защищены шифрованием
+                                </p>
+                            </div>
+
+                            <!-- QR / MBANK view -->
+                            <div id="qrView">
+                                <div class="qr-title">Оплата через QR</div>
+                                <div class="qr-top">
+                                    <!-- QR Code placeholder SVG -->
+                                    <div class="qr-code-wrap">
+                                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="160"
+                                            height="160">
+                                            <!-- Finder patterns -->
+                                            <rect x="10" y="10" width="60" height="60" fill="none" stroke="#000"
+                                                stroke-width="4" />
+                                            <rect x="20" y="20" width="40" height="40" fill="none" stroke="#000"
+                                                stroke-width="3" />
+                                            <rect x="28" y="28" width="24" height="24" fill="#000" />
+                                            <rect x="130" y="10" width="60" height="60" fill="none" stroke="#000"
+                                                stroke-width="4" />
+                                            <rect x="140" y="20" width="40" height="40" fill="none" stroke="#000"
+                                                stroke-width="3" />
+                                            <rect x="148" y="28" width="24" height="24" fill="#000" />
+                                            <rect x="10" y="130" width="60" height="60" fill="none" stroke="#000"
+                                                stroke-width="4" />
+                                            <rect x="20" y="140" width="40" height="40" fill="none" stroke="#000"
+                                                stroke-width="3" />
+                                            <rect x="28" y="148" width="24" height="24" fill="#000" />
+                                            <!-- Data dots -->
+                                            <rect x="80" y="10" width="8" height="8" fill="#000" />
+                                            <rect x="96" y="10" width="8" height="8" fill="#000" />
+                                            <rect x="112" y="10" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="26" width="8" height="8" fill="#000" />
+                                            <rect x="112" y="26" width="8" height="8" fill="#000" />
+                                            <rect x="96" y="42" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="58" width="8" height="8" fill="#000" />
+                                            <rect x="96" y="58" width="8" height="8" fill="#000" />
+                                            <rect x="112" y="58" width="8" height="8" fill="#000" />
+                                            <rect x="10" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="26" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="42" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="58" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="96" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="112" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="128" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="144" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="160" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="176" y="80" width="8" height="8" fill="#000" />
+                                            <rect x="10" y="96" width="8" height="8" fill="#000" />
+                                            <rect x="42" y="96" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="96" width="8" height="8" fill="#000" />
+                                            <rect x="112" y="96" width="8" height="8" fill="#000" />
+                                            <rect x="144" y="96" width="8" height="8" fill="#000" />
+                                            <rect x="176" y="96" width="8" height="8" fill="#000" />
+                                            <rect x="10" y="112" width="8" height="8" fill="#000" />
+                                            <rect x="26" y="112" width="8" height="8" fill="#000" />
+                                            <rect x="58" y="112" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="112" width="8" height="8" fill="#000" />
+                                            <rect x="96" y="112" width="8" height="8" fill="#000" />
+                                            <rect x="128" y="112" width="8" height="8" fill="#000" />
+                                            <rect x="160" y="112" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="128" width="8" height="8" fill="#000" />
+                                            <rect x="112" y="128" width="8" height="8" fill="#000" />
+                                            <rect x="128" y="128" width="8" height="8" fill="#000" />
+                                            <rect x="144" y="128" width="8" height="8" fill="#000" />
+                                            <rect x="176" y="128" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="144" width="8" height="8" fill="#000" />
+                                            <rect x="96" y="144" width="8" height="8" fill="#000" />
+                                            <rect x="128" y="144" width="8" height="8" fill="#000" />
+                                            <rect x="160" y="144" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="160" width="8" height="8" fill="#000" />
+                                            <rect x="96" y="160" width="8" height="8" fill="#000" />
+                                            <rect x="112" y="160" width="8" height="8" fill="#000" />
+                                            <rect x="144" y="160" width="8" height="8" fill="#000" />
+                                            <rect x="176" y="160" width="8" height="8" fill="#000" />
+                                            <rect x="80" y="176" width="8" height="8" fill="#000" />
+                                            <rect x="128" y="176" width="8" height="8" fill="#000" />
+                                            <rect x="160" y="176" width="8" height="8" fill="#000" />
+                                            <!-- MBANK logo center -->
+                                            <rect x="84" y="84" width="32" height="32" rx="6" fill="#00B140" />
+                                            <text x="88" y="107" font-family="Arial Black" font-size="18"
+                                                font-weight="900" fill="white">m</text>
+                                        </svg>
+                                    </div>
+
+                                    <!-- Receipt upload -->
+                                    <label class="receipt-upload" id="receiptUpload">
+                                        <input type="file" id="receiptFile" accept="image/*,.pdf"
+                                            onchange="handleReceiptUpload(this)">
+                                        <div class="receipt-icon" id="receiptIcon">
+                                            <svg width="44" height="44" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="1.5">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <circle cx="12" cy="10" r="3" />
+                                                <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+                                            </svg>
+                                        </div>
+                                        <span class="receipt-label" id="receiptLabel">Прикрепить чек</span>
+                                        <span id="receiptFileName"></span>
+                                    </label>
+                                </div>
+
+                                <!-- MBANK card fields -->
+                                <div class="card-form">
+                                    <div class="card-form-title">Введите данные карты Mbank</div>
+                                    <input class="card-input" id="mbankCardNum" type="text"
+                                        placeholder="1234 1234 1234 1234" maxlength="19">
+                                    <div class="card-row">
+                                        <input class="card-input" id="mbankExpiry" type="text" placeholder="ММ/ГГ"
+                                            maxlength="5">
+                                        <input class="card-input" id="mbankCvc" type="text" placeholder="CVC"
+                                            maxlength="3">
+                                    </div>
+                                </div>
+
+                                <button class="btn-confirm" onclick="handleConfirm()">Подтвердить платеж
+                                    2500сом</button>
+                                <p class="pay-footer">
+                                    Нажимая на кнопку "Подтвердить платеж 2500сом", вы соглашетесь в
+                                    <a href="#">Политикой денежных средств Tutor</a>.<br>
+                                    Оплатна на Tutot абсолютно безопасна. Все транзакции защищены шифрованием
+                                </p>
+                            </div>
+                        </div><!-- /left -->
+
+                        <!-- RIGHT — Tutor summary -->
+                        <div class="co-sidebar">
+                            <div class="co-tutor-card" id="coTutorCard"><!-- filled by JS --></div>
+                            <div class="co-lesson-detail">
+                                <h3>Детали пробного урока</h3>
+                                <div class="co-lesson-row">
+                                    <div class="co-date-badge">
+                                        <div class="month" id="coMonth">ЯНВ</div>
+                                        <div class="day" id="coDay">27</div>
+                                    </div>
+                                    <div class="co-lesson-info">
+                                        <div class="co-lesson-day" id="coLessonDay">вторник</div>
+                                        <div class="co-lesson-time" id="coLessonTime">20:30 – 21:20</div>
+                                        <div class="co-lesson-time" style="margin-top:3px">Урок пройдет ориентируясь на
+                                            время вашего города.</div>
+                                    </div>
+                                </div>
+                                <button class="btn-cancel" onclick="cancelBooking()">Отменить</button>
+                            </div>
+                        </div>
+
+                    </div><!-- /checkout-layout -->
+                </div><!-- /checkoutView -->
+
+            </main>
+        </div><!-- /main-content -->
+    </div><!-- /app-body -->
+
+    <!-- ════════════ PHASE 1 — BOOKING MODAL ════════════ -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="bk-modal">
+            <div class="bk-modal-head">
+                <span class="bk-modal-title">Бронь пробного урока</span>
+                <button class="bk-close" onclick="closeBookingModal()">×</button>
+            </div>
+
+            <span class="bk-duration-badge">50 минут</span>
+            <p class="bk-tz">В вашем часовом поясе Kyrgyzstan, Bishkek</p>
+
+            <!-- Day slots -->
+            <div class="bk-section">
+                <div class="bk-section-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5" />
+                        <line x1="12" y1="1" x2="12" y2="3" />
+                        <line x1="12" y1="21" x2="12" y2="23" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                        <line x1="1" y1="12" x2="3" y2="12" />
+                        <line x1="21" y1="12" x2="23" y2="12" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                    </svg>
+                    День
+                </div>
+                <div class="time-grid">
+                    <button class="time-btn" onclick="selectTime(this, '16:00')">16:00</button>
+                    <button class="time-btn" onclick="selectTime(this, '16:30')">16:30</button>
+                </div>
+            </div>
+
+            <!-- Evening slots -->
+            <div class="bk-section">
+                <div class="bk-section-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                    Вечер
+                </div>
+                <div class="time-grid">
+                    <button class="time-btn" onclick="selectTime(this, '20:00')">20:00</button>
+                    <button class="time-btn selected" onclick="selectTime(this, '20:30')">20:30</button>
+                    <button class="time-btn" onclick="selectTime(this, '21:00')">21:00</button>
+                </div>
+            </div>
+
+            <!-- Week calendar -->
+            <div class="week-cal">
+                <div class="week-nav">
+                    <button class="week-arrow" onclick="changeWeek(-1)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                    </button>
+                    <span class="week-label" id="weekLabel">25–31 янв. 2026 г.</span>
+                    <button class="week-arrow" onclick="changeWeek(1)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="week-days" id="weekDays"></div>
+            </div>
+
+            <button class="bk-continue" onclick="proceedToCheckout()">Продолжить</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toastEl"></div>
+
+    <!-- ════════════ JAVASCRIPT ════════════ -->
+    <script>
+
+        /* ══════════════════════════════════════════
+           AUTO-FILL FROM index.html (sessionStorage)
+        ══════════════════════════════════════════ */
+        (function () {
+            const raw = sessionStorage.getItem('bookingParams');
+            if (!raw) return;
+            try {
+                const p = JSON.parse(raw);
+                sessionStorage.removeItem('bookingParams'); // clean up
+
+                // Pre-fill booking state
+                window._prefilledBooking = p;
+
+                // When DOM is ready, populate the checkout sidebar with tutor info
+                document.addEventListener('DOMContentLoaded', () => {
+
+                    // Show checkout view directly if coming from index.html
+                    if (p.tutorId || p.tutorName) {
+                        // Parse date and time
+                        const date = p.date ? new Date(p.date) : null;
+                        const time = p.time || '20:00';
+
+                        // Constants needed here
+                        const MONTHS_CAP = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'];
+                        const DAYS_FULL = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'];
+
+                        // Set bookingState
+                        bookingState.tutorId = p.tutorId || null;
+                        bookingState.tutorName = p.tutorName || '';
+                        bookingState.date = date;
+                        bookingState.time = time;
+
+                        // Build fake tutor object from params
+                        const fakeTutor = {
+                            id: p.tutorId,
+                            name: p.tutorName || 'Репетитор',
+                            initials: p.tutorInitials || (p.tutorName || 'Р')[0],
+                            badge: p.tutorBadge || 'Mid-tutor',
+                            rating: 5.0,
+                            yearsTeaching: '—',
+                            lessonsCount: '—',
+                            studentsCount: '—',
+                            photoUrl: p.tutorPhoto || ''
+                        };
+
+                        // Populate checkout sidebar
+                        const av = fakeTutor.photoUrl
+                            ? `<img src="${fakeTutor.photoUrl}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`
+                            : fakeTutor.initials;
+                        document.getElementById('coTutorCard').innerHTML = `
+                  <div class="co-tutor-head">
+                    <div class="co-tutor-avatar" style="overflow:hidden;">${av}</div>
+                    <div>
+                      <div class="co-tutor-name">${fakeTutor.name}</div>
+                      <span class="co-tutor-badge">${fakeTutor.badge}</span>
+                      <div class="co-rating"><span class="star">★</span> ${fakeTutor.rating}</div>
+                    </div>
+                  </div>
+                  <button class="btn-visit-profile" onclick="history.back()">← Назад к ленте</button>`;
+
+                        // Update lesson detail
+                        if (date) {
+                            const endH = parseInt(time.split(':')[0]);
+                            const endM = parseInt(time.split(':')[1]) + 50;
+                            const endTime = `${String(Math.floor((endH * 60 + parseInt(time.split(':')[1]) + 50) / 60)).padStart(2, '0')}:${String((parseInt(time.split(':')[1]) + 50) % 60).padStart(2, '0')}`;
+                            document.getElementById('coMonth').textContent = MONTHS_CAP[date.getMonth()];
+                            document.getElementById('coDay').textContent = date.getDate();
+                            document.getElementById('coLessonDay').textContent = DAYS_FULL[date.getDay()];
+                            document.getElementById('coLessonTime').textContent = `${time} – ${endTime}`;
+                        }
+
+                        // Switch to checkout view
+                        document.getElementById('listingView').style.display = 'none';
+                        document.getElementById('checkoutView').classList.add('visible');
+                    }
+                });
+            } catch (e) { console.warn('bookingParams parse error:', e); }
+        })();
+        /* ══════════════════════════════════════════
+           MOCK DATA  — replace with API fetch later
+           e.g. fetch('/api/tutors').then(r => r.json()).then(data => renderTutors(data))
+        ══════════════════════════════════════════ */
+        const tutors = [
+            {
+                id: 1,
+                name: "Училка Хзшевна",
+                initials: "УХ",
+                badge: "Mid-tutor",
+                rating: 4.8,
+                reviews: 14,
+                price: 2500,
+                pricePer: "в месяц",
+                yearsTeaching: 5,
+                lessonsCount: 378,
+                studentsCount: 26,
+                subjects: ["Английский"],
+                languages: ["Английский", "Русский"],
+                description: "Если хочешь быть уверенным в себе и уверенно улучшить свой английский — поскорее запишись!",
+                flag: "🇰🇬",
+            },
+            {
+                id: 2,
+                name: "Алина Смирнова",
+                initials: "АС",
+                badge: "Top-tutor",
+                rating: 4.9,
+                reviews: 38,
+                price: 3200,
+                pricePer: "в месяц",
+                yearsTeaching: 8,
+                lessonsCount: 512,
+                studentsCount: 45,
+                subjects: ["Математика"],
+                languages: ["Русский", "Кыргызский"],
+                description: "Помогаю с ЕНТ и олимпиадами. Более 45 учеников поступили в топ-вузы.",
+                flag: "🇷🇺",
+            },
+            {
+                id: 3,
+                name: "Даниэль Ли",
+                initials: "ДЛ",
+                badge: "Pro-tutor",
+                rating: 4.7,
+                reviews: 22,
+                price: 2800,
+                pricePer: "в месяц",
+                yearsTeaching: 6,
+                lessonsCount: 290,
+                studentsCount: 31,
+                subjects: ["Английский", "IELTS"],
+                languages: ["Английский", "Корейский"],
+                description: "IELTS 8.5. Специализируюсь на academic English и подготовке к международным экзаменам.",
+                flag: "🇰🇷",
+            },
+        ];
+
+        /* Booking state — passed between phases */
+        let bookingState = {
+            tutorId: null,
+            tutorName: null,
+            date: null,   // Date object
+            time: null,   // string e.g. "20:30"
+            receiptFile: null, // File object
+        };
+
+        let weekOffset = 0; // weeks from current week
+
+        /* ══════════════════════════════════════════
+           RENDER TUTOR CARDS
+        ══════════════════════════════════════════ */
+        function renderTutors(data) {
+            const grid = document.getElementById('tutorsGrid');
+            grid.innerHTML = data.map(t => `
+            <div class="tutor-card">
+                <div class="tc-header">
+                    <div class="tc-avatar">${t.initials}</div>
+                    <div class="tc-meta">
+                        <div class="tc-name">${t.name} ${t.flag}</div>
+                        <span class="tc-badge">${t.badge}</span>
+                        <div class="tc-rating">
+                            <span class="star">★</span> ${t.rating}
+                            <span style="color:var(--border);margin:0 4px">|</span>
+                            <span>${t.reviews} отзывов</span>
+                        </div>
+                    </div>
+                    <div style="margin-left:auto;text-align:right;flex-shrink:0">
+                        <div class="tc-price">${t.price.toLocaleString()}сом<br><span>${t.pricePer}</span></div>
+                    </div>
+                </div>
+                <div class="tc-tags">
+                    ${t.subjects.map(s => `<span class="tc-tag">📚 ${s}</span>`).join('')}
+                    ${t.languages.map(l => `<span class="tc-tag">🌐 ${l}</span>`).join('')}
+                </div>
+                <div class="tc-desc">${t.description}</div>
+                <div class="tc-footer">
+                    <button class="btn-trial" onclick="openBookingModal(${t.id})">Забронировать пробный урок</button>
+                    <button class="btn-profile">Профиль</button>
+                </div>
+            </div>
+        `).join('');
+        }
+
+        renderTutors(tutors);
+
+        /* ══════════════════════════════════════════
+           PHASE 1 — BOOKING MODAL
+        ══════════════════════════════════════════ */
+        function openBookingModal(tutorId) {
+            const tutor = tutors.find(t => t.id === tutorId);
+            if (!tutor) return;
+            bookingState.tutorId = tutorId;
+            bookingState.tutorName = tutor.name;
+            renderWeekDays();
+            document.getElementById('bookingModal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        /* Default selection */
+        bookingState.time = '20:30';
+
+        function selectTime(el, time) {
+            document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            bookingState.time = time;
+        }
+
+        /* ── Week calendar ── */
+        const RU_DAY_SHORT = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+        const RU_MONTHS_SHORT = ['янв.', 'февр.', 'март', 'апр.', 'май', 'июн.', 'июл.', 'авг.', 'сент.', 'окт.', 'нояб.', 'дек.'];
+        const RU_MONTHS_GEN = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+        const RU_MONTHS_CAP = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'];
+        const RU_DAY_FULL = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'];
+
+        function getWeekStart(offset) {
+            const now = new Date();
+            const day = now.getDay(); // 0=Sun
+            const mon = new Date(now);
+            mon.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
+            mon.setHours(0, 0, 0, 0);
+            return mon;
+        }
+
+        function renderWeekDays() {
+            const mon = getWeekStart(weekOffset);
+            const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+
+            // Label
+            const sameMonth = mon.getMonth() === sun.getMonth();
+            const labelStart = mon.getDate();
+            const labelEnd = sun.getDate();
+            const yr = mon.getFullYear();
+            const ml = RU_MONTHS_SHORT[mon.getMonth()];
+            document.getElementById('weekLabel').textContent =
+                `${labelStart}${sameMonth ? '' : ' ' + ml}–${labelEnd} ${sameMonth ? ml : RU_MONTHS_SHORT[sun.getMonth()]} ${yr} г.`;
+
+            const container = document.getElementById('weekDays');
+            container.innerHTML = '';
+
+            // Header row — day names (Mon–Sun)
+            const dayNames = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
+            dayNames.forEach(n => {
+                const el = document.createElement('div');
+                el.className = 'week-day-name';
+                el.textContent = n;
+                container.appendChild(el);
+            });
+
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(mon); d.setDate(mon.getDate() + i);
+                const el = document.createElement('div');
+                const isPast = d < today;
+
+                el.className = 'week-day' + (isPast ? ' disabled' : '');
+                if (!isPast && d.toDateString() === today.toDateString()) el.classList.add('today');
+                if (bookingState.date && d.toDateString() === bookingState.date.toDateString()) el.classList.add('selected');
+
+                el.textContent = d.getDate();
+
+                if (!isPast) {
+                    el.addEventListener('click', () => {
+                        bookingState.date = d;
+                        renderWeekDays();
+                    });
+                }
+                container.appendChild(el);
+            }
+        }
+
+        function changeWeek(delta) {
+            weekOffset += delta;
+            renderWeekDays();
+        }
+
+        /* ══════════════════════════════════════════
+           PHASE 2 — PROCEED TO CHECKOUT
+        ══════════════════════════════════════════ */
+        function proceedToCheckout() {
+            if (!bookingState.date) { showToast('⚠️ Выберите дату урока'); return; }
+            if (!bookingState.time) { showToast('⚠️ Выберите время урока'); return; }
+
+            closeBookingModal();
+
+            // Populate checkout sidebar
+            const tutor = tutors.find(t => t.id === bookingState.tutorId);
+            if (tutor) populateCheckoutSidebar(tutor);
+
+            // Update lesson detail block
+            const d = bookingState.date;
+            const endTime = calcEndTime(bookingState.time, 50);
+            document.getElementById('coMonth').textContent = RU_MONTHS_CAP[d.getMonth()];
+            document.getElementById('coDay').textContent = d.getDate();
+            document.getElementById('coLessonDay').textContent = RU_DAY_FULL[d.getDay()];
+            document.getElementById('coLessonTime').textContent = `${bookingState.time} – ${endTime}`;
+
+            // Switch views
+            document.getElementById('listingView').style.display = 'none';
+            document.getElementById('checkoutView').classList.add('visible');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function calcEndTime(start, durationMins) {
+            const [h, m] = start.split(':').map(Number);
+            const total = h * 60 + m + durationMins;
+            return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`;
+        }
+
+        function populateCheckoutSidebar(tutor) {
+            document.getElementById('coTutorCard').innerHTML = `
+            <div class="co-tutor-head">
+                <div class="co-tutor-avatar">${tutor.initials}</div>
+                <div>
+                    <div class="co-tutor-name">${tutor.name}</div>
+                    <span class="co-tutor-badge">${tutor.badge}</span>
+                    <div class="co-rating"><span class="star">★</span> ${tutor.rating}</div>
+                </div>
+            </div>
+            <div class="co-metrics">
+                <div class="co-metric">
+                    <div class="co-metric-val">${tutor.yearsTeaching} лет</div>
+                    <div class="co-metric-label">преподавания</div>
+                </div>
+                <div class="co-metric">
+                    <div class="co-metric-val">${tutor.lessonsCount}</div>
+                    <div class="co-metric-label">уроков</div>
+                </div>
+                <div class="co-metric">
+                    <div class="co-metric-val">${tutor.studentsCount}</div>
+                    <div class="co-metric-label">учеников</div>
+                </div>
+            </div>
+            <button class="btn-visit-profile">Посетить профиль</button>
+        `;
+        }
+
+        /* ══════════════════════════════════════════
+           PAYMENT METHOD SELECTION
+        ══════════════════════════════════════════ */
+        function showComingSoon(btn) {
+            showToast('⏳ Скоро будет доступно');
+        }
+
+        function selectMbank() {
+            // Highlight MBANK button
+            document.querySelectorAll('.pay-method').forEach(b => b.classList.remove('active'));
+            document.getElementById('mbankBtn').classList.add('active');
+
+            // Switch from generic card view → QR view
+            document.getElementById('payMethodView').style.display = 'none';
+            document.getElementById('qrView').classList.add('visible');
+        }
+
+        /* ══════════════════════════════════════════
+           PHASE 3 — RECEIPT UPLOAD
+        ══════════════════════════════════════════ */
+        function handleReceiptUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            bookingState.receiptFile = file;
+
+            const wrap = document.getElementById('receiptUpload');
+            const label = document.getElementById('receiptLabel');
+            const fname = document.getElementById('receiptFileName');
+            const icon = document.getElementById('receiptIcon');
+
+            wrap.classList.add('has-file');
+            label.textContent = 'Чек прикреплён ✓';
+            fname.textContent = file.name;
+            fname.style.display = 'block';
+
+            // Replace icon with checkmark
+            icon.innerHTML = `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--teal-dark)" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>`;
+        }
+
+        /* ══════════════════════════════════════════
+           CONFIRM PAYMENT
+        ══════════════════════════════════════════ */
+        function handleConfirm() {
+            const isQrView = document.getElementById('qrView').classList.contains('visible');
+
+            if (isQrView && !bookingState.receiptFile) {
+                showToast('📎 Прикрепите чек об оплате');
+                return;
+            }
+
+            // Success
+            document.getElementById('bookingModal').classList.remove('open');
+            alert(
+                '✅ Урок успешно забронирован!\n\n' +
+                'Наш менеджер проверит ваш чек, после чего репетитор свяжется с вами.'
+            );
+            showToast('🎉 Урок забронирован!');
+        }
+
+        function cancelBooking() {
+            if (!confirm('Отменить бронирование урока?')) return;
+            document.getElementById('checkoutView').classList.remove('visible');
+            document.getElementById('listingView').style.display = '';
+            bookingState = { tutorId: null, tutorName: null, date: null, time: null, receiptFile: null };
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ══════════════════════════════════════════
+           CLOSE MODAL ON OVERLAY CLICK / ESC
+        ══════════════════════════════════════════ */
+        document.getElementById('bookingModal').addEventListener('click', function (e) {
+            if (e.target === this) closeBookingModal();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeBookingModal();
+        });
+
+        /* ══════════════════════════════════════════
+           TOAST
+        ══════════════════════════════════════════ */
+        let _tt;
+        function showToast(msg) {
+            const el = document.getElementById('toastEl');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(_tt);
+            _tt = setTimeout(() => el.classList.remove('show'), 2800);
+        }
+
+        /* ══════════════════════════════════════════
+           CARD NUMBER FORMATTING
+        ══════════════════════════════════════════ */
+        document.querySelectorAll('input[placeholder="1234 1234 1234 1234"]').forEach(inp => {
+            inp.addEventListener('input', function () {
+                let v = this.value.replace(/\D/g, '').substring(0, 16);
+                this.value = v.replace(/(.{4})/g, '$1 ').trim();
+            });
+        });
+        document.querySelectorAll('input[placeholder="ММ/ГГ"]').forEach(inp => {
+            inp.addEventListener('input', function () {
+                let v = this.value.replace(/\D/g, '').substring(0, 4);
+                if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+                this.value = v;
+            });
+        });
+    </script>
+
+    <!-- ════ MOBILE BOTTOM NAV ════ -->
+    <nav class="mob-nav" id="mobNav">
+        <a href="index.html" class="mob-nav-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+                <polyline points="9 21 9 12 15 12 15 21" />
+            </svg>
+            <span>Лента</span>
+        </a>
+        <a href="public.html" class="mob-nav-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span>Обсуждения</span>
+        </a>
+        <a href="Chat.html" class="mob-nav-item">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span>Чат</span>
+        </a>
+        <a href="trainings.html" class="mob-nav-item">
+            <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span>Тренинги</span>
+        </a>
+        <a href="profile.html" class="mob-nav-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span>Профиль</span>
+        </a>
+    </nav>
+</body>
+
+</html>

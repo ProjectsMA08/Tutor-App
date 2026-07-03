@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorApp — UNIQE</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ════════════════════════════════════════
+           RESET & CSS VARIABLES
+        ════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* Colors — Duet of verdigris #40B5AD and dark blue #090740 */
+            --teal: #40B5AD;
+            --teal-dark: #32968F;
+            --teal-light: #E6F7F5;
+            --teal-mid: #99D9D3;
+            --teal-pale: #F0FAF9;
+            --bg: #F5F7FA;
+            --white: #FFFFFF;
+            --text: #090740;
+            --text-mid: #4A5568;
+            --muted: #9AA5B4;
+            --border: #E8EDF3;
+
+            /* Legacy aliases */
+            --text-dark: #090740;
+            --text-soft: #7A9A97;
+
+            /* Shadows */
+            --shadow-xs: 0 1px 4px rgba(0, 0, 0, 0.06);
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.10);
+
+            /* Radii */
+            --r: 16px;
+            --r-sm: 10px;
+            --r-xs: 7px;
+
+            /* Layout */
+            --header-h: 60px;
+            --subnav-h: 46px;
+            --sidebar-w: 168px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+        }
+
+        /* ════════════════════════════════════════
+           FIXED HEADER
+        ════════════════════════════════════════ */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-h);
+            z-index: 700;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 24px;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .h-ham {
+            display: flex;
+            flex-direction: column;
+            gap: 4.5px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .h-ham span {
+            display: block;
+            width: 20px;
+            height: 1.8px;
+            background: var(--text-mid);
+            border-radius: 2px;
+        }
+
+        .h-logo {
+            font-weight: 800;
+            font-size: 19px;
+            color: var(--teal);
+            letter-spacing: -.02em;
+            flex-shrink: 0;
+        }
+
+        .h-logo span {
+            color: var(--text-dark);
+        }
+
+        /* Header nav */
+        .h-nav {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            flex: 1;
+            margin: 0 8px;
+            justify-content: center;
+        }
+
+        .h-nav a {
+            text-decoration: none;
+            color: var(--text-mid);
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 7px 13px;
+            border-radius: 8px;
+            transition: all .18s;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .h-nav a:hover {
+            color: var(--teal-dark);
+            background: var(--teal-pale);
+        }
+
+        .h-nav a.active {
+            color: var(--teal-dark);
+            font-weight: 700;
+        }
+
+        .h-nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 13px;
+            right: 13px;
+            height: 2.5px;
+            background: var(--teal);
+            border-radius: 2px 2px 0 0;
+        }
+
+        .h-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .h-lang {
+            background: none;
+            color: var(--text-mid);
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            padding: 6px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: border-color .2s;
+        }
+
+        .h-lang:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .h-coins {
+            background: var(--teal-pale);
+            border-radius: 50px;
+            padding: 6px 14px;
+            color: var(--teal-dark);
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid var(--teal-light);
+        }
+
+        .coins-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--teal);
+        }
+
+        .h-notif {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-mid);
+            transition: border-color .2s, background .2s;
+        }
+
+        .h-notif:hover {
+            background: var(--teal-light);
+            border-color: var(--teal);
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: var(--teal);
+            border: 2px solid var(--white);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .h-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--teal-mid);
+            flex-shrink: 0;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--teal-mid), var(--teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        /* ════════════════════════════════════════
+           SUBNAV TABS
+        ════════════════════════════════════════ */
+        .subnav {
+            position: fixed;
+            top: var(--header-h);
+            left: 0;
+            right: 0;
+            z-index: 199;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 0 24px;
+            height: var(--subnav-h);
+        }
+
+        .subnav a {
+            text-decoration: none;
+            color: var(--text-mid);
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 6px 16px;
+            border-radius: 50px;
+            transition: all .18s;
+            white-space: nowrap;
+        }
+
+        .subnav a:hover {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+        }
+
+        .subnav a.active {
+            color: var(--teal-dark);
+            font-weight: 600;
+            border-bottom: 2px solid var(--teal);
+            border-radius: 0;
+            padding-bottom: 4px;
+        }
+
+        /* ════════════════════════════════════════
+           APP BODY
+        ════════════════════════════════════════ */
+        .app-body {
+            display: flex;
+            position: fixed;
+            top: var(--header-h);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+        }
+
+        /* ════════════════════════════════════════
+           SUBNAV — скрыт, навигация только в header
+        ════════════════════════════════════════ */
+        .subnav {
+            display: none;
+        }
+
+        /* ════════════════════════════════════════
+           LEFT PROMO PANEL (вместо sidebar)
+        ════════════════════════════════════════ */
+        :root {
+            --promo-w: 220px;
+        }
+
+        .sidebar {
+            width: var(--promo-w);
+            height: 100%;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            flex-shrink: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .promo-top {
+            background: linear-gradient(160deg, #e8faf8 0%, #c8f0eb 100%);
+            padding: 20px 16px 16px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .promo-label {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--teal-dark);
+            margin-bottom: 8px;
+        }
+
+        .promo-top h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1.25;
+            margin-bottom: 3px;
+        }
+
+        .promo-top h3 span {
+            color: var(--teal);
+        }
+
+        .promo-checklist {
+            list-style: none;
+            margin: 10px 0 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .promo-checklist li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--text-mid);
+            font-weight: 500;
+        }
+
+        .promo-checklist li::before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--teal);
+            flex-shrink: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .promo-start-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--teal);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 9px 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            justify-content: center;
+            transition: background .2s, transform .15s;
+            box-shadow: 0 4px 14px rgba(64, 181, 173, .3);
+        }
+
+        .promo-start-btn:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+
+        .promo-img-wrap {
+            position: relative;
+            height: 150px;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+            background: linear-gradient(170deg, #d4f5f0 0%, #a8e6e0 100%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .promo-img-wrap img {
+            height: 90%;
+            width: auto;
+            object-fit: contain;
+            object-position: bottom;
+            filter: drop-shadow(0 4px 12px rgba(0, 120, 110, .18));
+        }
+
+        .promo-sparkle {
+            position: absolute;
+            top: 14px;
+            font-size: 14px;
+            opacity: 0.5;
+            animation: twinkle 2.5s ease-in-out infinite;
+        }
+
+        .promo-sparkle:nth-child(2) {
+            left: 14px;
+            animation-delay: 0s;
+        }
+
+        .promo-sparkle:nth-child(3) {
+            right: 18px;
+            animation-delay: .9s;
+            font-size: 10px;
+            top: 26px;
+        }
+
+        .promo-sparkle:nth-child(4) {
+            left: 50%;
+            animation-delay: 1.6s;
+            font-size: 11px;
+            top: 6px;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: .5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        .promo-community {
+            padding: 12px 16px 14px;
+            flex-shrink: 0;
+        }
+
+        .promo-community h4 {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .promo-community p {
+            font-size: 11.5px;
+            color: var(--muted);
+            margin-bottom: 9px;
+            line-height: 1.45;
+        }
+
+        .promo-avatars {
+            display: flex;
+            align-items: center;
+        }
+
+        .promo-avatars .pav {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin-right: -7px;
+            overflow: hidden;
+            background: var(--teal-light);
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--teal-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pav-count {
+            background: var(--teal-pale) !important;
+            color: var(--teal-dark) !important;
+            font-size: 9px !important;
+            margin-right: 0 !important;
+            margin-left: 10px;
+        }
+
+        /* ════════════════════════════════════════
+           MAIN SCROLL AREA
+        ════════════════════════════════════════ */
+        .shell {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .outer-scroll {
+            flex: 1;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .outer-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .outer-scroll::-webkit-scrollbar-thumb {
+            background: var(--teal-mid);
+            border-radius: 4px;
+        }
+
+        .page-content {
+            max-width: 1060px;
+            margin: 0 auto;
+            padding: 32px 28px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* ═══════════════════════════════════════════
+           ANIMATIONS
+        ═══════════════════════════════════════════ */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(28px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideRight {
+            from {
+                opacity: 0;
+                transform: translateX(-24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(91, 189, 181, 0.55);
+            }
+
+            70% {
+                box-shadow: 0 0 0 14px rgba(91, 189, 181, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(91, 189, 181, 0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -400px 0;
+            }
+
+            100% {
+                background-position: 400px 0;
+            }
+        }
+
+        /* Scroll-reveal: elements start invisible, JS adds .visible */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .reveal-delay-4 {
+            transition-delay: 0.4s;
+        }
+
+        /* ═══════════════════════════════════════════
+           HERO CARD
+        ═══════════════════════════════════════════ */
+        .hero-card {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            min-height: 420px;
+            display: flex;
+            align-items: flex-end;
+            animation: scaleIn 0.7s ease both;
+        }
+
+        .hero-card img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 8s ease;
+        }
+
+        .hero-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .hero-card__overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top,
+                    rgba(10, 30, 28, 0.90) 0%,
+                    rgba(10, 30, 28, 0.55) 50%,
+                    rgba(10, 30, 28, 0.15) 100%);
+        }
+
+        .hero-card__content {
+            position: relative;
+            z-index: 2;
+            padding: 36px 40px;
+            animation: fadeUp 0.8s 0.2s ease both;
+        }
+
+        .hero-card__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(91, 189, 181, 0.28);
+            border: 1px solid rgba(91, 189, 181, 0.5);
+            backdrop-filter: blur(6px);
+            color: #a8ede9;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 50px;
+            padding: 5px 14px;
+            margin-bottom: 16px;
+        }
+
+        .hero-card__badge span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #5BBDB5;
+            animation: pulse-ring 2s infinite;
+        }
+
+        .hero-card__title {
+            font-size: clamp(22px, 3vw, 34px);
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1.25;
+            margin-bottom: 14px;
+        }
+
+        .hero-card__title em {
+            font-style: normal;
+            color: #7ECDC6;
+        }
+
+        .hero-card__sub {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.78);
+            line-height: 1.6;
+            max-width: 600px;
+            margin-bottom: 24px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .hero-stat__num {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1;
+        }
+
+        .hero-stat__lbl {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* ═══════════════════════════════════════════
+           MANIFESTO
+        ═══════════════════════════════════════════ */
+        .manifesto-card {
+            background: var(--white);
+            border-radius: 22px;
+            padding: 40px 44px;
+            box-shadow: 0 4px 24px rgba(91, 189, 181, 0.10);
+            border: 1.5px solid #d4eeea;
+        }
+
+        .manifesto-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.10em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 10px;
+        }
+
+        .manifesto-h1 {
+            font-size: clamp(24px, 3vw, 36px);
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 28px;
+            line-height: 1.2;
+        }
+
+        .manifesto-h1 span {
+            color: var(--teal);
+            position: relative;
+        }
+
+        .manifesto-h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--teal-light);
+            border-radius: 2px;
+        }
+
+        .manifesto-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .manifesto-para {
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 14px;
+            border-left: 3px solid var(--teal);
+            transition: transform 0.22s, box-shadow 0.22s;
+        }
+
+        .manifesto-para:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(91, 189, 181, 0.14);
+        }
+
+        .manifesto-para p {
+            font-size: 13.5px;
+            color: var(--text-mid);
+            line-height: 1.7;
+        }
+
+        .manifesto-para strong {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        /* ═══════════════════════════════════════════
+           SECTION HEADER
+        ═══════════════════════════════════════════ */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-tag {
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 50px;
+            padding: 3px 10px;
+        }
+
+        .section-tag--teal {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+        }
+
+        .section-see-all {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--teal-dark);
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: background 0.18s;
+        }
+
+        .section-see-all:hover {
+            background: var(--teal-light);
+        }
+
+        /* ═══════════════════════════════════════════
+           EXPEDITION GRID
+        ═══════════════════════════════════════════ */
+        .exp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 16px;
+        }
+
+        .exp-card {
+            background: var(--white);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1.5px solid #d4eeea;
+            cursor: pointer;
+            transition: transform 0.22s, box-shadow 0.22s;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .exp-card:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .exp-card:nth-child(2) {
+            animation-delay: 0.12s;
+        }
+
+        .exp-card:nth-child(3) {
+            animation-delay: 0.19s;
+        }
+
+        .exp-card:nth-child(4) {
+            animation-delay: 0.26s;
+        }
+
+        .exp-card:nth-child(5) {
+            animation-delay: 0.33s;
+        }
+
+        .exp-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 14px 36px rgba(91, 189, 181, 0.20);
+        }
+
+        .exp-card__photo {
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exp-card__photo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 40%, rgba(0, 0, 0, 0.25));
+        }
+
+        .exp-card__photo-placeholder {
+            font-size: 40px;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+            position: relative;
+            z-index: 1;
+        }
+
+        .exp-card__body {
+            padding: 14px 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .exp-card__loc {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .exp-card__date {
+            font-size: 11px;
+            color: var(--text-soft);
+            font-weight: 500;
+        }
+
+        .exp-card__pill {
+            display: inline-block;
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            border-radius: 50px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 6px;
+            align-self: flex-start;
+        }
+
+        /* ═══════════════════════════════════════════
+           IMPACT STRIP
+        ═══════════════════════════════════════════ */
+        .impact-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            background: linear-gradient(90deg, var(--teal-dark) 0%, var(--teal-mid) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 28px rgba(91, 189, 181, 0.28);
+        }
+
+        .impact-strip>div {
+            padding: 28px 20px;
+            text-align: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            transition: background 0.22s;
+        }
+
+        .impact-strip>div:last-child {
+            border-right: none;
+        }
+
+        .impact-strip>div:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .impact-num {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .impact-lbl {
+            font-size: 11.5px;
+            color: rgba(255, 255, 255, 0.72);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        /* ═══════════════════════════════════════════
+           QUOTE CARD
+        ═══════════════════════════════════════════ */
+        .quote-card {
+            background: var(--white);
+            border-radius: 22px;
+            padding: 40px 44px;
+            border: 1.5px solid #d4eeea;
+            box-shadow: 0 4px 20px rgba(91, 189, 181, 0.09);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--teal), var(--teal-mid));
+            border-radius: 0 0 0 22px;
+        }
+
+        .quote-card__mark {
+            font-size: 72px;
+            font-weight: 800;
+            color: var(--teal-light);
+            line-height: 0.8;
+            margin-bottom: 12px;
+            font-family: Georgia, serif;
+        }
+
+        .quote-card__text {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+            line-height: 1.65;
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+
+        .quote-card__author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quote-card__av {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--teal);
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .quote-card__name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .quote-card__role {
+            font-size: 12px;
+            color: var(--text-soft);
+            margin-top: 2px;
+        }
+
+        /* ═══════════════════════════════════════════
+           CTA CARD
+        ═══════════════════════════════════════════ */
+        .cta-card {
+            background: linear-gradient(135deg, #0d2624 0%, #1a3d3a 50%, #0f2e2b 100%);
+            border-radius: 24px;
+            padding: 44px 48px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='400' height='200' viewBox='0 0 400 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='350' cy='30' r='90' fill='rgba(91,189,181,0.07)'/%3E%3Ccircle cx='50' cy='160' r='70' fill='rgba(91,189,181,0.05)'/%3E%3C/svg%3E") center no-repeat;
+            pointer-events: none;
+        }
+
+        .cta-card__eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .cta-card__title {
+            font-size: clamp(22px, 3vw, 30px);
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .cta-card__sub {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.68);
+            line-height: 1.6;
+            max-width: 520px;
+            margin: 0 auto 32px;
+            position: relative;
+        }
+
+        .cta-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 24px;
+            border-radius: 14px;
+            border: 2px solid rgba(91, 189, 181, 0.5);
+            background: transparent;
+            color: var(--teal-mid);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, transform 0.15s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--teal);
+            background: rgba(91, 189, 181, 0.10);
+            transform: scale(1.03);
+        }
+
+        .btn-filled {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 13px 28px;
+            border-radius: 14px;
+            border: none;
+            background: var(--teal);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            animation: pulse-ring 2.5s 1s infinite;
+        }
+
+        .btn-filled:hover {
+            background: var(--teal-dark);
+            transform: scale(1.03);
+            animation: none;
+        }
+
+        .tg-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* ═══════════════════════════════════════════
+           SOCIAL FOOTER
+        ═══════════════════════════════════════════ */
+        .social-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 20px 28px;
+            background: var(--white);
+            border-radius: 18px;
+            border: 1.5px solid #d4eeea;
+        }
+
+        .social-footer__brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-mid);
+        }
+
+        .social-footer__links {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: var(--bg);
+            color: var(--text-mid);
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 600;
+            border: 1.5px solid #d4eeea;
+            transition: background 0.18s, transform 0.15s;
+        }
+
+        .social-link:hover {
+            background: var(--teal-light);
+            transform: scale(1.04);
+        }
+
+        /* ═══════════════════════════════════════════
+           TOAST
+        ═══════════════════════════════════════════ */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text-dark);
+            color: white;
+            padding: 12px 22px;
+            border-radius: 50px;
+            font-size: 13.5px;
+            font-weight: 600;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.22);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 999;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ─── Scrollbar ─── */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #B0D8D5;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ════════════ FIXED HEADER ════════════ -->
+    <header>
+        <div class="h-ham"><span></span><span></span><span></span></div>
+        <div class="h-logo" onclick="window.location.href='index.html'" style="cursor:pointer">Tutor<span>App</span>
+        </div>
+        <nav class="h-nav">
+            <a href="index.html">Лента</a>
+            <a href="Chat.html">Чат</a>
+            <a href="public.html">Обсуждения</a>
+            <a href="unique.html" class="active">Unique</a>
+            <a href="exam.html">Экзамены</a>
+            <a href="trainings.html">Тренинги</a>
+            <a href="profile.html">Профиль</a>
+        </nav>
+        <div class="h-right">
+            <div class="h-coins" id="hCoinsBadge"><span class="coins-dot"></span><span id="coinsDisplay">5</span></div>
+            <div class="h-notif" id="hNotif" onclick="window.toggleNotifPanel && window.toggleNotifPanel()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <span class="notif-badge" id="notifBadge" style="display:none;"></span>
+            </div>
+            <div class="h-avatar" id="headerAvatar" onclick="window.location.href='profile.html'">A</div>
+        </div>
+    </header>
+
+    <!-- NOTIFICATION DROPDOWN PANEL -->
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-panel-head">
+            <span class="notif-panel-title">Уведомления</span>
+            <button class="notif-mark-all" id="notifMarkAll">Прочитать все</button>
+        </div>
+        <div class="notif-panel-list" id="notifPanelList">
+            <div class="notif-empty">Нет новых уведомлений</div>
+        </div>
+    </div>
+    <div class="notif-overlay" id="notifOverlay" onclick="window.closeNotifPanel && window.closeNotifPanel()"></div>
+
+    <!-- ══════════ APP BODY ══════════ -->
+    <div class="app-body">
+
+        <!-- PROMO PANEL -->
+        <aside class="promo-panel">
+            <div class="promo-top">
+                <div class="promo-label">TutorApp Premium</div>
+                <h3>Стань репетитором<br>и <span>меняй жизни!</span></h3>
+                <ul class="promo-checklist">
+                    <li>Больше учеников</li>
+                    <li>Гибкий график</li>
+                    <li>Высокий доход</li>
+                    <li>Поддержка 24/7</li>
+                </ul>
+                <button class="promo-start-btn" onclick="showToast('🚀 Переход на страницу регистрации...')">
+                    Начать сейчас →
+                </button>
+            </div>
+            <div class="promo-img-wrap">
+                <span class="promo-sparkle">✦</span>
+                <span class="promo-sparkle">✦</span>
+                <span class="promo-sparkle">✦</span>
+                <img src="./assets/tutor-promo.png" alt="Tutor" onerror="this.style.display='none'">
+            </div>
+            <div class="promo-community">
+                <h4>Присоединяйся к сообществу</h4>
+                <p>Более 700+ репетиторов уже с нами</p>
+                <div class="promo-avatars">
+                    <div class="pav" style="background:#c8f0eb;color:var(--teal-dark);">А</div>
+                    <div class="pav" style="background:#fde8ef;color:#c0567a;">М</div>
+                    <div class="pav" style="background:#e8ecff;color:#5060c0;">Д</div>
+                    <div class="pav" style="background:#fef3e2;color:#c07830;">С</div>
+                    <div class="pav pav-count">+700</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ═══════════════════════════════════════
+             PAGE SHELL + SCROLL WRAPPER
+        ═══════════════════════════════════════ -->
+        <div class="shell">
+            <div class="outer-scroll" id="outerScroll">
+                <div class="page-content">
+
+                    <!-- ─── HERO IMAGE ─── -->
+                    <div class="hero-card">
+                        <img src="https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=1400&q=85&auto=format&fit=crop"
+                            alt="Children learning in remote village"
+                            onerror="this.src='https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=1400&q=85'">
+                        <div class="hero-card__overlay"></div>
+                        <div class="hero-card__content">
+                            <div class="hero-card__badge">
+                                <span></span> Миссия активна · 2026
+                            </div>
+                            <h1 class="hero-card__title">
+                                Знание — это Свет.<br>
+                                <em>Мы несём его тем,<br>кто нуждается больше всего.</em>
+                            </h1>
+                            <p class="hero-card__sub">
+                                Волонтёры-репетиторы Unique выезжают в самые отдалённые районы,<br>
+                                чтобы дать детям доступ к качественному образованию — бесплатно.
+                            </p>
+                            <div class="hero-stats">
+                                <div class="hero-stat">
+                                    <span class="hero-stat__num">47</span>
+                                    <span class="hero-stat__lbl">Экспедиций</span>
+                                </div>
+                                <div class="hero-stat">
+                                    <span class="hero-stat__num">2 840</span>
+                                    <span class="hero-stat__lbl">Детей обучено</span>
+                                </div>
+                                <div class="hero-stat">
+                                    <span class="hero-stat__num">18</span>
+                                    <span class="hero-stat__lbl">Регионов</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ─── MANIFESTO ─── -->
+                    <div class="manifesto-card reveal">
+                        <div class="manifesto-eyebrow">Наша миссия</div>
+                        <h2 class="manifesto-h1">UNIQE: <span>Миссия Света</span></h2>
+                        <div class="manifesto-grid">
+                            <div class="manifesto-para reveal reveal-delay-1">
+                                <p>
+                                    В Кыргызстане и Центральной Азии тысячи детей живут в сёлах, куда не доезжают
+                                    учителя.
+                                    Расстояние до ближайшей школы — часы по горным дорогам. Эти дети так же умны и
+                                    любопытны, но система образования оставила их позади. <strong>UNIQE существует,
+                                        чтобы изменить это.</strong>
+                                </p>
+                            </div>
+                            <div class="manifesto-para reveal reveal-delay-2">
+                                <p>
+                                    Наши волонтёры — студенты, педагоги, специалисты — берут рюкзаки и ноутбуки и
+                                    отправляются туда, где их никто не ждёт... кроме детей. Интенсивные курсы по
+                                    математике,
+                                    английскому, русскому и цифровой грамотности. <strong>Один хороший учитель меняет
+                                        судьбу поколения.</strong>
+                                </p>
+                            </div>
+                            <div class="manifesto-para reveal reveal-delay-3">
+                                <p>
+                                    UNIQE — это не разовая акция. Это системное движение. Каждая поездка
+                                    документируется,
+                                    каждый ребёнок получает план развития, каждый волонтёр проходит обучение. Мы строим
+                                    мосты между городским образованием и отдалёнными сёлами. <strong>Свет должен
+                                        доходить до каждого.</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ─── EXPEDITION CARDS ─── -->
+                    <div class="section-header reveal">
+                        <div class="section-title">
+                            Последние экспедиции
+                            <span class="section-tag section-tag--teal">2025–2026</span>
+                        </div>
+                        <button class="section-see-all" onclick="showToast('📋 Все экспедиции скоро!')">Все экспедиции
+                            →</button>
+                    </div>
+
+                    <div class="exp-grid">
+                        <div class="exp-card" onclick="showToast('📍 Горный Алтай · Май 2025')">
+                            <div class="exp-card__photo" style="background:linear-gradient(135deg,#0A1A0A,#0E2E0E);">
+                                <div class="exp-card__photo-placeholder">🏔</div>
+                            </div>
+                            <div class="exp-card__body">
+                                <div class="exp-card__loc">Отдалённое село Белтир</div>
+                                <div class="exp-card__date">📍 Горный Алтай, Россия</div>
+                                <div class="exp-card__date">📅 14–22 мая 2025</div>
+                                <span class="exp-card__pill">68 детей</span>
+                            </div>
+                        </div>
+
+                        <div class="exp-card" onclick="showToast('📍 Памир · Апрель 2025')">
+                            <div class="exp-card__photo" style="background:linear-gradient(135deg,#0A0A1A,#1A1A2E);">
+                                <div class="exp-card__photo-placeholder">🌄</div>
+                            </div>
+                            <div class="exp-card__body">
+                                <div class="exp-card__loc">Джергитал, Лейлекский р-н</div>
+                                <div class="exp-card__date">📍 Памир, Кыргызстан</div>
+                                <div class="exp-card__date">📅 3–11 апр. 2025</div>
+                                <span class="exp-card__pill">104 детей</span>
+                            </div>
+                        </div>
+
+                        <div class="exp-card" onclick="showToast('⭐ Главная экспедиция · Нарын 2025')">
+                            <div class="exp-card__photo" style="background:linear-gradient(135deg,#0E1A18,#1A3530);">
+                                <div class="exp-card__photo-placeholder">🗻</div>
+                            </div>
+                            <div class="exp-card__body">
+                                <div class="exp-card__loc">Нарынская область</div>
+                                <div class="exp-card__date">📍 Тянь-Шань, Кыргызстан</div>
+                                <div class="exp-card__date">📅 18–28 мар. 2025</div>
+                                <span class="exp-card__pill" style="background:var(--teal);color:#fff;">⭐ 152
+                                    детей</span>
+                            </div>
+                        </div>
+
+                        <div class="exp-card" onclick="showToast('📍 Южный Казахстан · Февраль 2025')">
+                            <div class="exp-card__photo" style="background:linear-gradient(135deg,#1A1608,#2E2810);">
+                                <div class="exp-card__photo-placeholder">🌾</div>
+                            </div>
+                            <div class="exp-card__body">
+                                <div class="exp-card__loc">Аул Сарыкемер</div>
+                                <div class="exp-card__date">📍 Южный Казахстан</div>
+                                <div class="exp-card__date">📅 7–15 фев. 2025</div>
+                                <span class="exp-card__pill">87 детей</span>
+                            </div>
+                        </div>
+
+                        <div class="exp-card" onclick="showToast('📍 Хорог, Таджикистан · Январь 2025')">
+                            <div class="exp-card__photo" style="background:linear-gradient(135deg,#1A0808,#2E1212);">
+                                <div class="exp-card__photo-placeholder">⛰</div>
+                            </div>
+                            <div class="exp-card__body">
+                                <div class="exp-card__loc">Хорог, Рушанский район</div>
+                                <div class="exp-card__date">📍 Памир, Таджикистан</div>
+                                <div class="exp-card__date">📅 10–18 янв. 2025</div>
+                                <span class="exp-card__pill">91 ребёнок</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ─── IMPACT NUMBERS ─── -->
+                    <div class="impact-strip reveal">
+                        <div>
+                            <div class="impact-num">47</div>
+                            <div class="impact-lbl">Экспедиций</div>
+                        </div>
+                        <div>
+                            <div class="impact-num">2 840</div>
+                            <div class="impact-lbl">Детей обучено</div>
+                        </div>
+                        <div>
+                            <div class="impact-num">186</div>
+                            <div class="impact-lbl">Волонтёров</div>
+                        </div>
+                        <div>
+                            <div class="impact-num">18</div>
+                            <div class="impact-lbl">Регионов</div>
+                        </div>
+                    </div>
+
+                    <!-- ─── QUOTE ─── -->
+                    <div class="quote-card reveal">
+                        <div class="quote-card__mark">"</div>
+                        <p class="quote-card__text">
+                            Когда наш репетитор приехал в аул, дети не знали, кто такой Ньютон. Через неделю они
+                            рассказывали о нём родителям. Такие моменты — это и есть смысл всего, что мы делаем.
+                        </p>
+                        <div class="quote-card__author">
+                            <div class="quote-card__av">А</div>
+                            <div>
+                                <div class="quote-card__name">Айдана К.</div>
+                                <div class="quote-card__role">Волонтёр · экспедиция Нарын 2025</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ─── CTA SECTION ─── -->
+                    <div class="cta-card reveal">
+                        <div class="cta-card__eyebrow">Присоединяйся</div>
+                        <h3 class="cta-card__title">Стань частью Unique</h3>
+                        <p class="cta-card__sub">
+                            Нужна помощь для вашей школы? Хотите стать волонтёром?
+                            У нас два пути — выбери свой.
+                        </p>
+                        <div class="cta-btns">
+                            <button class="btn-outline" onclick="showToast('🏫 Заявка на помощь — отправлена!')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                    <polyline points="9 22 9 12 15 12 15 22" />
+                                </svg>
+                                Запросить помощь для школы
+                            </button>
+                            <button class="btn-filled" onclick="showToast('🤝 Переход в Telegram Bot...')">
+                                <svg class="tg-icon" viewBox="0 0 24 24" fill="white">
+                                    <path
+                                        d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.076 13.99l-2.96-.924c-.643-.204-.658-.643.136-.953l11.57-4.461c.537-.194 1.006.131.836.937l.236.632z" />
+                                </svg>
+                                Стать волонтёром (TG Bot)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ─── SOCIAL FOOTER ─── -->
+                    <div class="social-footer reveal">
+                        <div class="social-footer__brand">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)"
+                                stroke-width="2.5">
+                                <path d="M12 3L2 8l10 5 10-5-10-5zM2 13l10 5 10-5M2 18l10 5 10-5" />
+                            </svg>
+                            TutorApp · UNIQE
+                        </div>
+                        <div class="social-footer__links">
+                            <a href="https://t.me/" target="_blank" class="social-link">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="#29B6F6">
+                                    <path
+                                        d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.076 13.99l-2.96-.924c-.643-.204-.658-.643.136-.953l11.57-4.461c.537-.194 1.006.131.836.937l.236.632z" />
+                                </svg>
+                                Telegram канал
+                            </a>
+                            <a href="https://youtube.com/" target="_blank" class="social-link">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="#FF0000">
+                                    <path
+                                        d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                                </svg>
+                                YouTube
+                            </a>
+                        </div>
+                    </div>
+
+                </div><!-- /page-content -->
+            </div><!-- /outer-scroll -->
+        </div><!-- /shell -->
+
+        <!-- TOAST -->
+        <div class="toast" id="toastEl"></div>
+
+    </div><!-- /app-body -->
+
+    <script>
+        let _tt;
+        function showToast(msg) {
+            const el = document.getElementById('toastEl');
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(_tt);
+            _tt = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // ── Scroll-reveal observer ──
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+
+    <!-- ════════════ FIREBASE: аватар в хедере ════════════ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQ9UYY6uh3CgXzytNwt_r2LCwaXval9T8",
+            authDomain: "tutorapp-95f48.firebaseapp.com",
+            projectId: "tutorapp-95f48",
+            storageBucket: "tutorapp-95f48.firebasestorage.app",
+            messagingSenderId: "559214827748",
+            appId: "1:559214827748:web:c77d90b72d607f6df1b4f1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+            try {
+                const snap = await getDoc(doc(db, 'users', user.uid));
+                const headerAv = document.getElementById('headerAvatar');
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.photoUrl) {
+                        headerAv.innerHTML = `<img src="${data.photoUrl}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                    } else {
+                        headerAv.textContent = (data.fullName || data.nick || user.email || '?')[0].toUpperCase();
+                    }
+                    // Монеты / стрик
+                    const coinsEl = document.getElementById('coinsDisplay');
+                    if (coinsEl) coinsEl.textContent = data.streakDays ?? data.coins ?? 0;
+                    // Ссылка на нужный профиль
+                    headerAv.onclick = () => {
+                        window.location.href = data.role === 'tutor' ? 'tutor-profile.html' : 'profile.html';
+                    };
+                    headerAv.style.cursor = 'pointer';
+                }
+            } catch (e) { console.warn('unique firebase header:', e); }
+        });
+    </script>
+</body>
+
+</html>

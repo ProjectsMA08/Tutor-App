@@ -1,0 +1,4028 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TutorApp — Лента</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --teal: #00A896;
+      --teal-dark: #008F7E;
+      --teal-light: #E6F7F5;
+      --teal-mid: #99D9D3;
+      --teal-pale: #F0FAF9;
+      --cobalt: #1E40AF;
+      --cobalt-mid: #3B5BD6;
+      --cobalt-light: #EEF2FF;
+      --bg: #F5F7FA;
+      --white: #FFFFFF;
+      --text: #1A2332;
+      --text-mid: #4A5568;
+      --muted: #9AA5B4;
+      --border: #E8EDF3;
+      --green: #38D68A;
+      --gold: #F5B942;
+      --red: #E05A7A;
+      --shadow-xs: 0 1px 4px rgba(0, 0, 0, .06);
+      --shadow-sm: 0 2px 12px rgba(0, 0, 0, .08);
+      --shadow-md: 0 6px 24px rgba(0, 0, 0, .10);
+      --r: 16px;
+      --r-sm: 10px;
+      --header-h: 60px;
+      --subnav-h: 46px;
+      --sidebar-w: 168px
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-h);
+      z-index: 700;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 24px;
+      box-shadow: var(--shadow-xs)
+    }
+
+    .h-ham {
+      display: flex;
+      flex-direction: column;
+      gap: 4.5px;
+      cursor: pointer;
+      flex-shrink: 0
+    }
+
+    .h-ham span {
+      display: block;
+      width: 20px;
+      height: 1.8px;
+      background: var(--text-mid);
+      border-radius: 2px
+    }
+
+    .h-logo {
+      font-weight: 800;
+      font-size: 19px;
+      color: var(--teal);
+      letter-spacing: -.02em;
+      flex-shrink: 0;
+      text-decoration: none !important;
+      border-bottom: none !important;
+      cursor: pointer;
+    }
+
+    .h-logo span {
+      color: var(--text)
+    }
+
+    /* ══ CENTERED NAV — flex по центру как в trainings.html ══ */
+    .h-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      margin: 0 12px;
+      justify-content: center;
+    }
+
+    .h-nav a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      transition: all .18s;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .h-nav a:hover {
+      color: var(--teal-dark);
+      background: var(--teal-pale);
+    }
+
+    .h-nav a.active {
+      color: var(--teal-dark);
+      font-weight: 700;
+    }
+
+    .h-nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 14px;
+      right: 14px;
+      height: 2.5px;
+      background: var(--teal);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* subnav hidden */
+    .subnav {
+      display: none !important;
+    }
+
+    /* ── APP BODY — starts right after header ── */
+    .app-body {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      overflow: hidden
+    }
+
+    /* ── PROMO PANEL (replaces sidebar) ── */
+    :root {
+      --promo-w: 230px;
+    }
+
+    .sidebar {
+      display: none !important;
+    }
+
+    .promo-panel {
+      width: var(--promo-w);
+      height: 100%;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .promo-top {
+      background: linear-gradient(160deg, #e8faf8 0%, #c8f0eb 100%);
+      padding: 22px 18px 18px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .promo-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--teal-dark);
+      margin-bottom: 8px;
+    }
+
+    .promo-top h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 3px;
+    }
+
+    .promo-top h3 span {
+      color: var(--teal);
+    }
+
+    .promo-checklist {
+      list-style: none;
+      margin: 12px 0 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .promo-checklist li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-mid);
+      font-weight: 500;
+    }
+
+    .promo-checklist li::before {
+      content: '';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .promo-start-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      transition: background .2s, transform .15s;
+      box-shadow: 0 4px 14px rgba(0, 168, 150, .28);
+    }
+
+    .promo-start-btn:hover {
+      background: var(--teal-dark);
+      transform: translateY(-1px);
+    }
+
+    /* ── Tutor photo area — identical to trainings.html ── */
+    .promo-img-wrap {
+      position: relative;
+      height: 160px;
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(170deg, #d4f5f0 0%, #a8e6e0 100%);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .promo-img-wrap img {
+      height: 95%;
+      width: auto;
+      object-fit: contain;
+      object-position: bottom;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0, 120, 110, .18));
+    }
+
+    .promo-sparkle {
+      position: absolute;
+      top: 14px;
+      font-size: 16px;
+      opacity: .55;
+      animation: twinkle 2.5s ease-in-out infinite;
+    }
+
+    .promo-sparkle:nth-child(2) {
+      left: 18px;
+      animation-delay: 0s;
+    }
+
+    .promo-sparkle:nth-child(3) {
+      right: 22px;
+      animation-delay: .9s;
+      font-size: 11px;
+      top: 28px;
+    }
+
+    .promo-sparkle:nth-child(4) {
+      left: 50%;
+      animation-delay: 1.6s;
+      font-size: 13px;
+      top: 8px;
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        opacity: .3;
+        transform: scale(.8);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+
+    .promo-community {
+      padding: 14px 18px 16px;
+      flex-shrink: 0;
+    }
+
+    .promo-community h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .promo-community p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      line-height: 1.45;
+    }
+
+    .promo-avatars {
+      display: flex;
+      align-items: center;
+    }
+
+    .promo-avatars .pav {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      margin-right: -8px;
+      background: var(--teal-light);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .promo-avatars .pav-count {
+      background: var(--teal);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      margin-right: 0;
+      margin-left: 12px;
+    }
+
+    .h-coins {
+      background: var(--teal-pale);
+      border-radius: 50px;
+      padding: 6px 14px;
+      color: var(--teal-dark);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1.5px solid var(--teal-light);
+      transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s, background .25s;
+    }
+
+    .h-coins.coins-pop {
+      transform: scale(1.18);
+      background: #d2f6ee;
+      box-shadow: 0 0 0 6px rgba(56, 214, 138, .18);
+    }
+
+    .coins-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green)
+    }
+
+    .h-notif {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-mid);
+      transition: border-color .2s, background .2s
+    }
+
+    .h-notif:hover {
+      background: var(--teal-light);
+      border-color: var(--teal)
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: 2px solid var(--white);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    /* NOTIFICATION BELL PULSE */
+    @keyframes notifPulse {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.15)
+      }
+    }
+
+    .notif-pulse {
+      animation: notifPulse .4s ease-in-out;
+    }
+
+    /* ── NOTIFICATION DROPDOWN PANEL ── */
+    .notif-panel {
+      position: fixed;
+      top: calc(var(--header-h) + 8px);
+      right: 16px;
+      width: 340px;
+      max-height: 480px;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      box-shadow: var(--shadow-md);
+      z-index: 900;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .notif-panel.open {
+      display: flex;
+    }
+
+    .notif-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 850;
+    }
+
+    .notif-overlay.open {
+      display: block;
+    }
+
+    .notif-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .notif-panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .notif-mark-all {
+      background: none;
+      border: none;
+      color: var(--teal);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background .18s;
+    }
+
+    .notif-mark-all:hover {
+      background: var(--teal-light);
+    }
+
+    .notif-panel-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .notif-panel-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .notif-panel-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .15s;
+      position: relative;
+    }
+
+    .notif-item:hover {
+      background: var(--teal-pale);
+    }
+
+    .notif-item.unread {
+      background: var(--teal-pale);
+    }
+
+    .notif-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .notif-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--teal-mid), var(--teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .notif-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .notif-icon-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--white);
+    }
+
+    .notif-icon-badge.msg {
+      background: var(--teal);
+    }
+
+    .notif-icon-badge.like {
+      background: var(--red);
+    }
+
+    .notif-icon-badge.comment {
+      background: #4A90D9;
+    }
+
+    .notif-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notif-from {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .notif-text {
+      font-size: 12.5px;
+      color: var(--text-mid);
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .notif-time {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .notif-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .h-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2.5px solid var(--teal);
+      cursor: pointer;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #00C9B1, #00A896, #007A6D);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 0 0 3px rgba(0, 168, 150, 0.18), 0 2px 8px rgba(0, 168, 150, 0.25);
+      transition: box-shadow .2s, transform .15s;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+    }
+
+    .h-avatar:hover {
+      box-shadow: 0 0 0 4px rgba(0, 168, 150, 0.28), 0 4px 14px rgba(0, 168, 150, 0.35);
+      transform: scale(1.06);
+    }
+
+    /* ── H-RIGHT CONTAINER ── */
+    .h-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main-area {
+      flex: 1;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 1fr 268px;
+      overflow: hidden
+    }
+
+    /* ── FEED COLUMN (wraps scrollable feed + pinned compose) ── */
+    .feed-col {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      background: var(--bg)
+    }
+
+    /* ── FEED SCROLL AREA ── */
+    #feedWrap {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--bg);
+      min-height: 0
+    }
+
+    #feedWrap::-webkit-scrollbar {
+      width: 4px
+    }
+
+    #feedWrap::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 3px
+    }
+
+    .feed-inner {
+      padding: 16px 18px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 680px;
+      width: 100%;
+      margin: 0 auto
+    }
+
+    /* ── CLUBS CAROUSEL ── */
+    .rooms-section {
+      background: var(--white);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-xs);
+      border: 1.5px solid var(--border)
+    }
+
+    .rooms-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scroll-behavior: smooth
+    }
+
+    .rooms-scroll::-webkit-scrollbar {
+      height: 3px
+    }
+
+    .rooms-scroll::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 3px
+    }
+
+    .room-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 80px;
+      transition: transform .18s
+    }
+
+    .room-card:hover {
+      transform: translateY(-2px)
+    }
+
+    .room-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--teal-light);
+      border: 2.5px solid var(--teal-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      position: relative;
+      transition: border-color .2s
+    }
+
+    .room-icon.create {
+      background: var(--cobalt-light);
+      border-color: var(--cobalt-mid);
+      font-size: 26px;
+      color: var(--cobalt-mid)
+    }
+
+    .room-icon.joined {
+      border-color: var(--teal);
+      background: var(--teal-pale)
+    }
+
+    .room-online {
+      position: absolute;
+      bottom: 1px;
+      right: 1px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--green);
+      border: 2px solid var(--white)
+    }
+
+    .room-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.3
+    }
+
+    .room-members {
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center
+    }
+
+    /* ── FILTERS ── */
+    .feed-filters {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap
+    }
+
+    .filter-tab {
+      padding: 6px 14px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all .18s
+    }
+
+    .filter-tab:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark)
+    }
+
+    .filter-tab.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff
+    }
+
+    .sort-select {
+      margin-left: auto;
+      padding: 6px 12px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-mid);
+      cursor: pointer;
+      outline: none
+    }
+
+    /* ── POST ── */
+    .post {
+      background: var(--white);
+      border-radius: var(--r);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-xs);
+      border: 1.5px solid var(--border);
+      transition: box-shadow .22s, border-color .22s;
+      animation: fadeUp .3s ease both
+    }
+
+    .post:hover {
+      box-shadow: var(--shadow-sm);
+      border-color: var(--teal-mid)
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .ph {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px
+    }
+
+    .ph-av {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--teal-pale)
+    }
+
+    .ph-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .ph-av-init {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700
+    }
+
+    .ph-info {
+      flex: 1
+    }
+
+    .ph-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer
+    }
+
+    .ph-name:hover {
+      color: var(--teal)
+    }
+
+    .ph-time {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px
+    }
+
+    .ph-more {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: background .18s;
+      letter-spacing: 2px
+    }
+
+    .ph-more:hover {
+      background: rgba(0, 0, 0, .06)
+    }
+
+    .post-text {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 12px
+    }
+
+    .card-tag {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border-radius: 50px;
+      padding: 3px 11px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 4px;
+      display: inline-block;
+      margin-bottom: 4px
+    }
+
+    .post-img {
+      width: 100%;
+      border-radius: var(--r-sm);
+      margin-bottom: 12px;
+      max-height: 400px;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+      transition: opacity .18s
+    }
+
+    .post-img:hover {
+      opacity: .92
+    }
+
+    /* ── ACTIONS ── */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px
+    }
+
+    .act-btn,
+    .comments-toggle,
+    .share-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 9px;
+      border-radius: var(--r-sm);
+      transition: background .18s, color .18s
+    }
+
+    .act-btn:hover,
+    .comments-toggle:hover,
+    .share-btn:hover {
+      background: var(--teal-light);
+      color: var(--teal-dark)
+    }
+
+    .act-btn.liked {
+      color: var(--red)
+    }
+
+    @keyframes heartPop {
+      0% {
+        transform: scale(1)
+      }
+
+      35% {
+        transform: scale(1.5)
+      }
+
+      65% {
+        transform: scale(.88)
+      }
+
+      100% {
+        transform: scale(1)
+      }
+    }
+
+    .act-btn.pop {
+      animation: heartPop .35s ease
+    }
+
+    /* ── COMMENTS (аватар используется и в Thread-модалке) ── */
+    .comment-av {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: var(--teal-pale);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal-dark)
+    }
+
+    .comment-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    /* ── PINNED COMPOSE AT BOTTOM OF FEED COLUMN ── */
+    .compose-sticky {
+      flex-shrink: 0;
+      background: var(--white);
+      border-top: 1.5px solid var(--border);
+      padding: 10px 18px 12px;
+      z-index: 50;
+      box-shadow: 0 -4px 18px rgba(0, 0, 0, .07)
+    }
+
+    .compose-sticky-inner {
+      max-width: 680px;
+      margin: 0 auto
+    }
+
+    .compose-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px
+    }
+
+    .compose-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #99D9D3, #00A896);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      overflow: hidden
+    }
+
+    .compose-input {
+      flex: 1;
+      padding: 9px 16px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .compose-input:focus {
+      border-color: var(--teal);
+      background: var(--white)
+    }
+
+    .compose-input::placeholder {
+      color: var(--muted)
+    }
+
+    .compose-bot {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap
+    }
+
+    .compose-act {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: none;
+      color: var(--text-mid);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: background .18s, color .18s
+    }
+
+    .compose-act:hover {
+      background: var(--teal-light);
+      color: var(--teal-dark)
+    }
+
+    .post-btn {
+      margin-left: auto;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 8px 22px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .15s
+    }
+
+    .post-btn:hover {
+      background: var(--teal-dark);
+      transform: scale(1.03)
+    }
+
+    #photoFileInput {
+      display: none
+    }
+
+    .upload-bar {
+      background: var(--teal-pale);
+      border: 1.5px dashed var(--teal-mid);
+      border-radius: var(--r-sm);
+      padding: 8px 14px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px
+    }
+
+    .upload-bar.show {
+      display: flex
+    }
+
+    .upload-preview {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      object-fit: cover;
+      display: block
+    }
+
+    .upload-clear {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: auto
+    }
+
+    /* ── RIGHT PANEL ── */
+    .panel-right {
+      border-left: 1px solid var(--border);
+      background: var(--white);
+      overflow-y: auto;
+      padding: 16px 14px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px
+    }
+
+    .panel-right::-webkit-scrollbar {
+      width: 3px
+    }
+
+    .panel-right::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 2px
+    }
+
+    /* Premium */
+    .premium-box {
+      background: linear-gradient(135deg, #00A896 0%, #008F7E 100%);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0
+    }
+
+    .premium-box::before {
+      content: '';
+      position: absolute;
+      top: -24px;
+      right: -24px;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .09)
+    }
+
+    .premium-box::after {
+      content: '';
+      position: absolute;
+      bottom: -18px;
+      left: -18px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .06)
+    }
+
+    .prem-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .7);
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between
+    }
+
+    .prem-crown {
+      font-size: 26px;
+      margin-bottom: 2px;
+      position: relative;
+      z-index: 1
+    }
+
+    .prem-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 5px;
+      position: relative;
+      z-index: 1
+    }
+
+    .prem-sub {
+      font-size: 11.5px;
+      color: rgba(255, 255, 255, .8);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1
+    }
+
+    .prem-btn {
+      background: #fff;
+      color: var(--teal-dark);
+      border: none;
+      border-radius: 50px;
+      padding: 7px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s;
+      position: relative;
+      z-index: 1
+    }
+
+    .prem-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .18)
+    }
+
+    /* Focus Timer */
+    .timer-box {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      padding: 14px 16px;
+      flex-shrink: 0
+    }
+
+    .timer-label {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px
+    }
+
+    .timer-ring-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px
+    }
+
+    .timer-ring {
+      position: relative;
+      width: 72px;
+      height: 72px
+    }
+
+    .timer-ring svg {
+      transform: rotate(-90deg)
+    }
+
+    .timer-track {
+      fill: none;
+      stroke: var(--teal-light);
+      stroke-width: 5
+    }
+
+    .timer-prog {
+      fill: none;
+      stroke: var(--teal);
+      stroke-width: 5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset .8s linear
+    }
+
+    .timer-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text)
+    }
+
+    .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px
+    }
+
+    .timer-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-mid);
+      transition: background .18s, border-color .18s
+    }
+
+    .timer-btn:hover {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      color: var(--teal-dark)
+    }
+
+    .timer-btn.play {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff
+    }
+
+    .timer-btn.play:hover {
+      background: var(--teal-dark)
+    }
+
+    .timer-modes {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 8px
+    }
+
+    .timer-mode {
+      padding: 3px 11px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .18s
+    }
+
+    .timer-mode.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff
+    }
+
+    .timer-session {
+      font-size: 10.5px;
+      color: var(--muted);
+      text-align: center
+    }
+
+    /* Section headers */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px
+    }
+
+    .section-head-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .section-head-all {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--teal-dark);
+      cursor: pointer;
+      text-decoration: none
+    }
+
+    .section-head-all:hover {
+      text-decoration: underline
+    }
+
+    /* Club rows in sidebar */
+    .club-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--r-sm);
+      background: var(--teal-pale);
+      margin-bottom: 7px;
+      cursor: pointer;
+      transition: background .18s
+    }
+
+    .club-row:hover {
+      background: var(--teal-light)
+    }
+
+    .club-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--teal-light);
+      border: 2px solid var(--teal-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      overflow: hidden
+    }
+
+    .club-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .club-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .club-members {
+      font-size: 10.5px;
+      color: var(--muted)
+    }
+
+    .club-open-btn {
+      background: var(--white);
+      border: 1.5px solid var(--teal-mid);
+      color: var(--teal-dark);
+      border-radius: 50px;
+      padding: 4px 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s, transform .15s;
+      white-space: nowrap
+    }
+
+    .club-open-btn:hover {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+      transform: scale(1.04)
+    }
+
+    /* Top tutors (contributors) */
+    .contrib-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--r-sm);
+      background: var(--teal-pale);
+      margin-bottom: 7px;
+      cursor: pointer;
+      transition: background .18s
+    }
+
+    .contrib-row:hover {
+      background: var(--teal-light)
+    }
+
+    .contrib-rank {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--muted);
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0
+    }
+
+    .contrib-rank.gold {
+      color: #F5B942
+    }
+
+    .contrib-rank.silver {
+      color: #9AA5B4
+    }
+
+    .contrib-rank.bronze {
+      color: #CD7F32
+    }
+
+    .contrib-av {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--teal-pale);
+      border: 2px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--teal-dark)
+    }
+
+    .contrib-av img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .contrib-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .contrib-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .contrib-role {
+      font-size: 10.5px;
+      color: var(--muted)
+    }
+
+    .contrib-stars {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      white-space: nowrap
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(14px);
+      background: var(--text);
+      color: #fff;
+      border-radius: 50px;
+      padding: 9px 22px;
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      transition: opacity .22s, transform .22s;
+      pointer-events: none;
+      z-index: 9999;
+      white-space: nowrap
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0)
+    }
+
+    /* Club modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 800;
+      display: none;
+      align-items: center;
+      justify-content: center
+    }
+
+    .modal-overlay.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 28px 26px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: var(--shadow-md);
+      animation: fadeUp .25s ease
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--text-mid);
+      margin-bottom: 18px;
+      line-height: 1.5
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end
+    }
+
+    .modal-btn {
+      padding: 9px 22px;
+      border-radius: 50px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s
+    }
+
+    .modal-btn.cancel {
+      background: var(--bg);
+      color: var(--text-mid)
+    }
+
+    .modal-btn.cancel:hover {
+      background: var(--border)
+    }
+
+    .modal-btn.join {
+      background: var(--teal);
+      color: #fff
+    }
+
+    .modal-btn.join:hover {
+      background: var(--teal-dark)
+    }
+
+    /* ── THREAD MODAL (Threads-style комментарии) ── */
+    .thread-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .thread-overlay.open {
+      display: flex
+    }
+
+    .thread-box {
+      background: var(--white);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      animation: fadeUp .25s ease;
+    }
+
+    .thread-head {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .thread-head-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .thread-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg);
+      color: var(--text-mid);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s;
+      flex-shrink: 0;
+    }
+
+    .thread-close:hover {
+      background: var(--border);
+    }
+
+    .thread-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 18px;
+    }
+
+    .thread-scroll::-webkit-scrollbar {
+      width: 4px
+    }
+
+    .thread-scroll::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 2px
+    }
+
+    /* Оригинальный пост внутри треда — компактная копия */
+    .thread-original-post {
+      padding-bottom: 16px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Вертикальная линия треда, как в Threads, соединяющая аватар поста с первым комментарием */
+    .thread-original-post {
+      position: relative;
+    }
+
+    .thread-comments-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .thread-comment-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      animation: fadeUp .2s ease both;
+    }
+
+    .thread-comment-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .thread-comment-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .thread-comment-text {
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-top: 2px;
+      word-wrap: break-word;
+    }
+
+    .thread-input-row {
+      flex-shrink: 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .thread-input {
+      flex: 1;
+      padding: 9px 16px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .thread-input:focus {
+      border-color: var(--teal)
+    }
+
+    .thread-send-btn {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--teal);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s, transform .15s;
+    }
+
+    .thread-send-btn:hover {
+      background: var(--teal-dark);
+      transform: scale(1.06);
+    }
+
+    /* ── SHARE-TO-FRIEND MODAL ── */
+    .share-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 950;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .share-overlay.open {
+      display: flex
+    }
+
+    .share-box {
+      background: var(--white);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 380px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      animation: fadeUp .25s ease;
+    }
+
+    .share-head {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .share-head-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .share-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 8px;
+    }
+
+    .share-list::-webkit-scrollbar {
+      width: 4px
+    }
+
+    .share-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px
+    }
+
+    .friend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      transition: background .15s;
+    }
+
+    .friend-row:hover {
+      background: var(--teal-pale);
+    }
+
+    .friend-name {
+      flex: 1;
+      min-width: 0;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .friend-send-btn {
+      flex-shrink: 0;
+      padding: 7px 16px;
+      border-radius: 50px;
+      border: none;
+      background: var(--teal);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .18s;
+    }
+
+    .friend-send-btn:hover {
+      background: var(--teal-dark);
+    }
+
+    .friend-send-btn:disabled {
+      background: var(--muted);
+      cursor: default;
+    }
+
+    .share-empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 36px 20px;
+      line-height: 1.6;
+    }
+
+    .share-footer {
+      flex-shrink: 0;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .share-copy-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 10px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--text-mid);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .18s;
+    }
+
+    .share-copy-btn:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark);
+      background: var(--teal-pale);
+    }
+
+    /* ── EUREKA MASCOT WIDGET (правый нижний угол) ──
+       Эталон взят из trainings.html: круг заливается через
+       background-image (без пустых полей), плавная анимация
+       покачивания + пульсирующий индикатор "онлайн". */
+    .eureka-widget {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .eureka-bubble {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .14);
+      max-width: 240px;
+      min-width: 190px;
+      position: relative;
+      border: 1.5px solid var(--border);
+      animation: bubbleIn .35s cubic-bezier(.34, 1.56, .64, 1) both;
+    }
+
+    @keyframes bubbleIn {
+      from {
+        opacity: 0;
+        transform: scale(.8) translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .eureka-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -9px;
+      right: 28px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 10px 8px 0 8px;
+      border-color: var(--white) transparent transparent transparent;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .07));
+    }
+
+    .eureka-bubble.hidden {
+      display: none;
+    }
+
+    .eureka-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-mid);
+      font-size: 16px;
+      line-height: 1;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background .15s, color .15s;
+    }
+
+    .eureka-close:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .eureka-text {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.55;
+      font-weight: 500;
+      padding-right: 18px;
+    }
+
+    .eureka-text strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 3px;
+      font-weight: 700;
+    }
+
+    .eureka-avatar-wrap {
+      position: relative;
+      width: 75px;
+      height: 75px;
+      cursor: pointer;
+      flex-shrink: 0;
+      animation: eurekaFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes eurekaFloat {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .mascot-avatar-circle {
+      width: 75px !important;
+      height: 75px !important;
+      border-radius: 50% !important;
+      background-image: url('./assets/Leo.png') !important;
+      background-size: 145% auto !important;
+      background-position: center 41% !important;
+      background-repeat: no-repeat !important;
+      background-color: #d4f5f0 !important;
+      border: 3px solid var(--teal-mid) !important;
+      box-shadow: 0 4px 16px rgba(91, 189, 181, 0.35) !important;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+      overflow: hidden !important;
+    }
+
+    .mascot-avatar-circle:hover {
+      transform: scale(1.08);
+    }
+
+    .eureka-pulse {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #4ADE80;
+      border: 2px solid var(--white);
+    }
+
+    .eureka-pulse::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: rgba(74, 222, 128, .35);
+      animation: pulse-ring 1.5s ease infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        opacity: .8;
+        transform: scale(.9);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.7);
+      }
+    }
+
+    /* Loading skeleton */
+    .skel {
+      background: linear-gradient(90deg, var(--border) 25%, #f0f3f7 50%, var(--border) 75%);
+      background-size: 200% 100%;
+      animation: skelAnim 1.5s infinite;
+      border-radius: 8px
+    }
+
+    @keyframes skelAnim {
+      0% {
+        background-position: 200% 0
+      }
+
+      100% {
+        background-position: -200% 0
+      }
+    }
+
+    .skel-post {
+      background: var(--white);
+      border-radius: var(--r);
+      padding: 16px 18px;
+      border: 1.5px solid var(--border)
+    }
+
+    /* ══════════════════════════════════════════
+       MOBILE ADAPTIVE — телефон
+    ══════════════════════════════════════════ */
+
+    /* Глобальный скроллбар — тонкий как в trainings.html */
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--teal-mid);
+      border-radius: 3px;
+    }
+
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--teal-mid) transparent;
+    }
+
+    /* ── Bottom mobile nav bar ── */
+    .mob-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      z-index: 800;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 8px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      box-shadow: 0 -2px 12px rgba(0, 0, 0, .08);
+    }
+
+    .mob-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      transition: color .18s, background .18s;
+      flex: 1;
+    }
+
+    .mob-nav-item:hover,
+    .mob-nav-item.active {
+      color: var(--teal-dark);
+      background: var(--teal-pale);
+    }
+
+    .mob-nav-item svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 900px) {
+
+      /* Hide promo panel on tablet */
+      .promo-panel {
+        display: none !important;
+      }
+
+      /* Right panel goes below on tablet */
+      .main-area {
+        grid-template-columns: 1fr !important;
+      }
+
+      .panel-right {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      /* Header on mobile */
+      html,
+      body {
+        overflow: hidden;
+      }
+
+      .h-ham {
+        display: none;
+      }
+
+      .h-nav {
+        display: none !important;
+      }
+
+      header {
+        padding: 0 14px;
+        gap: 10px;
+        height: 54px;
+      }
+
+      :root {
+        --header-h: 54px;
+      }
+
+      /* Show bottom nav bar */
+      .mob-nav {
+        display: flex;
+      }
+
+      /* App body adjusts for bottom nav */
+      .app-body {
+        top: var(--header-h);
+        bottom: 60px;
+      }
+
+      /* Feed inner padding */
+      .feed-inner {
+        padding: 10px 10px 16px;
+        gap: 10px;
+      }
+
+      /* Posts */
+      .post {
+        padding: 12px 14px;
+        border-radius: 12px;
+      }
+
+      .ph {
+        margin-bottom: 8px;
+      }
+
+      /* Compose box */
+      .compose-sticky {
+        padding: 8px 12px 10px;
+      }
+
+      .compose-bot {
+        gap: 2px;
+        flex-wrap: wrap;
+      }
+
+      .compose-act span {
+        display: none;
+      }
+
+      /* hide text labels on mobile */
+      .post-btn {
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+
+      /* Clubs carousel */
+      .rooms-section {
+        padding: 10px 12px;
+      }
+
+      .room-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+      }
+
+      .room-name {
+        font-size: 10px;
+      }
+
+      /* Filter tabs scrollable */
+      .feed-filters {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 6px;
+        padding-bottom: 2px;
+      }
+
+      .feed-filters::-webkit-scrollbar {
+        height: 0;
+      }
+
+      .filter-tab {
+        flex-shrink: 0;
+        font-size: 12px;
+        padding: 5px 12px;
+      }
+
+      .sort-select {
+        flex-shrink: 0;
+        font-size: 12px;
+      }
+
+      /* Coins display */
+      .h-coins {
+        padding: 4px 10px;
+        font-size: 12px;
+        gap: 4px;
+      }
+
+      /* Avatar in header */
+      .h-avatar {
+        width: 34px;
+        height: 34px;
+        font-size: 13px;
+      }
+
+      /* Toast above bottom nav */
+      .toast {
+        bottom: 72px;
+      }
+
+      /* Thread modal full screen on mobile */
+      .thread-overlay {
+        padding: 0;
+      }
+
+      .thread-box {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+
+      /* Share modal full screen on mobile */
+      .share-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+
+      .share-box {
+        max-width: 100%;
+        max-height: 80vh;
+        border-radius: 20px 20px 0 0;
+      }
+
+      /* Eureka widget repositioned */
+      .eureka-widget {
+        bottom: 72px;
+        right: 12px;
+      }
+
+      .eureka-avatar-wrap {
+        width: 58px;
+        height: 58px;
+      }
+
+      .mascot-avatar-circle {
+        width: 58px !important;
+        height: 58px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .h-coins {
+        padding: 3px 8px;
+        font-size: 11px;
+      }
+
+      /* shrink coins on very small screens */
+      .feed-inner {
+        padding: 8px 8px 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="h-ham"><span></span><span></span><span></span></div>
+    <a href="index.html" class="h-logo" style="text-decoration:none;">Tutor<span>App</span></a>
+    <nav class="h-nav">
+      <a href="index.html">Лента</a>
+      <a href="Chat.html">Чат</a>
+      <a href="public.html" class="active">Обсуждения</a>
+      <a href="unique.html">Unique</a>
+      <a href="exam.html">Экзамены</a>
+      <a href="trainings.html">Тренинги</a>
+      <a href="profile.html">Профиль</a>
+    </nav>
+    <div class="h-right">
+      <div class="h-coins" id="hCoinsBadge"><span class="coins-dot"></span><span id="coinsDisplay">5</span></div>
+      <div class="h-notif" id="hNotif" onclick="window.toggleNotifPanel()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <span class="notif-badge" id="notifBadge" style="display:none;"></span>
+      </div>
+      <div class="h-avatar" id="headerAvatar" onclick="window.location.href='profile.html'">А</div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION DROPDOWN PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-head">
+      <span class="notif-panel-title">Уведомления</span>
+      <button class="notif-mark-all" id="notifMarkAll">Прочитать все</button>
+    </div>
+    <div class="notif-panel-list" id="notifPanelList">
+      <div class="notif-empty">Нет новых уведомлений</div>
+    </div>
+  </div>
+  <div class="notif-overlay" id="notifOverlay" onclick="window.closeNotifPanel()"></div>
+
+  <!-- SUBNAV -->
+  <nav class="subnav">
+    <a href="index.html">Лента</a>
+    <a href="Chat.html">Чат</a>
+    <a href="public.html" class="active">Обсуждения</a>
+    <a href="#">Unique</a>
+    <a href="exam.html">Экзамены</a>
+    <a href="#">Тренинги</a>
+    <a href="profile.html">Профиль</a>
+  </nav>
+
+  <!-- APP BODY -->
+  <div class="app-body">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="promo-panel">
+      <!-- Top: Become a tutor CTA -->
+      <div class="promo-top">
+        <div class="promo-label">TutorApp Premium</div>
+        <h3>Стань репетитором<br>и <span>меняй жизни!</span></h3>
+        <ul class="promo-checklist">
+          <li>Больше учеников</li>
+          <li>Гибкий график</li>
+          <li>Высокий доход</li>
+          <li>Тысячи учеников</li>
+          <li>Поддержка 24/7</li>
+        </ul>
+        <button class="promo-start-btn" onclick="showToast('🚀 Переход на страницу регистрации...')">
+          Начать сейчас →
+        </button>
+      </div>
+
+      <!-- Community info -->
+      <div class="promo-community">
+        <h4>Присоединяйся к сообществу</h4>
+        <p>Более 700+ репетиторов уже с нами</p>
+        <div class="promo-avatars">
+          <div class="pav" style="background:#c8f0eb;color:var(--teal-dark);">А</div>
+          <div class="pav" style="background:#fde8ef;color:#c0567a;">М</div>
+          <div class="pav" style="background:#e8ecff;color:#5060c0;">Д</div>
+          <div class="pav" style="background:#fef3e2;color:#c07830;">С</div>
+          <div class="pav pav-count">+700</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- FEED COLUMN (scroll + pinned compose) -->
+      <div class="feed-col">
+
+        <!-- FEED SCROLL -->
+        <div id="feedWrap">
+          <div class="feed-inner">
+
+            <!-- CLUBS CAROUSEL -->
+            <div class="rooms-section">
+              <div class="rooms-scroll" id="clubsCarousel">
+                <div class="room-card" onclick="showCreateClubModal()">
+                  <div class="room-icon create">+</div>
+                  <div class="room-name">Создать</div>
+                  <div class="room-members">&nbsp;</div>
+                </div>
+                <!-- Clubs loaded from Firebase -->
+              </div>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="feed-filters">
+              <button class="filter-tab active" onclick="setFilter(this,'all')">All</button>
+              <button class="filter-tab" onclick="setFilter(this,'friends')">Друзья</button>
+              <button class="filter-tab" onclick="setFilter(this,'popular')">Популярные</button>
+              <select class="sort-select" id="sortSelect" onchange="changeSortOrder()">
+                <option value="desc" selected>Сначала новые</option>
+                <option value="asc">Сначала старые</option>
+              </select>
+            </div>
+
+            <!-- LIVE FEED -->
+            <div id="feedInner">
+              <!-- Skeleton loading -->
+              <div class="skel-post" id="skelLoad">
+                <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center">
+                  <div class="skel" style="width:40px;height:40px;border-radius:50%"></div>
+                  <div style="flex:1">
+                    <div class="skel" style="height:12px;width:60%;margin-bottom:6px"></div>
+                    <div class="skel" style="height:10px;width:35%"></div>
+                  </div>
+                </div>
+                <div class="skel" style="height:14px;margin-bottom:8px"></div>
+                <div class="skel" style="height:14px;width:80%;margin-bottom:8px"></div>
+                <div class="skel" style="height:14px;width:55%"></div>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- /feedWrap -->
+
+        <!-- PINNED COMPOSE BOX (always at bottom, never scrolls) -->
+        <div class="compose-sticky">
+          <div class="compose-sticky-inner">
+            <div class="compose-top">
+              <div class="compose-av" id="composeAv">A</div>
+              <input type="text" class="compose-input" id="composeInput" placeholder="Поделись своими мыслями...">
+            </div>
+            <div class="upload-bar" id="uploadBar">
+              <img src="" alt="preview" class="upload-preview" id="uploadPreview">
+              <span id="uploadFileName"
+                style="font-size:12px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+              <button class="upload-clear" onclick="clearUpload()" title="Remove">✕</button>
+            </div>
+            <div class="compose-bot">
+              <input type="file" id="photoFileInput" accept="image/*">
+              <button class="compose-act" onclick="document.getElementById('photoFileInput').click()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
+                </svg>Фото
+              </button>
+              <button class="compose-act" onclick="toast('📎 Файлы скоро!')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                </svg>Файл
+              </button>
+              <button class="compose-act" onclick="toast('📊 Опросы скоро!')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="20" x2="18" y2="10" />
+                  <line x1="12" y1="20" x2="12" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>Опрос
+              </button>
+              <button class="post-btn" id="postBtn" onclick="localSubmitPost()">Опубликовать</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /feed-col -->
+
+      <!-- RIGHT PANEL (sticky, fixed height) -->
+      <aside class="panel-right">
+        <!-- Premium -->
+        <div class="premium-box">
+          <div class="prem-label"><span>TutorApp Premium</span><span>Ad</span></div>
+          <div class="prem-crown">👑</div>
+          <div class="prem-title">Раскрой потенциал</div>
+          <div class="prem-sub">Неограниченный доступ ко всем функциям и топ-репетиторам.</div>
+          <button class="prem-btn" onclick="toast('🚀 Premium скоро!')">Go Premium</button>
+        </div>
+
+        <!-- Focus Timer -->
+        <div class="timer-box">
+          <div class="timer-label">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            Deep Focus Timer
+          </div>
+          <div class="timer-ring-wrap">
+            <div class="timer-ring">
+              <svg width="72" height="72" viewBox="0 0 72 72">
+                <circle class="timer-track" cx="36" cy="36" r="30" />
+                <circle class="timer-prog" id="timerProg" cx="36" cy="36" r="30" stroke-dasharray="188.5"
+                  stroke-dashoffset="0" />
+              </svg>
+              <div class="timer-text" id="timerDisplay">25:00</div>
+            </div>
+          </div>
+          <div class="timer-controls">
+            <button class="timer-btn" onclick="timerReset()" title="Reset">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10" />
+                <path d="M3.51 15a9 9 0 1 0 .49-5" />
+              </svg>
+            </button>
+            <button class="timer-btn play" id="timerPlayBtn" onclick="timerToggle()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" id="timerPlayIcon">
+                <polygon points="5 3 19 12 5 21 5 3" />
+              </svg>
+            </button>
+            <button class="timer-btn" onclick="timerSkip()" title="Skip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 4 15 12 5 20 5 4" />
+                <line x1="19" y1="5" x2="19" y2="19" />
+              </svg>
+            </button>
+          </div>
+          <div class="timer-modes">
+            <button class="timer-mode active" onclick="setTimerMode(this,25,'focus')">Focus</button>
+            <button class="timer-mode" onclick="setTimerMode(this,5,'short')">Short</button>
+            <button class="timer-mode" onclick="setTimerMode(this,15,'long')">Long</button>
+          </div>
+          <div class="timer-session" id="timerSession">Сессия 1 · Stay locked in 🔒</div>
+        </div>
+
+        <!-- My Clubs (from Firebase) -->
+        <div style="flex-shrink:0;">
+          <div class="section-head">
+            <span class="section-head-title">Мои клубы</span>
+            <a class="section-head-all" href="#">All</a>
+          </div>
+          <div id="myClubsList">
+            <div style="color:var(--muted);font-size:12px;padding:4px 0;">Загружаем...</div>
+          </div>
+        </div>
+
+        <!-- Top Tutors (from Firebase ratings) -->
+        <div style="flex-shrink:0;">
+          <div class="section-head">
+            <span class="section-head-title">Топ репетиторы</span>
+            <a class="section-head-all" href="#">All</a>
+          </div>
+          <div id="topTutorsList">
+            <div style="color:var(--muted);font-size:12px;padding:4px 0;">Загружаем...</div>
+          </div>
+        </div>
+      </aside>
+
+    </div><!-- /main-area -->
+  </div><!-- /app-body -->
+
+  <!-- TOAST -->
+  <div class="toast" id="toastEl"></div>
+
+  <!-- CLUB JOIN MODAL -->
+  <div class="modal-overlay" id="clubModal">
+    <div class="modal">
+      <div class="modal-title" id="clubModalTitle">Вступить в клуб</div>
+      <div class="modal-sub" id="clubModalSub">Вступи в этот клуб чтобы общаться с другими участниками!</div>
+      <div class="modal-btns">
+        <button class="modal-btn cancel" onclick="closeClubModal()">Отмена</button>
+        <button class="modal-btn join" id="clubModalJoinBtn" onclick="confirmJoinClub()">Вступить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- THREAD MODAL (Threads-style комментарии) -->
+  <div class="thread-overlay" id="threadOverlay" onclick="if(event.target===this) closeThread()">
+    <div class="thread-box">
+      <div class="thread-head">
+        <span class="thread-head-title">Тред</span>
+        <button class="thread-close" onclick="closeThread()">✕</button>
+      </div>
+      <div class="thread-scroll" id="threadScroll">
+        <div class="thread-original-post" id="threadOriginalPost"></div>
+        <div class="thread-comments-list" id="threadCommentsList">
+          <div style="color:var(--muted);font-size:12px;padding:6px 0;">Загружаем...</div>
+        </div>
+      </div>
+      <div class="thread-input-row">
+        <input class="thread-input" type="text" id="threadInput" placeholder="Написать ответ..."
+          onkeydown="if(event.key==='Enter') window._fbSubmitThreadComment()">
+        <button class="thread-send-btn" onclick="window._fbSubmitThreadComment()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="22" y1="2" x2="11" y2="13" />
+            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHARE-TO-FRIEND MODAL -->
+  <div class="share-overlay" id="shareOverlay" onclick="if(event.target===this) closeShareModal()">
+    <div class="share-box">
+      <div class="share-head">
+        <span class="share-head-title">Поделиться постом</span>
+        <button class="thread-close" onclick="closeShareModal()">✕</button>
+      </div>
+      <div class="share-list" id="shareFriendsList">
+        <div style="color:var(--muted);font-size:12px;padding:16px;text-align:center;">Загружаем друзей...</div>
+      </div>
+      <div class="share-footer">
+        <button class="share-copy-btn" onclick="window._copyShareLink()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
+          Скопировать ссылку
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ NON-MODULE UTILITIES ══════════ -->
+  <script>
+    /* ── Toast ── */
+    let _tt;
+    function toast(msg) {
+      const el = document.getElementById('toastEl');
+      el.textContent = msg; el.classList.add('show');
+      clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 2800);
+    }
+
+    /* ── Mascot tips (заготовка — содержимое легко поменять) ── */
+    const MASCOT_TIPS = [
+      {
+        title: 'Привет! 👋',
+        text: 'Это лента сообщества — здесь можно делиться советами и знаниями, учиться у других и искать друзей.'
+      },
+      {
+        title: 'А ты знал? 🤔',
+        text: 'Ты можешь вступать в клубы по интересам — это поможет найти друзей и единомышленников!'
+      },
+      {
+        title: 'Награда ждёт! 🏆',
+        text: 'Чем больше друзей заведёшь — тем интереснее учиться. Набери 100 друзей и получи награду «Дружелюбный»!'
+      }
+    ];
+    let _mascotTipIndex = 0;
+    let _mascotAutoTimer = null;
+
+    function _mascotShowTip(index) {
+      const tip = MASCOT_TIPS[index % MASCOT_TIPS.length];
+      const bubble = document.getElementById('eurekaBubble');
+      document.getElementById('eurekaText').innerHTML = `<strong>${tip.title}</strong>${tip.text}`;
+      bubble.classList.remove('hidden');
+    }
+
+    window._mascotNextTip = function () {
+      _mascotTipIndex = (_mascotTipIndex + 1) % MASCOT_TIPS.length;
+      _mascotShowTip(_mascotTipIndex);
+    };
+
+    // Показываем первую подсказку с небольшой задержкой, затем меняем сообщение раз в ~12 секунд,
+    // но только если пользователь не закрыл пузырь явно.
+    setTimeout(() => _mascotShowTip(_mascotTipIndex), 1200);
+    _mascotAutoTimer = setInterval(() => {
+      const bubble = document.getElementById('eurekaBubble');
+      if (bubble && !bubble.classList.contains('hidden')) {
+        _mascotTipIndex = (_mascotTipIndex + 1) % MASCOT_TIPS.length;
+        _mascotShowTip(_mascotTipIndex);
+      }
+    }, 12000);
+
+    /* ── Filter tabs ── */
+    let currentFilter = 'all';
+    function setFilter(btn, f) {
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = f;
+      const sortSelect = document.getElementById('sortSelect');
+      if (sortSelect) sortSelect.style.display = (f === 'popular') ? 'none' : '';
+      if (window._reloadFeed) window._reloadFeed();
+    }
+
+    /* ── Sort ── */
+    function changeSortOrder() { if (window._reloadFeed) window._reloadFeed(); }
+
+    /* ── Photo preview ── */
+    let pendingImgFile = null;
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('photoFileInput').addEventListener('change', function (e) {
+        const file = e.target.files[0]; if (!file) return;
+        pendingImgFile = file;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          document.getElementById('uploadPreview').src = ev.target.result;
+          document.getElementById('uploadFileName').textContent = file.name;
+          document.getElementById('uploadBar').classList.add('show');
+        };
+        reader.readAsDataURL(file); e.target.value = '';
+      });
+    });
+    function clearUpload() {
+      pendingImgFile = null;
+      document.getElementById('uploadPreview').src = '';
+      document.getElementById('uploadFileName').textContent = '';
+      document.getElementById('uploadBar').classList.remove('show');
+    }
+
+    /* ── Relative time ── */
+    function relativeTime(ts) {
+      if (!ts) return 'только что';
+      const date = ts.toDate ? ts.toDate() : new Date(ts);
+      const diff = Math.floor((Date.now() - date.getTime()) / 1000);
+      if (diff < 60) return 'только что';
+      if (diff < 3600) return Math.floor(diff / 60) + ' мин назад';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' ч назад';
+      return Math.floor(diff / 86400) + ' дн назад';
+    }
+
+    /* ── Avatar helper ── */
+    function avatarHTML(name, photoUrl, size = 40, cls = 'ph-av') {
+      const init = (name || '?')[0].toUpperCase();
+      const colors = ['#00A896', '#3B5BD6', '#E05A7A', '#F5B942', '#38D68A', '#f97316', '#7c3aed'];
+      const color = colors[init.charCodeAt(0) % colors.length];
+      if (photoUrl) {
+        return `<div class="${cls}" style="width:${size}px;height:${size}px;border-radius:50%;overflow:hidden;flex-shrink:0;border:2px solid #E8EDF3;">
+        <img src="${photoUrl}" alt="${init}" style="width:100%;height:100%;object-fit:cover;"
+          onerror="this.parentElement.style.background='${color}';this.parentElement.innerHTML='<span style=\\'color:#fff;font-weight:700;font-size:${Math.floor(size * .4)}px;\\'>${init}</span>'">
+      </div>`;
+      }
+      return `<div class="${cls}" style="width:${size}px;height:${size}px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.floor(size * .4)}px;flex-shrink:0;">${init}</div>`;
+    }
+
+    /* ── SVG icons ── */
+    const SVG_HEART = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+    const SVG_COMMENT = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
+    const SVG_SHARE = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+
+    /* ── Club modal state ── */
+    let _pendingClub = null;
+    function openClubModal(clubId, clubName, memberCount, isJoined) {
+      _pendingClub = { clubId, clubName, memberCount, isJoined };
+      if (isJoined) {
+        document.getElementById('clubModalTitle').textContent = 'Открыть клуб';
+        document.getElementById('clubModalSub').textContent = `Ты уже в клубе "${clubName}". Открыть чат клуба?`;
+        document.getElementById('clubModalJoinBtn').textContent = 'Открыть чат';
+      } else {
+        document.getElementById('clubModalTitle').textContent = `Вступить в "${clubName}"`;
+        document.getElementById('clubModalSub').textContent = `Участников: ${memberCount}. После вступления ты сможешь общаться в чате клуба и счётчик обновится.`;
+        document.getElementById('clubModalJoinBtn').textContent = 'Вступить';
+      }
+      document.getElementById('clubModal').classList.add('open');
+    }
+    function closeClubModal() { document.getElementById('clubModal').classList.remove('open'); _pendingClub = null; }
+    function confirmJoinClub() { if (window._fbConfirmJoinClub && _pendingClub) window._fbConfirmJoinClub(_pendingClub); }
+    function showCreateClubModal() { toast('🛠️ Создание клубов скоро!'); }
+
+    /* ── Focus Timer ── */
+    let timerInterval = null, timerRunning = false, timerSeconds = 25 * 60, timerTotal = 25 * 60, timerSessions = 1;
+    const CIRCUM = 2 * Math.PI * 30; // 188.5
+    function timerUpdate() {
+      const m = Math.floor(timerSeconds / 60), s = timerSeconds % 60;
+      document.getElementById('timerDisplay').textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      const prog = document.getElementById('timerProg');
+      const offset = CIRCUM - (CIRCUM * (timerTotal - timerSeconds) / timerTotal);
+      prog.style.strokeDashoffset = Math.max(0, offset);
+    }
+    function timerToggle() {
+      timerRunning = !timerRunning;
+      const icon = document.getElementById('timerPlayIcon');
+      if (timerRunning) {
+        icon.innerHTML = `<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>`;
+        timerInterval = setInterval(() => {
+          if (timerSeconds <= 0) { timerDone(); return; }
+          timerSeconds--; timerUpdate();
+        }, 1000);
+      } else {
+        icon.innerHTML = `<polygon points="5 3 19 12 5 21 5 3"/>`;
+        clearInterval(timerInterval);
+      }
+    }
+    function timerReset() {
+      clearInterval(timerInterval); timerRunning = false; timerSeconds = timerTotal;
+      document.getElementById('timerPlayIcon').innerHTML = `<polygon points="5 3 19 12 5 21 5 3"/>`;
+      timerUpdate();
+    }
+    function timerSkip() { timerDone(); }
+    function timerDone() {
+      clearInterval(timerInterval); timerRunning = false; timerSeconds = timerTotal; timerSessions++;
+      document.getElementById('timerPlayIcon').innerHTML = `<polygon points="5 3 19 12 5 21 5 3"/>`;
+      document.getElementById('timerSession').textContent = `Сессия ${timerSessions} · Stay locked in 🔒`;
+      timerUpdate(); toast('⏰ Время вышло! Отличная работа!');
+    }
+    function setTimerMode(btn, mins, label) {
+      document.querySelectorAll('.timer-mode').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      clearInterval(timerInterval); timerRunning = false;
+      timerSeconds = mins * 60; timerTotal = mins * 60;
+      document.getElementById('timerPlayIcon').innerHTML = `<polygon points="5 3 19 12 5 21 5 3"/>`;
+      timerUpdate();
+    }
+    timerUpdate();
+  </script>
+
+  <!-- ══════════ FIREBASE MODULE ══════════ -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+    import {
+      getFirestore, collection, doc, addDoc, getDoc, getDocs, setDoc, updateDoc,
+      onSnapshot, query, orderBy, limit, where,
+      runTransaction, serverTimestamp, arrayUnion, arrayRemove, increment
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import { uploadToCloudinary } from './cloudinary-upload.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQ9UYY6uh3CgXzytNwt_r2LCwaXval9T8",
+      authDomain: "tutorapp-95f48.firebaseapp.com",
+      projectId: "tutorapp-95f48",
+      storageBucket: "tutorapp-95f48.firebasestorage.app",
+      messagingSenderId: "559214827748",
+      appId: "1:559214827748:web:c77d90b72d607f6df1b4f1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null, currentProfile = null, feedUnsub = null;
+    const likedCache = new Map(), commentUnsubs = new Map();
+    let currentSortOrder = 'desc';
+    let allClubs = [];  // cached clubs from Firebase
+    let userPointsUnsub = null;
+    const SIGNUP_BONUS_SCORE = 5; // стартовый бонус за регистрацию (уже выставлен в базе по умолчанию)
+
+    // ── AUTH ──────────────────────────────────────────────────
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        try {
+          const snap = await getDoc(doc(db, 'users', user.uid));
+          currentProfile = snap.exists() ? snap.data() : null;
+          await _ensureSignupBonus(user.uid, snap);
+        } catch (e) { console.warn('[Profile]', e); }
+        _updateHeaderAvatar();
+        _updateComposeAvatar();
+        _startUserPointsListener(user.uid);
+        _subscribeNotifications(user.uid);
+        _bindNotifMarkAll(user.uid);
+      } else {
+        if (userPointsUnsub) { userPointsUnsub(); userPointsUnsub = null; }
+        document.getElementById('coinsDisplay').textContent = '5';
+      }
+      _startFeed();
+      _loadClubs();
+      _loadTopTutors();
+    });
+
+    // Если у пользователя в Firestore ещё нет поля score — выдаём 5 баллов за регистрацию.
+    // Дальше баллы будут начисляться отдельно: за тренинги, посещения и т.д.
+    async function _ensureSignupBonus(uid, existingSnap) {
+      const data = existingSnap.exists() ? existingSnap.data() : null;
+      if (data && typeof data.score === 'number') return; // баллы уже есть — ничего не делаем
+      try {
+        await setDoc(doc(db, 'users', uid), {
+          score: SIGNUP_BONUS_SCORE,
+          scoreHistory: arrayUnion({ amount: SIGNUP_BONUS_SCORE, reason: 'signup_bonus', at: Date.now() })
+        }, { merge: true });
+      } catch (e) { console.warn('[SignupBonus]', e); }
+    }
+
+    // ── NOTIFICATIONS DROPDOWN (лайки, комментарии, сообщения) ──
+    let notifsUnsub = null;
+
+    function _escNotif(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    window.toggleNotifPanel = function () {
+      const panel = document.getElementById('notifPanel');
+      const overlay = document.getElementById('notifOverlay');
+      const isOpen = panel.classList.contains('open');
+      if (isOpen) {
+        panel.classList.remove('open');
+        overlay.classList.remove('open');
+      } else {
+        panel.classList.add('open');
+        overlay.classList.add('open');
+      }
+    };
+
+    window.closeNotifPanel = function () {
+      document.getElementById('notifPanel').classList.remove('open');
+      document.getElementById('notifOverlay').classList.remove('open');
+    };
+
+    function _notifTypeIcon(type) {
+      if (type === 'like') return '<span class="notif-icon-badge like">❤️</span>';
+      if (type === 'comment') return '<span class="notif-icon-badge comment">💬</span>';
+      return '<span class="notif-icon-badge msg">💬</span>';
+    }
+
+    function _relTimeShort(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const diff = Date.now() - d.getTime();
+      const m = Math.floor(diff / 60000);
+      if (m < 1) return 'только что';
+      if (m < 60) return `${m} мин`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h} ч`;
+      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    }
+
+    function _renderNotifPanel(docs) {
+      const list = document.getElementById('notifPanelList');
+      if (!list) return;
+      if (!docs.length) {
+        list.innerHTML = '<div class="notif-empty">Нет новых уведомлений</div>';
+        return;
+      }
+      list.innerHTML = '';
+      docs.forEach(d => {
+        const data = d.data();
+        const item = document.createElement('div');
+        item.className = 'notif-item' + (data.read ? '' : ' unread');
+        const init = (data.fromName || '?')[0].toUpperCase();
+        const avContent = data.fromAvatar
+          ? `<img src="${_escNotif(data.fromAvatar)}" alt="" onerror="this.parentElement.innerHTML='${init}'">`
+          : init;
+        item.innerHTML = `
+          <div class="notif-av" style="position:relative;">
+            ${avContent}
+            ${_notifTypeIcon(data.type || 'message')}
+          </div>
+          <div class="notif-body">
+            <div class="notif-from">${_escNotif(data.fromName || 'Кто-то')}</div>
+            <div class="notif-text">${_escNotif(data.text || '')}</div>
+            <div class="notif-time">${_relTimeShort(data.createdAt)}</div>
+          </div>`;
+        item.addEventListener('click', async () => {
+          try { await updateDoc(d.ref, { read: true }); } catch (e) { }
+          if (data.chatId && data.chatType === 'direct') {
+            window.location.href = `Chat.html?to=${data.fromUid}`;
+          } else if (data.chatId && data.chatType === 'club') {
+            window.location.href = `Chat.html?club=${data.chatId}`;
+          } else if (data.type === 'like' || data.type === 'comment') {
+            window.location.href = 'public.html';
+          }
+          window.closeNotifPanel();
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function _bindNotifMarkAll(uid) {
+      const btn = document.getElementById('notifMarkAll');
+      if (!btn || btn._bound) return;
+      btn._bound = true;
+      btn.addEventListener('click', async () => {
+        const q2 = query(collection(db, 'notifications'), where('toUid', '==', uid), where('read', '==', false));
+        const snap = await getDocs(q2);
+        await Promise.all(snap.docs.map(d => updateDoc(d.ref, { read: true })));
+      });
+    }
+
+    function _subscribeNotifications(uid) {
+      if (notifsUnsub) notifsUnsub();
+      const q = query(
+        collection(db, 'notifications'),
+        where('toUid', '==', uid),
+        orderBy('createdAt', 'desc'),
+        limit(30)
+      );
+      notifsUnsub = onSnapshot(q, snap => {
+        const unread = snap.docs.filter(d => !d.data().read);
+        const cnt = unread.length;
+        const badge = document.getElementById('notifBadge');
+        const bell = document.getElementById('hNotif');
+        if (badge) {
+          if (cnt > 0) {
+            badge.textContent = cnt > 9 ? '9+' : cnt;
+            badge.style.display = 'flex';
+            if (bell) {
+              bell.classList.add('notif-pulse');
+              setTimeout(() => bell.classList.remove('notif-pulse'), 400);
+            }
+          } else {
+            badge.style.display = 'none';
+          }
+        }
+        _renderNotifPanel(snap.docs);
+      }, (err) => console.warn('[Notifications]', err));
+    }
+
+    // Подписка в реальном времени на документ пользователя — баллы и аватар
+    // обновляются в шапке мгновенно, в т.ч. если их начислили на другой странице (тренинги, чат и т.д.)
+    let _lastKnownPoints = null;
+    function _startUserPointsListener(uid) {
+      if (userPointsUnsub) userPointsUnsub();
+      userPointsUnsub = onSnapshot(doc(db, 'users', uid), (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        currentProfile = data;
+        _updateHeaderAvatar();
+        _updateComposeAvatar();
+        const points = typeof data.score === 'number' ? data.score : 5;
+        const el = document.getElementById('coinsDisplay');
+        if (el) {
+          if (_lastKnownPoints !== null && points !== _lastKnownPoints) {
+            _animateCoinsTo(el, _lastKnownPoints, points);
+          } else {
+            el.textContent = points.toLocaleString('ru-RU');
+          }
+        }
+        _lastKnownPoints = points;
+      }, (err) => console.warn('[Points]', err));
+    }
+
+    // Плавный counter-up + пульсация бейджа при изменении баллов
+    function _animateCoinsTo(el, from, to, duration = 700) {
+      const badge = document.getElementById('hCoinsBadge');
+      if (badge && to > from) {
+        badge.classList.add('coins-pop');
+        setTimeout(() => badge.classList.remove('coins-pop'), 280);
+      }
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(from + (to - from) * eased);
+        el.textContent = current.toLocaleString('ru-RU');
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.textContent = to.toLocaleString('ru-RU');
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function _updateComposeAvatar() {
+      const av = document.getElementById('composeAv'); if (!av) return;
+      const name = currentProfile?.fullName || currentUser?.displayName || 'U';
+      const photo = currentProfile?.photoUrl || currentUser?.photoURL || null;
+      const init = name[0].toUpperCase();
+      if (photo) { av.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`; }
+      else { av.textContent = init; }
+    }
+
+    function _updateHeaderAvatar() {
+      const av = document.getElementById('headerAvatar'); if (!av || !currentUser) return;
+      const name = currentProfile?.fullName || currentUser.displayName || 'U';
+      const photo = currentProfile?.photoUrl || currentUser?.photoURL || null;
+      if (photo) { av.innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">`; }
+      else { av.textContent = name[0].toUpperCase(); }
+    }
+
+    // ── CLUBS ─────────────────────────────────────────────────
+    async function _loadClubs() {
+      try {
+        const snap = await getDocs(collection(db, 'clubs'));
+        allClubs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        _renderClubsCarousel();
+        _renderMyClubs();
+      } catch (e) { console.warn('[Clubs]', e); }
+
+      // Real-time club updates
+      onSnapshot(collection(db, 'clubs'), (snap) => {
+        allClubs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        _renderClubsCarousel();
+        _renderMyClubs();
+      });
+    }
+
+    function _renderClubsCarousel() {
+      const wrap = document.getElementById('clubsCarousel');
+      // Keep the "Create" card
+      const createCard = wrap.querySelector('.room-card');
+      wrap.innerHTML = '';
+      if (createCard) wrap.appendChild(createCard);
+
+      allClubs.slice(0, 8).forEach(club => {
+        const members = club.members || [];
+        const isJoined = currentUser && members.includes(currentUser.uid);
+        const count = members.length;
+        const card = document.createElement('div');
+        card.className = 'room-card';
+        card.innerHTML = `
+        <div class="room-icon${isJoined ? ' joined' : ''}">
+          ${club.emoji || '📚'}
+          ${count > 0 ? '<div class="room-online"></div>' : ''}
+        </div>
+        <div class="room-name">${_esc(club.name || 'Клуб')}</div>
+        <div class="room-members">${count} уч.</div>`;
+        card.onclick = () => openClubModal(club.id, club.name || 'Клуб', count, isJoined);
+        wrap.appendChild(card);
+      });
+    }
+
+    function _renderMyClubs() {
+      const wrap = document.getElementById('myClubsList');
+      if (!currentUser) { wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;">Войдите чтобы видеть клубы</div>`; return; }
+      const myClubs = allClubs.filter(c => (c.members || []).includes(currentUser.uid));
+      if (!myClubs.length) { wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:4px 0;">Ты пока не в клубах. Вступи!</div>`; return; }
+      wrap.innerHTML = '';
+      myClubs.slice(0, 4).forEach(club => {
+        const count = (club.members || []).length;
+        const row = document.createElement('div');
+        row.className = 'club-row';
+        row.innerHTML = `
+        <div class="club-av">${club.emoji || '📚'}</div>
+        <div class="club-info">
+          <div class="club-name">${_esc(club.name || 'Клуб')}</div>
+          <div class="club-members">${count} участников</div>
+        </div>
+        <button class="club-open-btn">Открыть</button>`;
+        row.querySelector('.club-open-btn').onclick = (e) => {
+          e.stopPropagation();
+          window.location.href = `Chat.html?club=${club.id}`;
+        };
+        row.onclick = () => window.location.href = `Chat.html?club=${club.id}`;
+        wrap.appendChild(row);
+      });
+    }
+
+    // ── JOIN / LEAVE CLUB ──────────────────────────────────────
+    window._fbConfirmJoinClub = async function ({ clubId, clubName, isJoined }) {
+      if (!currentUser) { toast('👤 Войдите, чтобы вступить в клуб'); closeClubModal(); return; }
+      const clubRef = doc(db, 'clubs', clubId);
+      try {
+        if (isJoined) {
+          // Already member — go to chat
+          closeClubModal();
+          window.location.href = `Chat.html?club=${clubId}`;
+          return;
+        }
+        // Join
+        await updateDoc(clubRef, { members: arrayUnion(currentUser.uid) });
+        toast(`✅ Ты вступил(а) в "${clubName}"!`);
+        closeClubModal();
+        // Redirect to club chat
+        setTimeout(() => window.location.href = `Chat.html?club=${clubId}`, 600);
+      } catch (e) {
+        console.error('[Join Club]', e);
+        toast('⚠️ Ошибка. Попробуйте снова.');
+        closeClubModal();
+      }
+    };
+
+    // ── TOP TUTORS (by rating) ────────────────────────────────
+    async function _loadTopTutors() {
+      const wrap = document.getElementById('topTutorsList');
+      try {
+        const q = query(collection(db, 'users'), orderBy('rating', 'desc'), limit(5));
+        onSnapshot(q, (snap) => {
+          wrap.innerHTML = '';
+          let rank = 1;
+          snap.forEach(d => {
+            const u = d.data();
+            if (!u.rating) return; // skip users with no rating
+            const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+            const row = document.createElement('div');
+            row.className = 'contrib-row';
+            row.innerHTML = `
+            <span class="contrib-rank ${rankClass}">${rank}</span>
+            ${avatarHTML(u.fullName || u.displayName || 'T', u.photoUrl || null, 32, 'contrib-av')}
+            <div class="contrib-info">
+              <div class="contrib-name">${_esc(u.fullName || u.displayName || 'Репетитор')}</div>
+              <div class="contrib-role">${_esc(u.subject || u.role || 'Репетитор')}</div>
+            </div>
+            <div class="contrib-stars">★ ${(u.rating || 0).toFixed(1)}</div>`;
+            row.onclick = () => window.location.href = `profile.html?uid=${d.id}`;
+            wrap.appendChild(row);
+            rank++;
+          });
+          if (!wrap.children.length) {
+            wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:4px 0;">Данные рейтинга пока не загружены</div>`;
+          }
+        });
+      } catch (e) {
+        console.warn('[TopTutors]', e);
+        wrap.innerHTML = `<div style="color:var(--muted);font-size:12px;">Нет данных</div>`;
+      }
+    }
+
+    // ── FEED ──────────────────────────────────────────────────
+    function _startFeed() {
+      const feedInner = document.getElementById('feedInner');
+      if (!feedInner) return;
+
+      // Remove skeleton
+      const skel = document.getElementById('skelLoad'); if (skel) skel.remove();
+
+      if (feedUnsub) { feedUnsub(); feedUnsub = null; }
+
+      if (currentFilter === 'friends') { _startFriendsFeed(feedInner); return; }
+      if (currentFilter === 'popular') { _startPopularFeed(feedInner); return; }
+
+      feedInner.innerHTML = `<div style="text-align:center;padding:32px 0;color:var(--muted);font-size:14px;"><div style="font-size:28px;margin-bottom:10px;">⏳</div>Загружаем ленту...</div>`;
+
+      const order = document.getElementById('sortSelect')?.value || 'desc';
+      const q = query(collection(db, 'posts'), orderBy('createdAt', order), limit(60));
+
+      feedUnsub = onSnapshot(q, (snapshot) => {
+        if (snapshot.empty) {
+          feedInner.innerHTML = `<div style="text-align:center;padding:48px 24px;color:var(--muted);">
+          <div style="font-size:40px;margin-bottom:12px;">📝</div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Лента пустая</div>
+          <div style="font-size:13px;">Будь первым — опубликуй что-нибудь!</div>
+        </div>`; return;
+        }
+
+        // Флаг: первый снимок (начальная загрузка) или уже живой поток?
+        const isInitialLoad = snapshot.metadata.hasPendingWrites === false
+          && snapshot.docChanges().every(c => c.type === 'added')
+          && !feedInner.querySelector('[data-post-id]');
+
+        if (isInitialLoad) {
+          // Начальная загрузка: Firebase уже вернул в порядке запроса (desc = новые первые)
+          // Рендерим в том же порядке через appendChild — они уже отсортированы
+          feedInner.innerHTML = '';
+          snapshot.docs.forEach(doc => {
+            const postId = doc.id, data = doc.data();
+            feedInner.appendChild(_buildPostElement(postId, data));
+            if (currentUser) _checkLiked(postId);
+          });
+          return;
+        }
+
+        snapshot.docChanges().forEach(change => {
+          const postId = change.doc.id, data = change.doc.data();
+          if (change.type === 'added') {
+            // Clear empty state if present
+            const emptyState = feedInner.querySelector('[data-empty]');
+            if (emptyState) emptyState.remove();
+
+            const el = _buildPostElement(postId, data);
+            if (order === 'desc') {
+              // Новый пост — в самый верх
+              feedInner.insertBefore(el, feedInner.firstChild);
+            } else {
+              feedInner.appendChild(el);
+            }
+            if (currentUser) _checkLiked(postId);
+          }
+          if (change.type === 'modified') {
+            postsCache.set(postId, data);
+            const existing = document.querySelector(`[data-post-id="${postId}"]`);
+            if (existing) {
+              const lk = existing.querySelector('.like-count');
+              const cm = existing.querySelector('.comment-count');
+              if (lk && data.likesCount !== undefined) lk.textContent = data.likesCount;
+              if (cm && data.commentsCount !== undefined) cm.textContent = data.commentsCount;
+            }
+            if (_openThreadPostId === postId) _renderThreadOriginalPost(postId, data);
+          }
+          if (change.type === 'removed') {
+            postsCache.delete(postId);
+            const existing = document.querySelector(`[data-post-id="${postId}"]`);
+            if (existing) existing.remove();
+            if (commentUnsubs.has(postId)) { commentUnsubs.get(postId)(); commentUnsubs.delete(postId); }
+          }
+        });
+      }, (err) => {
+        console.error('[Feed]', err);
+        feedInner.innerHTML = `<div style="text-align:center;padding:40px;color:var(--red);font-size:13px;">⚠️ Не удалось загрузить ленту. Проверьте настройки Firestore.</div>`;
+      });
+    }
+
+    // ── Популярные: сортировка по количеству лайков ──
+    function _startPopularFeed(feedInner) {
+      feedInner.innerHTML = `<div style="text-align:center;padding:32px 0;color:var(--muted);font-size:14px;"><div style="font-size:28px;margin-bottom:10px;">⏳</div>Загружаем популярные посты...</div>`;
+      const q = query(collection(db, 'posts'), orderBy('likesCount', 'desc'), limit(60));
+      feedUnsub = onSnapshot(q, (snapshot) => {
+        if (snapshot.empty) {
+          feedInner.innerHTML = `<div style="text-align:center;padding:48px 24px;color:var(--muted);">
+          <div style="font-size:40px;margin-bottom:12px;">📝</div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Лента пустая</div>
+          <div style="font-size:13px;">Будь первым — опубликуй что-нибудь!</div>
+        </div>`; return;
+        }
+        feedInner.innerHTML = '';
+        snapshot.docs.forEach(doc => {
+          const postId = doc.id, data = doc.data();
+          feedInner.appendChild(_buildPostElement(postId, data));
+          if (currentUser) _checkLiked(postId);
+        });
+      }, (err) => {
+        console.error('[PopularFeed]', err);
+        feedInner.innerHTML = `<div style="text-align:center;padding:40px;color:var(--red);font-size:13px;">⚠️ Не удалось загрузить популярные посты. Возможно, в Firestore нужно создать индекс для поля likesCount (ссылка появится в консоли браузера).</div>`;
+      });
+    }
+
+    // ── Друзья: посты от уже добавленных друзей (users/{uid}.friends) ──
+    async function _startFriendsFeed(feedInner) {
+      if (!currentUser) {
+        feedInner.innerHTML = `<div style="text-align:center;padding:48px 24px;color:var(--muted);">
+        <div style="font-size:40px;margin-bottom:12px;">👥</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Войдите, чтобы видеть посты друзей</div>
+      </div>`; return;
+      }
+      const friendIds = (currentProfile && Array.isArray(currentProfile.friends)) ? currentProfile.friends : [];
+      if (!friendIds.length) {
+        feedInner.innerHTML = `<div style="text-align:center;padding:48px 24px;color:var(--muted);">
+        <div style="font-size:40px;margin-bottom:12px;">👥</div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px;">У вас нет друзей...</div>
+        <div style="font-size:13px;">Добавьте друзей, чтобы видеть здесь их посты!</div>
+      </div>`; return;
+      }
+      feedInner.innerHTML = `<div style="text-align:center;padding:32px 0;color:var(--muted);font-size:14px;"><div style="font-size:28px;margin-bottom:10px;">⏳</div>Загружаем посты друзей...</div>`;
+      try {
+        // Firestore 'in' принимает не более 10 значений за раз — разбиваем на части
+        const chunks = [];
+        for (let i = 0; i < friendIds.length; i += 10) chunks.push(friendIds.slice(i, i + 10));
+        const results = await Promise.all(chunks.map(chunk =>
+          getDocs(query(collection(db, 'posts'), where('authorId', 'in', chunk), orderBy('createdAt', 'desc'), limit(60)))
+        ));
+        let docsArr = [];
+        results.forEach(snap => snap.forEach(d => docsArr.push(d)));
+        docsArr.sort((a, b) => (b.data().createdAt?.toMillis?.() || 0) - (a.data().createdAt?.toMillis?.() || 0));
+        if (currentFilter !== 'friends') return; // фильтр успели переключить, пока шёл запрос
+        if (!docsArr.length) {
+          feedInner.innerHTML = `<div style="text-align:center;padding:48px 24px;color:var(--muted);">
+          <div style="font-size:40px;margin-bottom:12px;">📝</div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:6px;">Друзья пока ничего не публиковали</div>
+        </div>`; return;
+        }
+        feedInner.innerHTML = '';
+        docsArr.slice(0, 60).forEach(d => {
+          feedInner.appendChild(_buildPostElement(d.id, d.data()));
+          if (currentUser) _checkLiked(d.id);
+        });
+      } catch (e) {
+        console.error('[FriendsFeed]', e);
+        feedInner.innerHTML = `<div style="text-align:center;padding:40px;color:var(--red);font-size:13px;">⚠️ Не удалось загрузить посты друзей. Возможно, в Firestore нужно создать индекс (ссылка появится в консоли браузера).</div>`;
+      }
+    }
+
+    window._reloadFeed = _startFeed;
+
+    const postsCache = new Map(); // postId -> data, нужно для рендера оригинального поста в треде
+
+    // ── BUILD POST ELEMENT ────────────────────────────────────
+    function _buildPostElement(postId, data) {
+      postsCache.set(postId, data);
+
+      const article = document.createElement('article');
+      article.className = 'post';
+      article.dataset.postId = postId;
+      article.style.animationDelay = '0s';
+
+      const safeText = (data.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      const timeStr = relativeTime(data.createdAt);
+      const likeCount = data.likesCount || 0;
+      const cmtCount = data.commentsCount || 0;
+      const avHTML = avatarHTML(data.authorName, data.authorAvatar, 40, 'ph-av');
+
+      // Image if present
+      let imgHTML = '';
+      if (data.imageUrl) {
+        imgHTML = `<div style="margin:2px 0 12px;border-radius:12px;overflow:hidden;max-height:420px;">
+        <img src="${_escAttr(data.imageUrl)}" style="width:100%;display:block;object-fit:cover;max-height:420px;cursor:pointer;" 
+          onclick="window.open('${_escAttr(data.imageUrl)}','_blank')"
+          onerror="this.parentElement.style.display='none'">
+      </div>`;
+      }
+
+      article.innerHTML = `
+      <div class="ph">
+        <div onclick="window.location.href='profile.html?uid=${data.authorId || ''}'" style="cursor:pointer;flex-shrink:0;">${avHTML}</div>
+        <div class="ph-info">
+          <div class="ph-name" onclick="window.location.href='profile.html?uid=${data.authorId || ''}'" style="cursor:pointer;">
+            ${_esc(data.authorName || 'Пользователь')}
+          </div>
+          <div class="ph-time">${timeStr}</div>
+        </div>
+        <button class="ph-more" onclick="toast('⚙️ Опции поста скоро!')">···</button>
+      </div>
+      ${data.content ? `<div class="post-text">${safeText}</div>` : ''}
+      ${imgHTML}
+      <div class="actions">
+        <button class="act-btn like-btn" data-post-id="${postId}" onclick="window._fbLikeToggle('${postId}',this)">
+          ${SVG_HEART}<span class="like-count">${likeCount}</span>
+        </button>
+        <button class="comments-toggle" onclick="window.openThread('${postId}')">
+          ${SVG_COMMENT}<span class="comment-count">${cmtCount}</span>
+        </button>
+        <button class="share-btn" onclick="window._openShareModal('${postId}')">
+          ${SVG_SHARE} Поделиться
+        </button>
+      </div>`;
+
+      // Открытие треда по клику на текст поста — как в Threads
+      const textEl = article.querySelector('.post-text');
+      if (textEl) { textEl.style.cursor = 'pointer'; textEl.onclick = () => window.openThread(postId); }
+
+      return article;
+    }
+
+    function _fmtNum(n) { if (n >= 1000) return (n / 1000).toFixed(1) + 'k'; return String(n); }
+    function _esc(s) { return String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function _escAttr(s) { return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+    // ── SHARE TO FRIEND ──────────────────────────────────────────
+    let _sharePostId = null;
+
+    window._openShareModal = async function (postId) {
+      _sharePostId = postId;
+      document.getElementById('shareOverlay').classList.add('open');
+      const list = document.getElementById('shareFriendsList');
+      list.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:16px;text-align:center;">Загружаем друзей...</div>`;
+
+      if (!currentUser) {
+        list.innerHTML = `<div class="share-empty">👤 Войдите, чтобы делиться постами с друзьями</div>`;
+        return;
+      }
+      const friendIds = (currentProfile && Array.isArray(currentProfile.friends)) ? currentProfile.friends : [];
+      if (!friendIds.length) {
+        list.innerHTML = `<div class="share-empty">👥 У вас нет друзей...<br>Добавьте друзей, чтобы делиться с ними постами!</div>`;
+        return;
+      }
+      try {
+        const friendDocs = await Promise.all(
+          friendIds.slice(0, 50).map(uid => getDoc(doc(db, 'users', uid)))
+        );
+        list.innerHTML = '';
+        friendDocs.forEach(snap => {
+          if (!snap.exists()) return;
+          const u = snap.data();
+          const name = u.fullName || u.displayName || 'Пользователь';
+          const row = document.createElement('div');
+          row.className = 'friend-row';
+          row.innerHTML = `
+            ${avatarHTML(name, u.photoUrl || null, 38, 'friend-av')}
+            <div class="friend-name">${_esc(name)}</div>
+            <button class="friend-send-btn">Отправить</button>`;
+          row.querySelector('.friend-send-btn').onclick = (e) => _sendPostToFriend(snap.id, name, e.currentTarget);
+          list.appendChild(row);
+        });
+        if (!list.children.length) {
+          list.innerHTML = `<div class="share-empty">👥 У вас нет друзей...<br>Добавьте друзей, чтобы делиться с ними постами!</div>`;
+        }
+      } catch (e) {
+        console.error('[ShareModal]', e);
+        list.innerHTML = `<div class="share-empty">⚠️ Не удалось загрузить список друзей</div>`;
+      }
+    };
+
+    window.closeShareModal = function () {
+      document.getElementById('shareOverlay').classList.remove('open');
+      _sharePostId = null;
+    };
+
+    window._copyShareLink = function () {
+      if (!_sharePostId) return;
+      navigator.clipboard && navigator.clipboard.writeText(window.location.href + '?post=' + _sharePostId)
+        .then(() => toast('🔗 Ссылка скопирована!'));
+    };
+
+    // Отправляет пост другу прямым сообщением в чат (вместо простого копирования ссылки)
+    async function _sendPostToFriend(friendUid, friendName, btn) {
+      if (!currentUser || !_sharePostId) return;
+      const postId = _sharePostId;
+      const postData = postsCache.get(postId) || {};
+      if (btn) { btn.disabled = true; btn.textContent = 'Отправка...'; }
+      try {
+        const chatId = [currentUser.uid, friendUid].sort().join('_');
+        await addDoc(collection(db, 'chats', chatId, 'messages'), {
+          senderUid: currentUser.uid,
+          senderName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+          senderAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+          type: 'post_share',
+          postId: postId,
+          postText: (postData.content || '').slice(0, 200),
+          postImage: postData.imageUrl || null,
+          postAuthorName: postData.authorName || 'Пользователь',
+          postAuthorAvatar: postData.authorAvatar || null,
+          read: false,
+          createdAt: serverTimestamp()
+        });
+        await setDoc(doc(db, 'chats', chatId), {
+          participants: [currentUser.uid, friendUid],
+          lastMessage: '📨 Поделился(ась) постом',
+          lastMessageAt: serverTimestamp()
+        }, { merge: true });
+        await addDoc(collection(db, 'notifications'), {
+          toUid: friendUid,
+          fromUid: currentUser.uid,
+          fromName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+          fromAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+          text: 'отправил(а) вам пост',
+          chatType: 'direct', chatId: chatId,
+          type: 'message',
+          read: false,
+          createdAt: serverTimestamp()
+        });
+        if (btn) { btn.textContent = 'Отправлено ✓'; }
+        toast(`✅ Пост отправлен: ${friendName}`);
+      } catch (e) {
+        console.error('[SharePost]', e);
+        toast('⚠️ Не удалось отправить пост');
+        if (btn) { btn.disabled = false; btn.textContent = 'Отправить'; }
+      }
+    }
+
+    // ── LIKE ──────────────────────────────────────────────────
+    async function _checkLiked(postId) {
+      if (!currentUser) return;
+      try {
+        const likeRef = doc(db, 'posts', postId, 'likes', currentUser.uid);
+        const snap = await getDoc(likeRef);
+        if (snap.exists()) {
+          const btn = document.querySelector(`.like-btn[data-post-id="${postId}"]`);
+          if (btn) { btn.classList.add('liked'); btn.querySelector('svg').setAttribute('fill', 'currentColor'); }
+          likedCache.set(postId, true);
+        } else { likedCache.set(postId, false); }
+      } catch (e) { console.warn('[LikeCheck]', e); }
+    }
+
+    window._fbLikeToggle = async function (postId, btn) {
+      if (!currentUser) { toast('👤 Войдите, чтобы ставить лайки'); return; }
+      const wasLiked = likedCache.get(postId) === true || btn.classList.contains('liked');
+      btn.classList.toggle('liked', !wasLiked);
+      btn.classList.add('pop');
+      setTimeout(() => btn.classList.remove('pop'), 380);
+      btn.querySelector('svg').setAttribute('fill', wasLiked ? 'none' : 'currentColor');
+      const span = btn.querySelector('.like-count');
+      span.textContent = Math.max(0, (parseInt(span.textContent) || 0) + (wasLiked ? -1 : 1));
+      likedCache.set(postId, !wasLiked);
+      try {
+        const postRef = doc(db, 'posts', postId);
+        const likeRef = doc(db, 'posts', postId, 'likes', currentUser.uid);
+        await runTransaction(db, async (tx) => {
+          const ps = await tx.get(postRef);
+          if (!ps.exists()) throw new Error('Post gone');
+          if (wasLiked) { tx.delete(likeRef); tx.update(postRef, { likesCount: Math.max(0, (ps.data().likesCount || 0) - 1) }); }
+          else { tx.set(likeRef, { likedAt: serverTimestamp() }); tx.update(postRef, { likesCount: (ps.data().likesCount || 0) + 1 }); }
+        });
+        // Уведомляем автора поста о новом лайке (не себе)
+        if (!wasLiked) {
+          const postData = postsCache.get(postId);
+          if (postData && postData.authorId && postData.authorId !== currentUser.uid) {
+            try {
+              await addDoc(collection(db, 'notifications'), {
+                toUid: postData.authorId,
+                fromUid: currentUser.uid,
+                fromName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+                fromAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+                text: 'оценил(а) ваш пост',
+                chatType: null, chatId: null,
+                type: 'like',
+                read: false,
+                createdAt: serverTimestamp()
+              });
+            } catch (e) { console.warn('[LikeNotif]', e); }
+          }
+        }
+      } catch (e) {
+        console.error('[Like]', e);
+        btn.classList.toggle('liked', wasLiked);
+        btn.querySelector('svg').setAttribute('fill', wasLiked ? 'currentColor' : 'none');
+        span.textContent = Math.max(0, (parseInt(span.textContent) || 0) + (wasLiked ? 1 : -1));
+        likedCache.set(postId, wasLiked);
+        toast('⚠️ Ошибка. Попробуйте снова.');
+      }
+    };
+
+    // ── THREAD MODAL (Threads-style комментарии) ───────────────
+    let _openThreadPostId = null;
+
+    function _renderThreadOriginalPost(postId, data) {
+      const wrap = document.getElementById('threadOriginalPost');
+      if (!wrap) return;
+      const safeText = (data.content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      const timeStr = relativeTime(data.createdAt);
+      const avHTML = avatarHTML(data.authorName, data.authorAvatar, 40, 'ph-av');
+      let imgHTML = '';
+      if (data.imageUrl) {
+        imgHTML = `<div style="margin:10px 0 0;border-radius:12px;overflow:hidden;max-height:360px;">
+        <img src="${_escAttr(data.imageUrl)}" style="width:100%;display:block;object-fit:cover;max-height:360px;cursor:pointer;"
+          onclick="window.open('${_escAttr(data.imageUrl)}','_blank')"
+          onerror="this.parentElement.style.display='none'">
+      </div>`;
+      }
+      wrap.innerHTML = `
+      <div class="ph" style="margin-bottom:0;">
+        <div onclick="window.location.href='profile.html?uid=${data.authorId || ''}'" style="cursor:pointer;flex-shrink:0;">${avHTML}</div>
+        <div class="ph-info">
+          <div class="ph-name" onclick="window.location.href='profile.html?uid=${data.authorId || ''}'" style="cursor:pointer;">
+            ${_esc(data.authorName || 'Пользователь')}
+          </div>
+          <div class="ph-time">${timeStr}</div>
+        </div>
+      </div>
+      ${data.content ? `<div class="post-text" style="margin-top:10px;">${safeText}</div>` : ''}
+      ${imgHTML}`;
+    }
+
+    window.openThread = function (postId) {
+      _openThreadPostId = postId;
+      const overlay = document.getElementById('threadOverlay');
+      const data = postsCache.get(postId);
+      if (data) _renderThreadOriginalPost(postId, data);
+      overlay.classList.add('open');
+      document.getElementById('threadInput').value = '';
+
+      const listEl = document.getElementById('threadCommentsList');
+      listEl.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:6px 0;">Загружаем...</div>`;
+
+      if (!commentUnsubs.has(postId)) _startThreadCommentsListener(postId);
+
+      // Скроллим к верху треда при открытии
+      const scrollEl = document.getElementById('threadScroll');
+      if (scrollEl) scrollEl.scrollTop = 0;
+    };
+
+    window.closeThread = function () {
+      document.getElementById('threadOverlay').classList.remove('open');
+      _openThreadPostId = null;
+    };
+
+    function _startThreadCommentsListener(postId) {
+      const listEl = document.getElementById('threadCommentsList');
+      const q = query(collection(db, 'posts', postId, 'comments'), orderBy('createdAt', 'asc'));
+      const unsub = onSnapshot(q, (snap) => {
+        // Рендерим только если этот тред всё ещё открыт (избегаем гонки между тредами)
+        if (_openThreadPostId !== postId) return;
+        listEl.innerHTML = '';
+        if (snap.empty) { listEl.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:6px 0;">Пока нет ответов. Будь первым!</div>`; return; }
+        snap.forEach(d => {
+          const c = d.data();
+          const item = document.createElement('div');
+          item.className = 'thread-comment-item';
+          item.innerHTML = `
+          ${avatarHTML(c.authorName, c.authorAvatar, 32, 'comment-av')}
+          <div class="thread-comment-body">
+            <div class="thread-comment-name" style="cursor:pointer;" onclick="window.location.href='profile.html?uid=${c.authorId}'">${_esc(c.authorName || 'Пользователь')}</div>
+            <div class="thread-comment-text">${_esc(c.text || '')}</div>
+          </div>`;
+          listEl.appendChild(item);
+        });
+      }, (err) => { console.error('[Comments]', err); if (_openThreadPostId === postId) listEl.innerHTML = `<div style="color:var(--red);font-size:12px;">Ошибка.</div>`; });
+      commentUnsubs.set(postId, unsub);
+    }
+
+    window._fbSubmitThreadComment = async function () {
+      const postId = _openThreadPostId;
+      if (!postId) return;
+      if (!currentUser) { toast('👤 Войдите, чтобы комментировать'); return; }
+      const input = document.getElementById('threadInput');
+      const text = input.value.trim(); if (!text) return;
+      input.disabled = true;
+      try {
+        await addDoc(collection(db, 'posts', postId, 'comments'), {
+          authorId: currentUser.uid,
+          authorName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+          authorAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+          text, createdAt: serverTimestamp()
+        });
+        await runTransaction(db, async (tx) => {
+          const snap = await tx.get(doc(db, 'posts', postId));
+          if (snap.exists()) tx.update(doc(db, 'posts', postId), { commentsCount: (snap.data().commentsCount || 0) + 1 });
+        });
+        // Уведомляем автора поста о новом комментарии (не себе)
+        const postData = postsCache.get(postId);
+        if (postData && postData.authorId && postData.authorId !== currentUser.uid) {
+          try {
+            await addDoc(collection(db, 'notifications'), {
+              toUid: postData.authorId,
+              fromUid: currentUser.uid,
+              fromName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+              fromAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+              text: text.length > 80 ? text.slice(0, 80) + '…' : text,
+              chatType: null, chatId: null,
+              type: 'comment',
+              read: false,
+              createdAt: serverTimestamp()
+            });
+          } catch (e) { console.warn('[CommentNotif]', e); }
+        }
+        input.value = '';
+        const scrollEl = document.getElementById('threadScroll');
+        if (scrollEl) setTimeout(() => { scrollEl.scrollTop = scrollEl.scrollHeight; }, 120);
+      } catch (e) { console.error('[Comment]', e); toast('⚠️ Ошибка комментария.'); }
+      finally { input.disabled = false; input.focus(); }
+    };
+
+    // ── CREATE POST ───────────────────────────────────────────
+    window.localSubmitPost = async function () {
+      const input = document.getElementById('composeInput');
+      const text = input.value.trim();
+      if (!text && !pendingImgFile) { toast('✏️ Напиши что-нибудь!'); return; }
+      if (!currentUser) { toast('👤 Войдите, чтобы публиковать'); return; }
+
+      const btn = document.getElementById('postBtn');
+      btn.disabled = true; btn.textContent = '...';
+
+      try {
+        let imageUrl = null;
+
+        // Upload image if present
+        if (typeof pendingImgFile !== 'undefined' && pendingImgFile) {
+          try {
+            imageUrl = await uploadToCloudinary(pendingImgFile, 'post_images');
+          } catch (e) { console.warn('[Upload]', e); toast('⚠️ Фото не загрузилось, пост без фото'); }
+        }
+
+        const postData = {
+          authorId: currentUser.uid,
+          authorName: currentProfile?.fullName || currentUser.displayName || 'Пользователь',
+          authorAvatar: currentProfile?.photoUrl || currentUser.photoURL || null,
+          content: text,
+          createdAt: serverTimestamp(),
+          likesCount: 0,
+          commentsCount: 0
+        };
+        if (imageUrl) postData.imageUrl = imageUrl;
+
+        await addDoc(collection(db, 'posts'), postData);
+        input.value = '';
+        clearUpload();
+        toast('✅ Пост опубликован!');
+      } catch (e) {
+        console.error('[Post]', e);
+        toast('⚠️ Ошибка публикации. Проверь правила Firestore.');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Опубликовать';
+      }
+    };
+  </script>
+
+
+  <!-- ════ EUREKA MASCOT WIDGET — помощник в правом нижнем углу ════ -->
+  <div class="eureka-widget" id="eurekaWidget">
+    <div class="eureka-bubble" id="eurekaBubble">
+      <button class="eureka-close" id="eurekaClose" title="Закрыть"
+        onclick="document.getElementById('eurekaBubble').classList.add('hidden')">✕</button>
+      <div class="eureka-text" id="eurekaText">
+        <strong>Привет! 👋</strong>
+        Это лента сообщества — здесь можно делиться советами и знаниями, учиться у других и искать друзей.
+      </div>
+    </div>
+    <div class="eureka-avatar-wrap" onclick="window._mascotNextTip && window._mascotNextTip()">
+      <div class="mascot-avatar-circle" id="eurekaAvatar"></div>
+      <div class="eureka-pulse"></div>
+    </div>
+  </div>
+  <!-- ════ MOBILE BOTTOM NAV ════ -->
+  <!-- ════ MOBILE BOTTOM NAV ════ -->
+  <nav class="mob-nav" id="mobNav">
+    <a href="index.html" class="mob-nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" />
+        <polyline points="9 21 9 12 15 12 15 21" />
+      </svg>
+      <span>Лента</span>
+    </a>
+    <a href="public.html" class="mob-nav-item active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      <span>Обсуждения</span>
+    </a>
+    <a href="Chat.html" class="mob-nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+      <span>Чат</span>
+    </a>
+    <a href="trainings.html" class="mob-nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+      <span>Тренинги</span>
+    </a>
+    <a href="profile.html" class="mob-nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+      <span>Профиль</span>
+    </a>
+  </nav>
+
+</body>
+
+</html>
